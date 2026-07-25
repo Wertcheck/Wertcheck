@@ -34,16 +34,7 @@ body {
     url('header_png.png') center top / cover fixed no-repeat;
   background-color: #08101C;
 }
-/* Overlay über gesamte Seite damit Text lesbar bleibt */
-body::before {
-  content:'';
-  position:fixed;
-  inset:0;
-  background: rgba(8,16,28,0.55);
-  z-index:0;
-  pointer-events:none;
-}
-/* Alle Sections über dem Overlay */
+/* Alle Sections über Hintergrundbild */
 nav, section, footer, .mobile-menu, .hero, #wizard-mobile-section {
   position: relative;
   z-index: 1;
@@ -537,20 +528,19 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
 
 
 /* ── FAKTOREN ACCORDION ──────────────────────────────────────── */
-.fak-item { border-bottom: 1px solid rgba(255,255,255,0.12); }
+.fak-item { border-bottom: 1px solid var(--border); }
 .fak-q {
   width:100%; display:flex; justify-content:space-between; align-items:center;
   padding:18px 0; background:none; border:none; cursor:pointer;
-  font-size:16px; font-weight:600; color:#ffffff; font-family:var(--f-body);
+  font-size:15px; font-weight:600; color:var(--text); font-family:var(--f-body);
   text-align:left; transition:color .2s;
 }
 .fak-q:hover { color:var(--orange); }
-.fak-q:hover .fak-plus { color:var(--orange); }
 .fak-plus { font-size:22px; font-weight:300; color:var(--orange); flex-shrink:0; transition:transform .2s; }
 .fak-q.open .fak-plus { transform:rotate(45deg); }
 .fak-a {
   display:none; padding:0 0 18px;
-  font-size:14px; font-weight:300; color:rgba(255,255,255,0.55);
+  font-size:14px; font-weight:300; color:var(--muted);
   line-height:1.75;
 }
 .fak-a.open { display:block; }
@@ -780,11 +770,11 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
 </section>
 
 <!-- FAKTOREN -->
-<section id="faktoren" style="background:#0D1B2A; padding:88px 5%;">
+<section id="faktoren">
   <div class="section-center">
     <span class="section-eyebrow fade-in">Worauf es ankommt</span>
-    <h2 class="section-title fade-in" style="color:#ffffff;">Was beeinflusst den <em>Wert</em><br>Ihrer Immobilie?</h2>
-    <p class="section-sub fade-in" style="color:rgba(255,255,255,0.55);">Diese sechs Faktoren bestimmen maßgeblich, zu welchem Preis Ihre Immobilie am Markt erzielt werden kann.</p>
+    <h2 class="section-title fade-in">Was beeinflusst den <em>Wert</em><br>Ihrer Immobilie?</h2>
+    <p class="section-sub fade-in">Diese sechs Faktoren bestimmen maßgeblich, zu welchem Preis Ihre Immobilie am Markt erzielt werden kann.</p>
     
     <!-- ACCORDION FAKTOREN -->
     <div style="max-width:680px; margin:40px auto 0; text-align:left;" class="fade-in">
