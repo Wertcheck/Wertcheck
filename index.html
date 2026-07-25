@@ -128,9 +128,8 @@ nav.scrolled {
 }
 .hero-inner {
   max-width: 1280px; margin:0 auto; width:100%;
-  display: grid; grid-template-columns:1fr 460px;
-  gap: 48px; align-items:start;
-  padding-top: 20px;
+  display: grid; grid-template-columns:1fr 500px;
+  gap: 56px; align-items:center;
 }
 .hero-text-top {
   margin-bottom: 28px;
@@ -142,9 +141,9 @@ nav.scrolled {
   margin-bottom:20px; padding-left:16px; border-left:2px solid var(--orange);
 }
 .hero-left h1 {
-  font-family:var(--f-head); font-size:clamp(32px,4vw,56px);
-  font-weight:800; color:#fff; line-height:1.1;
-  margin-bottom:18px; letter-spacing:-0.02em;
+  font-family:var(--f-head); font-size:clamp(36px,4.5vw,64px);
+  font-weight:800; color:#fff; line-height:1.08;
+  margin-bottom:22px; letter-spacing:-0.03em;
 }
 .hero-accent { color:var(--orange); font-style:italic; }
 .hero-desc { font-size:16px; font-weight:300; color:rgba(255,255,255,0.65); max-width:420px; margin-bottom:28px; }
@@ -164,8 +163,8 @@ nav.scrolled {
 
 /* ── WIZARD CARD ────────────────────────────────────────────────── */
 .wizard-card {
-  background:#fff; border-radius:16px; padding:32px 28px;
-  box-shadow:0 24px 64px rgba(0,0,0,0.35);
+  background:#fff; border-radius:20px; padding:40px 36px;
+  box-shadow:0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.08);
 }
 .step-label { font-size:10px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
 .progress-bar { height:6px; background:var(--border); border-radius:99px; overflow:hidden; margin-bottom:5px; }
@@ -293,12 +292,12 @@ section { padding:88px 5%; }
 
 /* ── FAQ ─────────────────────────────────────────────────────────── */
 .faq-list { max-width:680px; margin:0 auto; text-align:left; }
-.faq-item { border-bottom:1px solid var(--border); }
-.faq-q { width:100%; text-align:left; padding:18px 0; background:none; border:none; cursor:pointer; font-size:15px; font-weight:600; color:var(--text); display:flex; justify-content:space-between; align-items:center; gap:16px; transition:color .2s; font-family:var(--f-body); }
+.faq-item { border-bottom:1px solid rgba(255,255,255,0.12); }
+.faq-q { width:100%; text-align:left; padding:18px 0; background:none; border:none; cursor:pointer; font-size:15px; font-weight:600; color:#ffffff; display:flex; justify-content:space-between; align-items:center; gap:16px; transition:color .2s; font-family:var(--f-body); }
 .faq-q:hover { color:var(--orange); }
 .faq-arrow { color:var(--orange); transition:transform .2s; display:flex; align-items:center; flex-shrink:0; }
 .faq-q.open .faq-arrow { transform:rotate(180deg); }
-.faq-a { display:none; padding:0 0 18px; font-size:14px; font-weight:300; color:var(--muted); line-height:1.75; }
+.faq-a { display:none; padding:0 0 18px; font-size:14px; font-weight:300; color:rgba(255,255,255,0.55); line-height:1.75; }
 .faq-a.open { display:block; }
 
 /* ── FOOTER ──────────────────────────────────────────────────────── */
@@ -788,8 +787,8 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
 <section id="faktoren">
   <div class="section-center">
     <span class="section-eyebrow fade-in">Worauf es ankommt</span>
-    <h2 class="section-title fade-in">Was beeinflusst den <em>Wert</em><br>Ihrer Immobilie?</h2>
-    <p class="section-sub fade-in">Diese sechs Faktoren bestimmen maßgeblich, zu welchem Preis Ihre Immobilie am Markt erzielt werden kann.</p>
+    <h2 class="section-title fade-in" style="color:#ffffff;">Was beeinflusst den <em>Wert</em><br>Ihrer Immobilie?</h2>
+    <p class="section-sub fade-in" style="color:rgba(255,255,255,0.55);">Diese sechs Faktoren bestimmen maßgeblich, zu welchem Preis Ihre Immobilie am Markt erzielt werden kann.</p>
     
     <!-- ACCORDION FAKTOREN -->
     <div style="max-width:680px; margin:40px auto 0; text-align:left;" class="fade-in">
