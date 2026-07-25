@@ -337,16 +337,17 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   .logo-img { height:48px; }
 
   /* HERO — vollflächig, Bild sichtbar */
-  /* MOBILE HERO — Wizard schwebt über Hintergrundbild */
+  /* MOBILE HERO — kompakt oben, Wizard darunter */
   .hero {
     min-height: 100svh;
-    padding: 72px 5% 32px;
-    align-items: flex-start;
+    padding: 72px 5% 24px;
     background: transparent;
+    display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    align-items: stretch;
   }
-  .hero-inner { grid-template-columns:1fr; gap:0; }
+  .hero-inner { grid-template-columns:1fr; gap:0; display:block; }
   .hero-inner .wizard-card { display:none !important; }
 
   /* Kompakte Headline */
@@ -355,9 +356,12 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   .hero-desc { display:none; }
   .hero-checks { display:none; }
 
-  /* Rating klein anzeigen */
-  .hero-left > div[style*="display:flex; align-items:center; gap:12px; margin-bottom:24px"] {
-    margin-bottom: 16px !important;
+  /* Rating auf Mobile — jede Zeile für sich */
+  .hero-rating {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 16px;
   }
 
   /* CTA Button verstecken auf Mobile — Wizard ist direkt da */
@@ -661,6 +665,16 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   display: none;
 }
 
+
+/* Rating Badge Desktop */
+.hero-rating {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
 </style>
 </head>
 <body>
@@ -693,11 +707,12 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 
 <!-- HERO -->
 <section class="hero" id="hero">
+  <!-- Desktop: Grid mit Text links + Wizard rechts -->
   <div class="hero-inner">
     <div class="hero-left">
       <div class="hero-eyebrow">Kostenlos · Unverbindlich · In 3 Minuten</div>
       <h1>Was ist Ihre<br><span class="hero-accent">Immobilie</span><br>wirklich <span class="hero-accent">wert?</span></h1>
-      <p style="font-size:15px; color:rgba(255,255,255,0.7); margin-bottom:20px; font-weight:300; line-height:1.7;">
+      <p class="hero-desc" style="font-size:15px; color:rgba(255,255,255,0.7); margin-bottom:20px; font-weight:300; line-height:1.7;">
         Erfahren Sie in nur 3 Minuten den Wert Ihrer Immobilie — kostenlos &amp; unverbindlich.
       </p>
       <ul class="hero-checks">
@@ -707,26 +722,12 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
         <li>100 % kostenlos &amp; ohne Verpflichtungen</li>
       </ul>
       <!-- Rating Badge -->
-      <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px; flex-wrap:wrap;">
+      <div class="hero-rating">
         <div style="color:#0097B2; font-size:18px; letter-spacing:2px;">★★★★★</div>
         <div style="font-size:13px; color:rgba(255,255,255,0.65); font-weight:300;">
-          <strong style="color:#ffffff; font-weight:600;">4,9 / 5</strong> — basierend auf ersten Nutzerbewertungen
+          <strong style="color:#ffffff; font-weight:600;">4,9 / 5</strong>
         </div>
-      </div>
-
-      <!-- Nur auf Mobile sichtbar -->
-      <a href="#wizard" class="hero-mobile-cta" onclick="closeMenu(); scrollToWizard(event);">
-        Kostenlose Bewertung starten →
-      </a>
-    </div>
-
-    <!-- GLASS WIZARD — nur Mobile, direkt im Hero -->
-    <div class="hero-mobile-wizard" id="hero-wizard-mobile">
-      <div class="wizard-glass" id="wizard-glass-card">
-        <div class="step-label" id="step-label-hm">Schritt 1 von 12</div>
-        <div class="progress-bar"><div class="progress-fill" id="progress-fill-hm" style="width:0%"></div></div>
-        <div class="progress-pct" id="progress-pct-hm">0%</div>
-        <div id="wizard-body-hm"></div>
+        <div style="font-size:12px; color:rgba(255,255,255,0.45);">basierend auf ersten Nutzerbewertungen</div>
       </div>
     </div>
     <!-- Wizard: nur Desktop -->
@@ -737,6 +738,16 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
         <div class="progress-pct" id="progress-pct">0%</div>
       </div>
       <div id="wizard-body"></div>
+    </div>
+  </div>
+
+  <!-- Mobile: Glass Wizard direkt sichtbar, außerhalb des Grids -->
+  <div class="hero-mobile-wizard" id="hero-wizard-mobile">
+    <div class="wizard-glass" id="wizard-glass-card">
+      <div class="step-label" id="step-label-hm">Schritt 1 von 12</div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill-hm" style="width:0%"></div></div>
+      <div class="progress-pct" id="progress-pct-hm">0%</div>
+      <div id="wizard-body-hm"></div>
     </div>
   </div>
   <!-- Scroll hint desktop -->
