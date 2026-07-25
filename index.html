@@ -78,7 +78,7 @@ nav.scrolled {
   border-bottom: 1px solid rgba(245,166,35,0.12);
 }
 .logo { display:flex; align-items:center; text-decoration:none; }
-.logo-img { height:44px; width:auto; mix-blend-mode:screen; }
+.logo-img { height:52px; width:auto; mix-blend-mode:screen; }
 .nav-links { display:flex; align-items:center; gap:32px; list-style:none; }
 .nav-links a { font-size:13px; font-weight:500; color:rgba(255,255,255,0.6); text-decoration:none; letter-spacing:0.02em; transition:color .2s; }
 .nav-links a:hover { color:#fff; }
@@ -292,13 +292,13 @@ section { padding:88px 5%; }
 
 /* ── FAQ ─────────────────────────────────────────────────────────── */
 .faq-list { max-width:680px; margin:0 auto; text-align:left; }
-.faq-item { border-bottom:1px solid rgba(255,255,255,0.12); }
-.faq-q { width:100%; text-align:left; padding:18px 0; background:none; border:none; cursor:pointer; font-size:15px; font-weight:600; color:#ffffff; display:flex; justify-content:space-between; align-items:center; gap:16px; transition:color .2s; font-family:var(--f-body); }
+.faq-item { border-bottom:1px solid var(--border); }
+.faq-q { width:100%; text-align:left; padding:18px 0; background:none; border:none; cursor:pointer; font-size:15px; font-weight:600; color:var(--text); display:flex; justify-content:space-between; align-items:center; gap:16px; transition:color .2s; font-family:var(--f-body); }
 .faq-q:hover { color:var(--orange); }
 .faq-q:hover { color:var(--orange); }
 .faq-arrow { color:var(--orange); transition:transform .2s; display:flex; align-items:center; flex-shrink:0; }
 .faq-q.open .faq-arrow { transform:rotate(180deg); }
-.faq-a { display:none; padding:0 0 18px; font-size:14px; font-weight:300; color:rgba(255,255,255,0.55); line-height:1.75; }
+.faq-a { display:none; padding:0 0 18px; font-size:14px; font-weight:300; color:var(--muted); line-height:1.75; }
 .faq-a.open { display:block; }
 
 /* ── FOOTER ──────────────────────────────────────────────────────── */
@@ -339,7 +339,7 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
 
   /* NAV */
   nav { height:60px; padding:0 4%; }
-  .logo-img { height:40px; }
+  .logo-img { height:48px; }
 
   /* HERO — vollflächig, Bild sichtbar */
   .hero {
@@ -544,11 +544,11 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
 
 
 /* ── FAKTOREN ACCORDION ──────────────────────────────────────── */
-.fak-item { border-bottom: 1px solid rgba(255,255,255,0.12); }
+.fak-item { border-bottom: 1px solid var(--border); }
 .fak-q {
   width:100%; display:flex; justify-content:space-between; align-items:center;
   padding:18px 0; background:none; border:none; cursor:pointer;
-  font-size:15px; font-weight:600; color:#ffffff; font-family:var(--f-body);
+  font-size:15px; font-weight:600; color:var(--text); font-family:var(--f-body);
   text-align:left; transition:color .2s; gap:16px;
 }
 .fak-q:hover { color:var(--orange); }
@@ -556,7 +556,7 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
 .fak-q.open .fak-arrow { transform:rotate(180deg); }
 .fak-a {
   display:none; padding:0 0 18px;
-  font-size:14px; font-weight:300; color:rgba(255,255,255,0.55);
+  font-size:14px; font-weight:300; color:var(--muted);
   line-height:1.75;
 }
 .fak-a.open { display:block; }
@@ -763,19 +763,19 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
     <p class="section-sub fade-in">Drei Schritte zur detaillierten Immobilienbewertung.</p>
     <div class="steps-grid fade-in">
       <div class="step-item">
-        <div class="step-num-wrap"><div class="step-num-circle">1</div></div>
+      </div>
         <div class="step-icon-circle"><svg viewBox="0 0 24 24"><path d="M3 12L12 4l9 8"/><path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/></svg></div>
         <h3>Immobilie eingeben</h3>
         <p>Beantworten Sie ein paar kurze Fragen zu Ihrer Immobilie.</p>
       </div>
       <div class="step-item">
-        <div class="step-num-wrap"><div class="step-num-circle">2</div></div>
+      </div>
         <div class="step-icon-circle"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg></div>
         <h3>Datenanalyse</h3>
         <p>Wir analysieren Lage, Ausstattung und aktuelle Marktdaten automatisch.</p>
       </div>
       <div class="step-item">
-        <div class="step-num-wrap"><div class="step-num-circle">3</div></div>
+      </div>
         <div class="step-icon-circle"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
         <h3>Ergebnis erhalten</h3>
         <p>Sie erhalten Ihre detaillierte Bewertung als PDF per E-Mail.</p>
@@ -788,8 +788,8 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
 <section id="faktoren">
   <div class="section-center">
     <span class="section-eyebrow fade-in">Worauf es ankommt</span>
-    <h2 class="section-title fade-in" style="color:#ffffff;">Was beeinflusst den <em>Wert</em><br>Ihrer Immobilie?</h2>
-    <p class="section-sub fade-in" style="color:rgba(255,255,255,0.55);">Diese sechs Faktoren bestimmen maßgeblich, zu welchem Preis Ihre Immobilie am Markt erzielt werden kann.</p>
+    <h2 class="section-title fade-in">Was beeinflusst den <em>Wert</em><br>Ihrer Immobilie?</h2>
+    <p class="section-sub fade-in">Diese sechs Faktoren bestimmen maßgeblich, zu welchem Preis Ihre Immobilie am Markt erzielt werden kann.</p>
     
     <!-- ACCORDION FAKTOREN -->
     <div style="max-width:680px; margin:40px auto 0; text-align:left;" class="fade-in">
@@ -864,7 +864,7 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
   <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:center;">
     <!-- Bild links -->
     <div class="fade-in" style="position:relative;">
-      <div style="background:linear-gradient(135deg,#0D1B2A 0%,#152238 100%); border-radius:16px; overflow:hidden; aspect-ratio:4/3; display:flex; align-items:center; justify-content:center;">
+      <div style="background:rgba(13,27,42,0.6); border:1px solid rgba(245,166,35,0.2); border-radius:16px; overflow:hidden; aspect-ratio:4/3; display:flex; align-items:center; justify-content:center;">
         <!-- Placeholder Beratungsbild -->
         <div style="text-align:center; padding:40px;">
           <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="rgba(245,166,35,0.4)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:16px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -880,25 +880,25 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
     <!-- Text rechts -->
     <div class="fade-in">
       <span class="section-eyebrow">Über ImmowertChecker</span>
-      <h2 class="section-title" style="text-align:left; margin-bottom:16px;">Wir machen <em>Immobilienwerte</em> transparent</h2>
+      <h2 class="section-title" style="text-align:left; margin-bottom:16px; color:#ffffff;">Wir machen <em>Immobilienwerte</em> transparent</h2>
       <p style="font-size:15px; color:var(--muted); line-height:1.8; margin-bottom:20px; font-weight:300;">
-        ImmowertChecker wurde gegründet mit einem klaren Ziel: Eigentümer sollen den echten Wert ihrer Immobilie kennen — kostenlos, schnell und ohne Verpflichtungen.
+ImmowertChecker wurde gegründet mit einem klaren Ziel: Eigentümer sollen den echten Wert ihrer Immobilie kennen — kostenlos, schnell und ohne Verpflichtungen.
       </p>
-      <p style="font-size:15px; color:var(--muted); line-height:1.8; margin-bottom:28px; font-weight:300;">
+      <p style="font-size:15px; color:rgba(255,255,255,0.65); line-height:1.8; margin-bottom:28px; font-weight:300;">
         Wir verbinden modernste KI-Technologie mit aktuellen Marktdaten und dem Wissen erfahrener Immobilienberater. Das Ergebnis: eine präzise Ersteinschätzung die Sie in Ihre nächste Entscheidung einbezieht.
       </p>
       <div style="display:flex; gap:32px; flex-wrap:wrap;">
         <div>
           <div style="font-family:var(--f-head); font-size:28px; font-weight:800; color:var(--orange);">100%</div>
-          <div style="font-size:13px; color:var(--muted);">Kostenlos</div>
+          <div style="font-size:13px; color:rgba(255,255,255,0.55);">Kostenlos</div>
         </div>
         <div>
           <div style="font-family:var(--f-head); font-size:28px; font-weight:800; color:var(--orange);">3 Min.</div>
-          <div style="font-size:13px; color:var(--muted);">Bis zum Ergebnis</div>
+          <div style="font-size:13px; color:rgba(255,255,255,0.55);">Bis zum Ergebnis</div>
         </div>
         <div>
           <div style="font-family:var(--f-head); font-size:28px; font-weight:800; color:var(--orange);">DSGVO</div>
-          <div style="font-size:13px; color:var(--muted);">Konform</div>
+          <div style="font-size:13px; color:rgba(255,255,255,0.55);">Konform</div>
         </div>
       </div>
     </div>
