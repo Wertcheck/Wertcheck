@@ -28,6 +28,17 @@ async function verarbeiten(kundendaten) {
 
   console.log('🟢 Jonas: Auftrag abgeschlossen für', kundendaten.email);
 
+  // ── FOLLOW-UP E-MAIL nach 3 Tagen ────────────────────────────
+  const drei_tage_ms = 3 * 24 * 60 * 60 * 1000;
+  setTimeout(async () => {
+    try {
+      await elena.sendeFollowUp(kundendaten, bewertung);
+      console.log('📧 Jonas: Follow-up E-Mail versendet an', kundendaten.email);
+    } catch(e) {
+      console.error('Follow-up Fehler:', e.message);
+    }
+  }, drei_tage_ms);
+
   return {
     status: 'abgeschlossen',
     kunde: kundendaten.email,
