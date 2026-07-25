@@ -263,7 +263,7 @@ section { padding:88px 5%; }
 
 /* ── ERGEBNIS ────────────────────────────────────────────────────── */
 .ergebnis-section { background:var(--night); padding:88px 5%; }
-.ergebnis-inner { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:center; }
+.ergebnis-inner { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:340px 1fr; gap:72px; align-items:center; }
 .mock-report { background:#fff; border-radius:12px; padding:28px; box-shadow:0 32px 80px rgba(0,0,0,0.5); }
 .report-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid var(--border); }
 .report-header h4 { font-family:var(--f-head); font-size:15px; font-weight:700; margin-bottom:3px; }
@@ -294,6 +294,7 @@ section { padding:88px 5%; }
 .faq-list { max-width:680px; margin:0 auto; text-align:left; }
 .faq-item { border-bottom:1px solid rgba(255,255,255,0.12); }
 .faq-q { width:100%; text-align:left; padding:18px 0; background:none; border:none; cursor:pointer; font-size:15px; font-weight:600; color:#ffffff; display:flex; justify-content:space-between; align-items:center; gap:16px; transition:color .2s; font-family:var(--f-body); }
+.faq-q:hover { color:var(--orange); }
 .faq-q:hover { color:var(--orange); }
 .faq-arrow { color:var(--orange); transition:transform .2s; display:flex; align-items:center; flex-shrink:0; }
 .faq-q.open .faq-arrow { transform:rotate(180deg); }
@@ -457,7 +458,7 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
 /* ── SMARTPHONE MOCKUP ───────────────────────────────────────── */
 .phone-mockup {
   position: relative;
-  width: 260px;
+  width: 240px;
   margin: 0 auto;
   flex-shrink: 0;
 }
@@ -543,19 +544,19 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
 
 
 /* ── FAKTOREN ACCORDION ──────────────────────────────────────── */
-.fak-item { border-bottom: 1px solid var(--border); }
+.fak-item { border-bottom: 1px solid rgba(255,255,255,0.12); }
 .fak-q {
   width:100%; display:flex; justify-content:space-between; align-items:center;
   padding:18px 0; background:none; border:none; cursor:pointer;
-  font-size:15px; font-weight:600; color:var(--text); font-family:var(--f-body);
-  text-align:left; transition:color .2s;
+  font-size:15px; font-weight:600; color:#ffffff; font-family:var(--f-body);
+  text-align:left; transition:color .2s; gap:16px;
 }
 .fak-q:hover { color:var(--orange); }
-.fak-plus { font-size:22px; font-weight:300; color:var(--orange); flex-shrink:0; transition:transform .2s; }
-.fak-q.open .fak-plus { transform:rotate(45deg); }
+.fak-arrow { color:var(--orange); transition:transform .2s; display:flex; align-items:center; flex-shrink:0; }
+.fak-q.open .fak-arrow { transform:rotate(180deg); }
 .fak-a {
   display:none; padding:0 0 18px;
-  font-size:14px; font-weight:300; color:var(--muted);
+  font-size:14px; font-weight:300; color:rgba(255,255,255,0.55);
   line-height:1.75;
 }
 .fak-a.open { display:block; }
@@ -796,7 +797,7 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
       <div class="fak-item">
         <button class="fak-q" onclick="toggleFak(this)">
           <span>Lage</span>
-          <span class="fak-plus">+</span>
+          <span class="fak-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
         </button>
         <div class="fak-a">
           Mikrolagen, Infrastruktur, Schulen, ÖPNV-Anbindung und Nachbarschaft sind die wichtigsten Werttreiber — unveränderlich und entscheidend. Eine A-Lage kann den Wert um 30–50% gegenüber einer C-Lage erhöhen.
@@ -806,7 +807,7 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
       <div class="fak-item">
         <button class="fak-q" onclick="toggleFak(this)">
           <span>Baujahr & Zustand</span>
-          <span class="fak-plus">+</span>
+          <span class="fak-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
         </button>
         <div class="fak-a">
           Neubauten erzielen höhere Preise — aber eine vollsanierte Altbau-Immobilie kann einen Neubau übertreffen. Zustand schlägt Alter. Eine Kernsanierung kann den Wert um 15–25% steigern.
@@ -816,7 +817,7 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
       <div class="fak-item">
         <button class="fak-q" onclick="toggleFak(this)">
           <span>Energieeffizienz</span>
-          <span class="fak-plus">+</span>
+          <span class="fak-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
         </button>
         <div class="fak-a">
           Energieausweis, Heizungsart und Dämmung beeinflussen den Wert zunehmend stark. Klasse A oder B erzielt deutlich höhere Preise als Klasse E oder F — Unterschied kann bis zu 20% betragen.
@@ -826,7 +827,7 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
       <div class="fak-item">
         <button class="fak-q" onclick="toggleFak(this)">
           <span>Ausstattung & Schnitt</span>
-          <span class="fak-plus">+</span>
+          <span class="fak-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
         </button>
         <div class="fak-a">
           Gehobene Ausstattung — Parkett, Einbauküche, hochwertige Bäder — kann den Wert um 10–20% steigern. Ein funktionaler Grundriss erhöht die Nachfrage erheblich.
@@ -836,7 +837,7 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
       <div class="fak-item">
         <button class="fak-q" onclick="toggleFak(this)">
           <span>Größe & Grundstück</span>
-          <span class="fak-plus">+</span>
+          <span class="fak-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
         </button>
         <div class="fak-a">
           Wohnfläche und Grundstücksgröße bestimmen den Preis pro m². Bei Häusern ist das Grundstück oft wertvoller als die Immobilie selbst — besonders in städtischen Lagen.
@@ -846,7 +847,7 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
       <div class="fak-item">
         <button class="fak-q" onclick="toggleFak(this)">
           <span>Angebot & Nachfrage</span>
-          <span class="fak-plus">+</span>
+          <span class="fak-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
         </button>
         <div class="fak-a">
           Aktuelle Marktlage, Zinsentwicklung und regionale Nachfrage beeinflussen den erzielbaren Preis erheblich. In gefragten Lagen übersteigt die Nachfrage das Angebot — das treibt die Preise.
