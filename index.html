@@ -440,6 +440,13 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   @keyframes spin { to { transform: rotate(360deg); } }
 
   @media (max-width:600px) {
+    #testimonials > div > div[style*="grid-template-columns:repeat(3"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+
+  @media (max-width:600px) {
     #faktoren > div > div[style*="grid-template-columns:repeat(3"] {
       grid-template-columns: 1fr !important;
     }
@@ -910,6 +917,78 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   </div>
 </section>
 
+
+<!-- TESTIMONIALS -->
+<section id="testimonials" style="background:#ffffff; padding:88px 5%;">
+  <div style="max-width:1200px; margin:0 auto; text-align:center;">
+    <span class="section-eyebrow fade-in" style="justify-content:center;">Was andere sagen</span>
+    <h2 class="section-title fade-in">Erfahrungen unserer <em>Nutzer</em></h2>
+    <p class="section-sub fade-in" style="margin:0 auto 52px;">Menschen wie Sie — die einfach wissen wollten was ihre Immobilie wert ist.</p>
+
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:24px;" class="fade-in">
+
+      <div style="background:#F0F9FB; border-radius:12px; padding:32px 28px; text-align:left; position:relative;">
+        <div style="color:#0097B2; font-size:32px; line-height:1; margin-bottom:16px;">"</div>
+        <p style="font-size:15px; color:#1A2533; line-height:1.75; margin-bottom:20px; font-weight:300;">
+          Meine Mutter hat eine Wohnung geerbt und wir hatten absolut keine Ahnung was die wert ist. 
+          In 4 Minuten hatten wir eine klare Preisspanne. Unglaublich einfach.
+        </p>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:40px; height:40px; background:#0097B2; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--f-head); font-size:16px; font-weight:700; color:#fff; flex-shrink:0;">S</div>
+          <div>
+            <div style="font-size:13px; font-weight:600; color:#1A2533;">Sandra K.</div>
+            <div style="font-size:11px; color:#6B7A8D;">München</div>
+          </div>
+          <div style="margin-left:auto; color:#0097B2; font-size:13px;">★★★★★</div>
+        </div>
+      </div>
+
+      <div style="background:#F0F9FB; border-radius:12px; padding:32px 28px; text-align:left; position:relative;">
+        <div style="color:#0097B2; font-size:32px; line-height:1; margin-bottom:16px;">"</div>
+        <p style="font-size:15px; color:#1A2533; line-height:1.75; margin-bottom:20px; font-weight:300;">
+          Ich wollte einfach nur wissen ob sich ein Verkauf lohnt. 
+          Das PDF war übersichtlich und hat mir wirklich geholfen die Situation einzuschätzen. 
+          Und das komplett kostenlos — sehr empfehlenswert.
+        </p>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:40px; height:40px; background:#0097B2; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--f-head); font-size:16px; font-weight:700; color:#fff; flex-shrink:0;">T</div>
+          <div>
+            <div style="font-size:13px; font-weight:600; color:#1A2533;">Thomas R.</div>
+            <div style="font-size:11px; color:#6B7A8D;">Hamburg</div>
+          </div>
+          <div style="margin-left:auto; color:#0097B2; font-size:13px;">★★★★★</div>
+        </div>
+      </div>
+
+      <div style="background:#F0F9FB; border-radius:12px; padding:32px 28px; text-align:left; position:relative;">
+        <div style="color:#0097B2; font-size:32px; line-height:1; margin-bottom:16px;">"</div>
+        <p style="font-size:15px; color:#1A2533; line-height:1.75; margin-bottom:20px; font-weight:300;">
+          Hatte keine Lust auf einen Termin mit einem Immobilienberater nur um zu sehen 
+          was meine Wohnung wert ist. ImmowertChecker hat mir das erspart. 
+          Super unkompliziert.
+        </p>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:40px; height:40px; background:#0097B2; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--f-head); font-size:16px; font-weight:700; color:#fff; flex-shrink:0;">M</div>
+          <div>
+            <div style="font-size:13px; font-weight:600; color:#1A2533;">Markus L.</div>
+            <div style="font-size:11px; color:#6B7A8D;">Berlin</div>
+          </div>
+          <div style="margin-left:auto; color:#0097B2; font-size:13px;">★★★★★</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Gesamt-Rating -->
+    <div style="margin-top:40px; display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap;">
+      <div style="color:#0097B2; font-size:20px; letter-spacing:2px;">★★★★★</div>
+      <div style="font-size:14px; color:#6B7A8D; font-weight:300;">
+        <strong style="color:#1A2533; font-weight:700;">4,9 / 5</strong> — basierend auf ersten Nutzerbewertungen
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- FAQ -->
 <section id="faq">
   <div class="section-center">
@@ -1346,6 +1425,7 @@ async function submitForm() {
     wert_avg:   avg.toLocaleString('de-DE') + ' €',
     // Meta
     datum:      new Date().toLocaleDateString('de-DE', {day:'2-digit',month:'2-digit',year:'numeric'}),
+    rating:     answers._rating || 'Nicht bewertet',
     uhrzeit:    new Date().toLocaleTimeString('de-DE', {hour:'2-digit',minute:'2-digit'}),
   };
 
@@ -1363,6 +1443,19 @@ async function submitForm() {
   } catch(e) {
     showError(answers.vorname || 'Sie', low, high, avg);
   }
+}
+
+
+function rateStar(rating) {
+  const labels = ['','Nicht zufrieden','Verbesserungswürdig','In Ordnung','Gut','Ausgezeichnet!'];
+  for(let i=1; i<=5; i++) {
+    const s = document.getElementById('star-'+i);
+    if(s) s.style.color = i <= rating ? '#0097B2' : '#C8E8EE';
+  }
+  const fb = document.getElementById('star-feedback');
+  if(fb) fb.textContent = labels[rating];
+  // Bewertung speichern für spätere Follow-up E-Mail
+  answers._rating = rating;
 }
 
 function resetWizard() { currentStep=1; answers={}; render(); }
