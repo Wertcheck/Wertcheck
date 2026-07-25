@@ -30,23 +30,35 @@
 html { scroll-behavior:smooth; }
 body {
   font-family:var(--f-body); color:var(--text); overflow-x:hidden; line-height:1.6;
-  background:
-    url('header_png.png') center top / cover fixed no-repeat;
   background-color: #08101C;
 }
-/* Alle Sections über Hintergrundbild */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(rgba(8,16,28,0.72), rgba(8,16,28,0.72)),
+    url('header_png.png') center top / cover no-repeat;
+  z-index: 0;
+  pointer-events: none;
+}
+/* Alle Sections über dem Hintergrundbild-Overlay */
 nav, section, footer, .mobile-menu, .hero, #wizard-mobile-section {
   position: relative;
   z-index: 1;
 }
+/* Helle Sections komplett undurchsichtig */
+.vorteile-bg, #how, #ueber-uns, #faq, #faktoren, #wizard-mobile-section {
+  isolation: isolate;
+}
 /* Sections vollständig undurchsichtig — kein Hintergrundbild */
 .vorteile-bg { background: #ffffff !important; }
 #how { background: #F8F6F2 !important; }
-.ergebnis-section { background: #0D1B2A !important; }
+.ergebnis-section { background: rgba(8,16,28,0.75) !important; position:relative; z-index:1; }
 #faktoren { background: #ffffff !important; }
 #ueber-uns { background: #F8F6F2 !important; }
 #faq { background: #ffffff !important; }
-footer { background: #0D1B2A !important; }
+footer { background: rgba(8,16,28,0.82) !important; position:relative; z-index:1; }
 #wizard-mobile-section { background: #F8F6F2 !important; }
 
 /* ── NAV ────────────────────────────────────────────────────────── */
@@ -115,9 +127,13 @@ nav.scrolled {
   padding: 100px 5% 60px;
 }
 .hero-inner {
-  max-width: 1200px; margin:0 auto; width:100%;
-  display: grid; grid-template-columns:1fr 420px;
-  gap: 64px; align-items:center;
+  max-width: 1280px; margin:0 auto; width:100%;
+  display: grid; grid-template-columns:1fr 460px;
+  gap: 48px; align-items:start;
+  padding-top: 20px;
+}
+.hero-text-top {
+  margin-bottom: 28px;
 }
 .hero-eyebrow {
   display:inline-flex; align-items:center; gap:10px;
@@ -581,7 +597,6 @@ footer { background:var(--night); color:rgba(255,255,255,0.35); padding:44px 5% 
     <div class="hero-left">
       <div class="hero-eyebrow">Kostenlose Bewertung · In 3 Minuten</div>
       <h1>Was ist Ihre<br><span class="hero-accent">Immobilie</span><br>wirklich <span class="hero-accent">wert?</span></h1>
-      <p class="hero-desc">Erhalten Sie eine datenbasierte Marktwerteinschätzung – präzise, unverbindlich und vollständig kostenlos.</p>
       <ul class="hero-checks">
         <li>Aktuelle Marktdaten &amp; Vergleichsobjekte</li>
         <li>Bewertung von Lage, Zustand &amp; Ausstattung</li>
@@ -1012,10 +1027,46 @@ let answers = {};
 const steps = [
   {id:1,question:"Um welche Immobilie handelt es sich?",hint:"Bitte wählen Sie den Immobilientyp aus.",type:"type-grid",key:"type",
    options:[
-     {value:"wohnung",icon:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 9h18M9 9v12M15 9v12"/></svg>`,label:"Wohnung"},
-     {value:"einfamilienhaus",icon:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12L12 4l9 8"/><path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/></svg>`,label:"Einfamilienhaus"},
-     {value:"mehrfamilienhaus",icon:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="16" rx="1"/><path d="M2 10h20M8 10v12M16 10v12"/></svg>`,label:"Mehrfamilienhaus"},
-     {value:"gewerbe",icon:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="1"/><path d="M8 21V10h8v11M2 9h20"/></svg>`,label:"Gewerbe"}
+     {value:"wohnung",icon:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="2" y="4" width="20" height="18" rx="1"/>
+  <path d="M2 9h20"/>
+  <path d="M2 14h20"/>
+  <path d="M7 9v5M12 9v5M17 9v5"/>
+  <rect x="9" y="17" width="6" height="5" rx="0.5"/>
+</svg>`,label:"Wohnung"},
+     {value:"einfamilienhaus",icon:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M3 10.5L12 3l9 7.5V21H3V10.5z"/>
+  <rect x="9" y="14" width="6" height="7"/>
+  <rect x="5" y="11" width="3" height="3" rx="0.5"/>
+  <rect x="16" y="11" width="3" height="3" rx="0.5"/>
+  <path d="M12 3v3"/>
+</svg>`,label:"Einfamilienhaus"},
+     {value:"mehrfamilienhaus",icon:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="1" y="2" width="22" height="20" rx="1"/>
+  <path d="M1 7h22M1 12h22M1 17h22"/>
+  <path d="M6 2v20M12 2v20M18 2v20"/>
+  <rect x="3" y="9" width="2" height="2" rx="0.3" fill="currentColor" opacity="0.4"/>
+  <rect x="8" y="9" width="2" height="2" rx="0.3" fill="currentColor" opacity="0.4"/>
+  <rect x="14" y="9" width="2" height="2" rx="0.3" fill="currentColor" opacity="0.4"/>
+  <rect x="19" y="9" width="2" height="2" rx="0.3" fill="currentColor" opacity="0.4"/>
+</svg>`,label:"Mehrfamilienhaus"},
+     {value:"gewerbe",icon:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="2" y="1" width="20" height="22" rx="1"/>
+  <path d="M2 6h20M2 11h20M2 16h20"/>
+  <rect x="5" y="3" width="2" height="2" rx="0.3"/>
+  <rect x="9" y="3" width="2" height="2" rx="0.3"/>
+  <rect x="13" y="3" width="2" height="2" rx="0.3"/>
+  <rect x="17" y="3" width="2" height="2" rx="0.3"/>
+  <rect x="5" y="8" width="2" height="2" rx="0.3"/>
+  <rect x="9" y="8" width="2" height="2" rx="0.3"/>
+  <rect x="13" y="8" width="2" height="2" rx="0.3"/>
+  <rect x="17" y="8" width="2" height="2" rx="0.3"/>
+  <rect x="5" y="13" width="2" height="2" rx="0.3"/>
+  <rect x="9" y="13" width="2" height="2" rx="0.3"/>
+  <rect x="13" y="13" width="2" height="2" rx="0.3"/>
+  <rect x="17" y="13" width="2" height="2" rx="0.3"/>
+  <rect x="9" y="18" width="6" height="5"/>
+</svg>`,label:"Gewerbe"}
    ]},
   {id:2,question:"Wo befindet sich die Immobilie?",hint:"Geben Sie die Postleitzahl und den Ort ein.",type:"fields",
    fields:[{key:"plz",label:"Postleitzahl",placeholder:"z. B. 80331",type:"text"},{key:"ort",label:"Stadt / Gemeinde",placeholder:"z. B. München",type:"text"}]},
