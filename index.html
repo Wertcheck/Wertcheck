@@ -345,7 +345,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   /* MOBILE HERO — kompakt oben, Wizard darunter */
   .hero {
     min-height: auto;
-    padding: 88px 5% 32px;
+    padding: 76px 5% 24px;
     background: transparent;
     display: flex;
     flex-direction: column;
@@ -355,22 +355,22 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   .hero-inner { grid-template-columns:1fr; gap:0; display:block; }
   .hero-inner .wizard-card { display:none !important; }
 
-  /* Kompakte Headline */
-  .hero-eyebrow { font-size:9px; letter-spacing:0.18em; margin-bottom:8px; }
-  .hero-left h1 { font-size:26px; line-height:1.12; margin-bottom:8px; }
+  /* Kompakte Headline — 2 statt 3 Zeilen */
+  .hero-eyebrow { font-size:9px; letter-spacing:0.16em; margin-bottom:8px; padding-left:12px; }
+  .hero-left h1 { font-size:24px; line-height:1.18; margin-bottom:10px; }
+  .hero-brk-1 { display:none; }
   .hero-desc { display:none; }
   .hero-checks { display:none; }
 
-  /* Rating auf Mobile — kompakt in einer Zeile */
+  /* Rating auf Mobile — Sterne eng an der Zahl, alles kompakt */
   .hero-rating {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 6px 10px;
-    margin-bottom: 14px;
+    align-items: baseline;
+    gap: 4px 8px;
+    margin-bottom: 12px;
   }
-  .hero-rating > div:last-child { width: 100%; }
+  .hero-rating-stars { font-size:13px; letter-spacing:1px; }
+  .hero-rating-score { font-size:12px; }
+  .hero-rating-sub { flex-basis:auto; font-size:10px; }
 
   /* CTA Button verstecken auf Mobile — Wizard ist direkt da */
   .hero-mobile-cta { display: none !important; }
@@ -379,20 +379,21 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   .hero-mobile-wizard {
     display: block;
     width: 100%;
-    margin-top: 4px;
+    margin-top: 2px;
   }
-  .hero-mobile-wizard .wizard-question { font-size:16px; }
-  .hero-mobile-wizard .wizard-hint { font-size:12px; margin-bottom:12px; }
-  .hero-mobile-wizard .type-grid { gap:8px; margin-bottom:12px; }
-  .hero-mobile-wizard .type-btn { padding:12px 8px; }
+  .hero-mobile-wizard .wizard-glass { padding:18px 16px; }
+  .hero-mobile-wizard .wizard-question { font-size:15px; margin-bottom:4px; }
+  .hero-mobile-wizard .wizard-hint { font-size:12px; margin-bottom:10px; }
+  .hero-mobile-wizard .type-grid { gap:8px; margin-bottom:10px; }
+  .hero-mobile-wizard .type-btn { padding:10px 8px; }
   .hero-mobile-wizard .type-label { font-size:11px; }
-  .hero-mobile-wizard .option-list { gap:6px; margin-bottom:12px; }
-  .hero-mobile-wizard .option-btn { padding:10px 12px; font-size:13px; }
-  .hero-mobile-wizard .field-group input { font-size:16px; padding:10px 12px; }
+  .hero-mobile-wizard .option-list { gap:6px; margin-bottom:10px; }
+  .hero-mobile-wizard .option-btn { padding:9px 12px; font-size:13px; }
+  .hero-mobile-wizard .field-group input { font-size:16px; padding:9px 12px; }
   .hero-mobile-wizard .input-row { grid-template-columns:1fr; }
-  .hero-mobile-wizard .btn-next { padding:14px; font-size:14px; color:#fff; }
-  .hero-mobile-wizard .btn-back { padding:14px 12px; }
-  .hero-mobile-wizard .security-note { font-size:10px; }
+  .hero-mobile-wizard .btn-next { padding:12px; font-size:14px; color:#fff; }
+  .hero-mobile-wizard .btn-back { padding:12px; }
+  .hero-mobile-wizard .security-note { font-size:10px; margin-top:8px; }
 
   /* Wizard Section unter Hero ausblenden auf Mobile */
   #wizard-mobile-section { display:none !important; }
@@ -441,7 +442,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 }
 
 @media (max-width:380px) {
-  .hero-left h1 { font-size:28px; }
+  .hero-left h1 { font-size:22px; }
   .hero-mobile-cta { font-size:14px; padding:15px; }
 }
 
@@ -668,13 +669,29 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 .wizard-glass .email-note { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
 .wizard-glass .email-note strong { color: #fff; }
 
-/* Rating Badge Desktop */
+/* Rating Badge */
 .hero-rating {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  align-items: baseline;
+  gap: 10px 14px;
   margin-bottom: 24px;
   flex-wrap: wrap;
+}
+.hero-rating-stars {
+  color: var(--orange);
+  font-size: 18px;
+  letter-spacing: 2px;
+}
+.hero-rating-score {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+.hero-rating-sub {
+  flex-basis: 100%;
+  font-size: 12px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.45);
 }
 
 </style>
@@ -713,7 +730,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   <div class="hero-inner">
     <div class="hero-left">
       <div class="hero-eyebrow">Kostenlos · Unverbindlich · In 3 Minuten</div>
-      <h1>Was ist Ihre<br><span class="hero-accent">Immobilie</span><br>wirklich <span class="hero-accent">wert?</span></h1>
+      <h1>Was ist Ihre<br class="hero-brk hero-brk-1"><span class="hero-accent">Immobilie</span><br class="hero-brk hero-brk-2">wirklich <span class="hero-accent">wert?</span></h1>
       <p class="hero-desc" style="font-size:15px; color:rgba(255,255,255,0.7); margin-bottom:20px; font-weight:300; line-height:1.7;">
         Erfahren Sie in nur 3 Minuten den Wert Ihrer Immobilie — kostenlos &amp; unverbindlich.
       </p>
@@ -725,11 +742,9 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
       </ul>
       <!-- Rating Badge -->
       <div class="hero-rating">
-        <div style="color:#0097B2; font-size:18px; letter-spacing:2px;">★★★★★</div>
-        <div style="font-size:13px; color:rgba(255,255,255,0.65); font-weight:300;">
-          <strong style="color:#ffffff; font-weight:600;">4,9 / 5</strong>
-        </div>
-        <div style="font-size:12px; color:rgba(255,255,255,0.45);">basierend auf ersten Nutzerbewertungen</div>
+        <span class="hero-rating-stars">★★★★★</span>
+        <span class="hero-rating-score">4,9 / 5</span>
+        <span class="hero-rating-sub">basierend auf ersten Nutzerbewertungen</span>
       </div>
     </div>
     <!-- Wizard: nur Desktop -->
