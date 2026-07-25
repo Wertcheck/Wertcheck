@@ -337,57 +337,53 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   .logo-img { height:48px; }
 
   /* HERO — vollflächig, Bild sichtbar */
+  /* MOBILE HERO — Wizard schwebt über Hintergrundbild */
   .hero {
     min-height: 100svh;
-    padding: 64px 6% 36px;
-    align-items: center;
+    padding: 72px 5% 32px;
+    align-items: flex-start;
     background: transparent;
+    flex-direction: column;
+    justify-content: flex-start;
   }
   .hero-inner { grid-template-columns:1fr; gap:0; }
   .hero-inner .wizard-card { display:none !important; }
 
-  /* Text */
-  .hero-eyebrow { font-size:9px; letter-spacing:0.18em; margin-bottom:12px; }
-  .hero-left h1 { font-size:34px; line-height:1.1; margin-bottom:10px; }
-  .hero-desc { display:block; font-size:14px; margin-bottom:16px; color:rgba(255,255,255,0.7); }
-  .hero-checks { margin-bottom:22px; }
-  .hero-checks li { font-size:13px; margin-bottom:7px; }
+  /* Kompakte Headline */
+  .hero-eyebrow { font-size:9px; letter-spacing:0.18em; margin-bottom:10px; }
+  .hero-left h1 { font-size:28px; line-height:1.1; margin-bottom:6px; }
+  .hero-desc { display:none; }
+  .hero-checks { display:none; }
 
-  /* CTA — einzeilig, weiße Schrift, volle Breite */
-  .hero-mobile-cta {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    background: var(--orange);
-    color: #ffffff !important;
-    font-family: var(--f-head);
-    font-weight: 800;
-    font-size: 16px;
-    padding: 17px 20px;
-    border-radius: 12px;
-    text-decoration: none;
-    white-space: nowrap;
-    box-shadow: 0 4px 14px rgba(0,151,178,0.22);
-    -webkit-tap-highlight-color: transparent;
-    letter-spacing: 0.01em;
+  /* Rating klein anzeigen */
+  .hero-left > div[style*="display:flex; align-items:center; gap:12px; margin-bottom:24px"] {
+    margin-bottom: 16px !important;
   }
 
-  /* Wizard unter dem Hero */
-  #wizard { scroll-margin-top:64px; }
-  .wizard-card { border-radius:14px; padding:20px 16px; box-shadow:0 8px 32px rgba(0,0,0,0.12); }
-  .wizard-question { font-size:16px; }
-  .wizard-hint { font-size:12px; margin-bottom:14px; }
-  .type-grid { gap:8px; margin-bottom:14px; }
-  .type-btn { padding:13px 8px; border-radius:10px; }
-  .type-label { font-size:12px; }
-  .option-list { gap:7px; margin-bottom:14px; }
-  .option-btn { padding:11px 12px; font-size:13px; border-radius:10px; }
-  .field-group input { font-size:16px; padding:10px 12px; }
-  .input-row { grid-template-columns:1fr; }
-  .btn-next { padding:14px; font-size:15px; color:#fff; }
-  .btn-back { padding:14px 12px; }
-  .security-note { font-size:10px; }
+  /* CTA Button verstecken auf Mobile — Wizard ist direkt da */
+  .hero-mobile-cta { display: none !important; }
+
+  /* Glass Wizard direkt im Hero auf Mobile */
+  .hero-mobile-wizard {
+    display: block;
+    width: 100%;
+    margin-top: 16px;
+  }
+  .hero-mobile-wizard .wizard-question { font-size:16px; }
+  .hero-mobile-wizard .wizard-hint { font-size:12px; margin-bottom:12px; }
+  .hero-mobile-wizard .type-grid { gap:8px; margin-bottom:12px; }
+  .hero-mobile-wizard .type-btn { padding:12px 8px; }
+  .hero-mobile-wizard .type-label { font-size:11px; }
+  .hero-mobile-wizard .option-list { gap:6px; margin-bottom:12px; }
+  .hero-mobile-wizard .option-btn { padding:10px 12px; font-size:13px; }
+  .hero-mobile-wizard .field-group input { font-size:16px; padding:10px 12px; }
+  .hero-mobile-wizard .input-row { grid-template-columns:1fr; }
+  .hero-mobile-wizard .btn-next { padding:14px; font-size:14px; color:#fff; }
+  .hero-mobile-wizard .btn-back { padding:14px 12px; }
+  .hero-mobile-wizard .security-note { font-size:10px; }
+
+  /* Wizard Section unter Hero ausblenden auf Mobile */
+  #wizard-mobile-section { display:none !important; }
 
   /* Sections */
   section { padding:44px 5%; }
@@ -564,6 +560,107 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 }
 .fak-a.open { display:block; }
 
+
+/* ── GLASMORPHISM WIZARD (Mobile) ────────────────────────────── */
+.wizard-glass {
+  background: rgba(8,16,28,0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 24px 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+.wizard-glass .step-label { color: rgba(255,255,255,0.5); }
+.wizard-glass .progress-bar { background: rgba(255,255,255,0.12); }
+.wizard-glass .wizard-question { color: #ffffff; font-size:18px; }
+.wizard-glass .wizard-hint { color: rgba(255,255,255,0.55); }
+.wizard-glass .progress-pct { color: rgba(255,255,255,0.4); }
+
+/* Type buttons — glass style */
+.wizard-glass .type-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  transition: all .2s;
+}
+.wizard-glass .type-btn:hover {
+  background: rgba(0,151,178,0.2);
+  border-color: rgba(0,151,178,0.5);
+}
+.wizard-glass .type-btn.selected {
+  background: rgba(0,151,178,0.25);
+  border-color: #0097B2;
+  box-shadow: 0 0 0 1px #0097B2;
+}
+.wizard-glass .type-label { color: #ffffff; font-size:12px; }
+.wizard-glass .type-icon svg { stroke: rgba(255,255,255,0.8); }
+.wizard-glass .type-btn.selected .type-icon svg { stroke: #0097B2; }
+
+/* Option buttons — glass style */
+.wizard-glass .option-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #ffffff;
+  border-radius: 10px;
+}
+.wizard-glass .option-btn:hover {
+  background: rgba(0,151,178,0.2);
+  border-color: rgba(0,151,178,0.5);
+}
+.wizard-glass .option-btn.selected {
+  background: rgba(0,151,178,0.25);
+  border-color: #0097B2;
+}
+
+/* Fields — glass style */
+.wizard-glass .field-group label { color: rgba(255,255,255,0.5); }
+.wizard-glass .field-group input {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #ffffff;
+  border-radius: 10px;
+}
+.wizard-glass .field-group input::placeholder { color: rgba(255,255,255,0.3); }
+.wizard-glass .field-group input:focus {
+  border-color: #0097B2;
+  background: rgba(0,151,178,0.15);
+  box-shadow: 0 0 0 3px rgba(0,151,178,0.2);
+}
+
+/* Slider — glass */
+.wizard-glass input[type="range"] { background: rgba(255,255,255,0.15); }
+.wizard-glass .slider-label { color: rgba(255,255,255,0.5); }
+
+/* Nav buttons — glass */
+.wizard-glass .btn-back {
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.06);
+  border-radius: 10px;
+}
+.wizard-glass .btn-back:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
+.wizard-glass .btn-next { border-radius: 10px; }
+.wizard-glass .security-note { color: rgba(255,255,255,0.3); }
+
+/* Contact note — glass */
+.wizard-glass .contact-note {
+  background: rgba(0,151,178,0.15);
+  border-left: 2px solid #0097B2;
+  color: rgba(255,255,255,0.7);
+}
+
+/* Success state — glass */
+.wizard-glass .value-range { background: rgba(0,0,0,0.3); }
+.wizard-glass .vr-label { color: rgba(255,255,255,0.4); }
+.wizard-glass .email-note { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
+.wizard-glass .email-note strong { color: #fff; }
+
+/* Mobile Hero mit Wizard */
+.hero-mobile-wizard {
+  display: none;
+}
+
 </style>
 </head>
 <body>
@@ -621,6 +718,16 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
       <a href="#wizard" class="hero-mobile-cta" onclick="closeMenu(); scrollToWizard(event);">
         Kostenlose Bewertung starten →
       </a>
+    </div>
+
+    <!-- GLASS WIZARD — nur Mobile, direkt im Hero -->
+    <div class="hero-mobile-wizard" id="hero-wizard-mobile">
+      <div class="wizard-glass" id="wizard-glass-card">
+        <div class="step-label" id="step-label-hm">Schritt 1 von 12</div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill-hm" style="width:0%"></div></div>
+        <div class="progress-pct" id="progress-pct-hm">0%</div>
+        <div id="wizard-body-hm"></div>
+      </div>
     </div>
     <!-- Wizard: nur Desktop -->
     <div class="wizard-card" id="wizard">
@@ -1091,6 +1198,156 @@ function closePage(id) {
   document.body.style.overflow = '';
 }
 
+
+// ── HERO MOBILE WIZARD ────────────────────────────────────────────
+function isHeroMobile() {
+  return window.innerWidth <= 600;
+}
+
+// Override render function um auch Hero-Mobile Wizard zu rendern
+const _originalRender = render;
+function renderAll() {
+  if (isHeroMobile()) {
+    renderWizardIn('wizard-body-hm', 'step-label-hm', 'progress-fill-hm', 'progress-pct-hm', 'hm');
+  } else {
+    renderWizardIn('wizard-body', 'step-label', 'progress-fill', 'progress-pct', '');
+  }
+}
+
+function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
+  const step = steps[currentStep - 1];
+  const pct = Math.round(((currentStep - 1) / totalSteps) * 100);
+  const lbl = document.getElementById(labelId);
+  const fill = document.getElementById(fillId);
+  const pct_el = document.getElementById(pctId);
+  if(lbl) lbl.textContent = `Schritt ${step.id} von ${totalSteps}`;
+  if(fill) fill.style.width = pct + '%';
+  if(pct_el) pct_el.textContent = pct + '%';
+
+  let html = `<h2 class="wizard-question">${step.question}</h2><p class="wizard-hint">${step.hint}</p>`;
+
+  if (step.type === 'type-grid') {
+    html += `<div class="type-grid">`;
+    step.options.forEach(opt => {
+      const sel = answers[step.key] === opt.value ? 'selected' : '';
+      html += `<button class="type-btn ${sel}" onclick="selectOptS('${step.key}','${opt.value}',this,'type-btn','${suffix}')"><span class="type-icon">${opt.icon}</span><span class="type-label">${opt.label}</span></button>`;
+    });
+    html += `</div>`;
+  } else if (step.type === 'options') {
+    html += `<div class="option-list">`;
+    step.options.forEach(opt => {
+      const sel = answers[step.key] === opt.value ? 'selected' : '';
+      html += `<button class="option-btn ${sel}" onclick="selectOptS('${step.key}','${opt.value}',this,'option-btn','${suffix}')"><span class="opt-icon">${opt.icon}</span><span>${opt.label}</span></button>`;
+    });
+    html += `</div>`;
+  } else if (step.type === 'multi') {
+    if (!answers[step.key]) answers[step.key] = [];
+    html += `<div class="type-grid">`;
+    step.options.forEach(opt => {
+      const sel = (answers[step.key]||[]).includes(opt.value) ? 'selected' : '';
+      html += `<button class="type-btn ${sel}" onclick="toggleMulti('${step.key}','${opt.value}',this)"><span class="type-icon">${opt.icon}</span><span class="type-label">${opt.label}</span></button>`;
+    });
+    html += `</div>`;
+  } else if (step.type === 'fields') {
+    step.fields.forEach(f => {
+      const val = answers[f.key] || '';
+      html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${val}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`;
+    });
+  } else if (step.type === 'slider') {
+    const val = answers[step.key] !== undefined ? answers[step.key] : step.default;
+    html += `<div class="slider-wrap"><div class="slider-label-row"><span class="slider-label">${step.label}</span><span class="slider-value" id="${bodyId}_sv">${val.toLocaleString('de-DE')} ${step.unit}</span></div><input type="range" min="${step.min}" max="${step.max}" step="${step.step}" value="${val}" oninput="updateSlider('${step.key}',this.value,'${step.unit}','${bodyId}_sv')"/><div class="slider-minmax"><span>${step.min} ${step.unit}</span><span>${step.max.toLocaleString('de-DE')} ${step.unit}</span></div></div>`;
+    answers[step.key] = val;
+  } else if (step.type === 'contact') {
+    html += `<div class="contact-note">Ihre Daten werden vertraulich behandelt.</div>`;
+    html += `<div class="input-row">`;
+    step.fields.slice(0,2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
+    html += `</div>`;
+    step.fields.slice(2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
+  }
+
+  const isLast = currentStep === totalSteps;
+  html += `<div class="wizard-nav">`;
+  if (currentStep > 1) html += `<button class="btn-back" onclick="goBackS('${suffix}')">←</button>`;
+  html += `<button class="btn-next" onclick="${isLast ? `submitFormS('${suffix}')` : `goNextS('${suffix}')`}">${isLast ? 'Bewertung anfordern' : 'Weiter →'}</button></div>`;
+  html += `<div class="security-note">Verschlüsselt · DSGVO-konform</div>`;
+
+  const body = document.getElementById(bodyId);
+  if(body) body.innerHTML = html;
+}
+
+function selectOptS(key, value, el, cls, suffix) {
+  answers[key] = value;
+  el.closest('.type-grid, .option-list').querySelectorAll(`.${cls}`).forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  const step = steps[currentStep-1];
+  if (step.type === 'type-grid' || step.type === 'options') setTimeout(() => goNextS(suffix), 260);
+}
+
+function goNextS(suffix) {
+  if (!validateStepS(suffix)) return;
+  if (currentStep < totalSteps) { currentStep++; renderAll(); }
+}
+
+function goBackS(suffix) {
+  if (currentStep > 1) { currentStep--; renderAll(); }
+}
+
+function validateStepS(suffix) {
+  const step = steps[currentStep-1];
+  const bodyId = suffix ? `wizard-body-${suffix}` : 'wizard-body';
+  if (step.type === 'fields' || step.type === 'contact') {
+    const required = step.fields.filter(f => f.type !== 'tel');
+    for (const f of required) {
+      const el = document.getElementById(`${bodyId}_field_${f.key}`);
+      if (el) answers[f.key] = el.value;
+      if (!answers[f.key] || !answers[f.key].trim()) {
+        el && el.focus(); el && (el.style.borderColor='#ef4444');
+        setTimeout(()=>{if(el)el.style.borderColor='';},2000); return false;
+      }
+    }
+  }
+  return true;
+}
+
+async function submitFormS(suffix) {
+  if (!validateStepS(suffix)) return;
+  const { low, high, avg } = calcWert();
+  const name = answers.vorname || 'Sie';
+  const email = answers.email || '';
+  const bodyId = suffix ? `wizard-body-${suffix}` : 'wizard-body';
+  const labelId = suffix ? `step-label-${suffix}` : 'step-label';
+  const fillId = suffix ? `progress-fill-${suffix}` : 'progress-fill';
+  const pctId = suffix ? `progress-pct-${suffix}` : 'progress-pct';
+
+  document.getElementById(labelId).textContent = 'Fertig';
+  document.getElementById(fillId).style.width = '100%';
+  document.getElementById(pctId).textContent = '100%';
+
+  document.getElementById(bodyId).innerHTML = `
+    <div class="success-state">
+      <div class="success-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <h3 style="color:#fff;">Vielen Dank, ${name}!</h3>
+      <p style="color:rgba(255,255,255,0.6);">Ihre Bewertung wird per E-Mail zugesendet.</p>
+      <div class="value-range">
+        <div class="vr-label">Geschätzter Marktwert</div>
+        <div class="vr-amount">${low.toLocaleString('de-DE')} € – ${high.toLocaleString('de-DE')} €</div>
+        <div class="vr-avg">Durchschnitt: <span>${avg.toLocaleString('de-DE')} €</span></div>
+      </div>
+      <div style="margin:12px 0; padding:12px; background:rgba(0,151,178,0.15); border-radius:8px;">
+        <p style="font-size:12px;color:#fff;margin-bottom:8px;font-weight:500;">Wie war Ihre Erfahrung?</p>
+        <div style="display:flex;justify-content:center;gap:6px;">
+          ${[1,2,3,4,5].map(i=>`<button onclick="rateStar(${i})" id="star-${suffix}-${i}" style="background:none;border:none;font-size:24px;cursor:pointer;color:rgba(255,255,255,0.2);transition:color .2s;">★</button>`).join('')}
+        </div>
+      </div>
+      <button class="btn-next" style="width:100%;color:#fff;" onclick="resetWizard()">Neue Bewertung ↺</button>
+    </div>`;
+
+  try {
+    const payload = {...answers, wohnflaeche: answers.wohnflaeche||100, merkmale: Array.isArray(answers.merkmale)?answers.merkmale:[]};
+    await fetch('https://wertcheck.onrender.com/bewertung', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  } catch(e) { console.log('Backend:', e.message); }
+}
+
 // ── MENU ──────────────────────────────────────────────────────────
 function toggleMenu() {
   const m = document.getElementById('mobile-menu');
@@ -1465,7 +1722,7 @@ function rateStar(rating) {
   answers._rating = rating;
 }
 
-function resetWizard() { currentStep=1; answers={}; render(); }
+function resetWizard() { currentStep=1; answers={}; if(isHeroMobile()){ renderAll(); } else { render(); } }
 
 
 function toggleFak(btn) {
@@ -1499,7 +1756,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 });
 
 // Init
-render();
+if(isHeroMobile()) { renderAll(); } else { render(); }
 
 // Handle resize
 window.addEventListener('resize', () => {
