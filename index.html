@@ -168,6 +168,105 @@ nav.scrolled {
   font-weight: 300;
   color: rgba(255,255,255,0.45);
 }
+
+/* ── GLASMORPHISM WIZARD (Mobile) — base rules must stay before the
+   media queries below: many of these use two-class selectors
+   (".wizard-glass .x") which tie in specificity with the mobile
+   overrides (".hero-mobile-wizard .x"), so source order decides the
+   winner. Keeping this block first lets the later mobile rules win. */
+.wizard-glass {
+  background: rgba(8,16,28,0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 24px 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+.wizard-glass .step-label { color: rgba(255,255,255,0.5); }
+.wizard-glass .progress-bar { background: rgba(255,255,255,0.12); }
+.wizard-glass .wizard-question { color: #ffffff; font-size:18px; }
+.wizard-glass .wizard-hint { color: rgba(255,255,255,0.55); }
+.wizard-glass .progress-pct { color: rgba(255,255,255,0.4); }
+
+/* Type buttons — glass style */
+.wizard-glass .type-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  transition: all .2s;
+}
+.wizard-glass .type-btn:hover {
+  background: rgba(0,151,178,0.2);
+  border-color: rgba(0,151,178,0.5);
+}
+.wizard-glass .type-btn.selected {
+  background: rgba(0,151,178,0.25);
+  border-color: #0097B2;
+  box-shadow: 0 0 0 1px #0097B2;
+}
+.wizard-glass .type-label { color: #ffffff; font-size:12px; }
+.wizard-glass .type-icon svg { stroke: rgba(255,255,255,0.8); }
+.wizard-glass .type-btn.selected .type-icon svg { stroke: #0097B2; }
+
+/* Option buttons — glass style */
+.wizard-glass .option-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #ffffff;
+  border-radius: 10px;
+}
+.wizard-glass .option-btn:hover {
+  background: rgba(0,151,178,0.2);
+  border-color: rgba(0,151,178,0.5);
+}
+.wizard-glass .option-btn.selected {
+  background: rgba(0,151,178,0.25);
+  border-color: #0097B2;
+}
+
+/* Fields — glass style */
+.wizard-glass .field-group label { color: rgba(255,255,255,0.5); }
+.wizard-glass .field-group input {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #ffffff;
+  border-radius: 10px;
+}
+.wizard-glass .field-group input::placeholder { color: rgba(255,255,255,0.3); }
+.wizard-glass .field-group input:focus {
+  border-color: #0097B2;
+  background: rgba(0,151,178,0.15);
+  box-shadow: 0 0 0 3px rgba(0,151,178,0.2);
+}
+
+/* Slider — glass */
+.wizard-glass input[type="range"] { background: rgba(255,255,255,0.15); }
+.wizard-glass .slider-label { color: rgba(255,255,255,0.5); }
+
+/* Nav buttons — glass */
+.wizard-glass .btn-back {
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.06);
+  border-radius: 10px;
+}
+.wizard-glass .btn-back:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
+.wizard-glass .btn-next { border-radius: 10px; }
+.wizard-glass .security-note { color: rgba(255,255,255,0.3); }
+
+/* Contact note — glass */
+.wizard-glass .contact-note {
+  background: rgba(0,151,178,0.15);
+  border-left: 2px solid #0097B2;
+  color: rgba(255,255,255,0.7);
+}
+
+/* Success state — glass */
+.wizard-glass .value-range { background: rgba(0,0,0,0.3); }
+.wizard-glass .vr-label { color: rgba(255,255,255,0.4); }
+.wizard-glass .email-note { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
+.wizard-glass .email-note strong { color: #fff; }
 .hero-checks { list-style:none; margin-bottom:32px; }
 .hero-checks li {
   display:flex; align-items:flex-start; gap:12px;
@@ -403,25 +502,63 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   /* CTA Button verstecken auf Mobile — Wizard ist direkt da */
   .hero-mobile-cta { display: none !important; }
 
-  /* Glass Wizard direkt im Hero auf Mobile */
+  /* Glass Wizard direkt im Hero auf Mobile — kompakter & heller Glass-Look */
   .hero-mobile-wizard {
     display: block;
-    width: 100%;
-    margin-top: 2px;
+    width: 94%;
+    margin: 2px auto 0;
   }
-  .hero-mobile-wizard .wizard-glass { padding:18px 16px; }
-  .hero-mobile-wizard .wizard-question { font-size:15px; margin-bottom:4px; }
-  .hero-mobile-wizard .wizard-hint { font-size:12px; margin-bottom:10px; }
-  .hero-mobile-wizard .type-grid { gap:8px; margin-bottom:10px; }
-  .hero-mobile-wizard .type-btn { padding:10px 8px; }
-  .hero-mobile-wizard .type-label { font-size:11px; }
-  .hero-mobile-wizard .option-list { gap:6px; margin-bottom:10px; }
-  .hero-mobile-wizard .option-btn { padding:9px 12px; font-size:13px; }
-  .hero-mobile-wizard .field-group input { font-size:16px; padding:9px 12px; }
+  .hero-mobile-wizard .wizard-glass {
+    padding: 15px 13px;
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(255,255,255,0.65);
+  }
+  .hero-mobile-wizard .step-label { color: rgba(26,37,51,0.55); }
+  .hero-mobile-wizard .progress-bar { background: rgba(26,37,51,0.15); }
+  .hero-mobile-wizard .progress-pct { color: rgba(26,37,51,0.5); }
+  .hero-mobile-wizard .wizard-question { font-size:14px; margin-bottom:4px; color:#1A2533; }
+  .hero-mobile-wizard .wizard-hint { font-size:11px; margin-bottom:9px; color:rgba(26,37,51,0.6); }
+  .hero-mobile-wizard .type-grid { gap:7px; margin-bottom:9px; }
+  .hero-mobile-wizard .type-btn {
+    padding:9px 7px;
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(26,37,51,0.15);
+  }
+  .hero-mobile-wizard .type-btn.selected {
+    background: rgba(0,151,178,0.18);
+    border-color: #0097B2;
+  }
+  .hero-mobile-wizard .type-label { font-size:10px; color:#1A2533; }
+  .hero-mobile-wizard .type-icon svg { stroke:#1A2533; }
+  .hero-mobile-wizard .type-btn.selected .type-icon svg { stroke:#0097B2; }
+  .hero-mobile-wizard .option-list { gap:5px; margin-bottom:9px; }
+  .hero-mobile-wizard .option-btn {
+    padding:8px 11px; font-size:12px;
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(26,37,51,0.15);
+    color:#1A2533;
+  }
+  .hero-mobile-wizard .option-btn.selected {
+    background: rgba(0,151,178,0.18);
+    border-color: #0097B2;
+  }
+  .hero-mobile-wizard .field-group label { color: rgba(26,37,51,0.6); }
+  .hero-mobile-wizard .field-group input {
+    font-size:16px; padding:8px 11px;
+    background: rgba(255,255,255,0.65);
+    border: 1px solid rgba(26,37,51,0.2);
+    color:#1A2533;
+  }
+  .hero-mobile-wizard .field-group input::placeholder { color: rgba(26,37,51,0.35); }
   .hero-mobile-wizard .input-row { grid-template-columns:1fr; }
-  .hero-mobile-wizard .btn-next { padding:12px; font-size:14px; color:#fff; }
-  .hero-mobile-wizard .btn-back { padding:12px; }
-  .hero-mobile-wizard .security-note { font-size:10px; margin-top:8px; }
+  .hero-mobile-wizard .btn-next { padding:11px; font-size:13px; color:#fff; }
+  .hero-mobile-wizard .btn-back {
+    padding:11px;
+    background: rgba(255,255,255,0.4);
+    border: 1px solid rgba(26,37,51,0.15);
+    color: rgba(26,37,51,0.7);
+  }
+  .hero-mobile-wizard .security-note { font-size:9.5px; margin-top:7px; color:rgba(26,37,51,0.45); }
 
   /* Wizard Section unter Hero ausblenden auf Mobile */
   #wizard-mobile-section { display:none !important; }
@@ -601,88 +738,6 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 }
 .fak-a.open { display:block; }
 
-
-/* ── GLASMORPHISM WIZARD (Mobile) ────────────────────────────── */
-.wizard-glass {
-  background: rgba(8,16,28,0.55);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 20px;
-  padding: 24px 20px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-}
-.wizard-glass .step-label { color: rgba(255,255,255,0.5); }
-.wizard-glass .progress-bar { background: rgba(255,255,255,0.12); }
-.wizard-glass .wizard-question { color: #ffffff; font-size:18px; }
-.wizard-glass .wizard-hint { color: rgba(255,255,255,0.55); }
-.wizard-glass .progress-pct { color: rgba(255,255,255,0.4); }
-
-/* Type buttons — glass style */
-.wizard-glass .type-btn {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 12px;
-  transition: all .2s;
-}
-.wizard-glass .type-btn:hover {
-  background: rgba(0,151,178,0.2);
-  border-color: rgba(0,151,178,0.5);
-}
-.wizard-glass .type-btn.selected {
-  background: rgba(0,151,178,0.25);
-  border-color: #0097B2;
-  box-shadow: 0 0 0 1px #0097B2;
-}
-.wizard-glass .type-label { color: #ffffff; font-size:12px; }
-.wizard-glass .type-icon svg { stroke: rgba(255,255,255,0.8); }
-.wizard-glass .type-btn.selected .type-icon svg { stroke: #0097B2; }
-
-/* Option buttons — glass style */
-.wizard-glass .option-btn {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  color: #ffffff;
-  border-radius: 10px;
-}
-.wizard-glass .option-btn:hover {
-  background: rgba(0,151,178,0.2);
-  border-color: rgba(0,151,178,0.5);
-}
-.wizard-glass .option-btn.selected {
-  background: rgba(0,151,178,0.25);
-  border-color: #0097B2;
-}
-
-/* Fields — glass style */
-.wizard-glass .field-group label { color: rgba(255,255,255,0.5); }
-.wizard-glass .field-group input {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: #ffffff;
-  border-radius: 10px;
-}
-.wizard-glass .field-group input::placeholder { color: rgba(255,255,255,0.3); }
-.wizard-glass .field-group input:focus {
-  border-color: #0097B2;
-  background: rgba(0,151,178,0.15);
-  box-shadow: 0 0 0 3px rgba(0,151,178,0.2);
-}
-
-/* Slider — glass */
-.wizard-glass input[type="range"] { background: rgba(255,255,255,0.15); }
-.wizard-glass .slider-label { color: rgba(255,255,255,0.5); }
-
-/* Nav buttons — glass */
-.wizard-glass .btn-back {
-  border: 1px solid rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.6);
-  background: rgba(255,255,255,0.06);
-  border-radius: 10px;
-}
-.wizard-glass .btn-back:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
-.wizard-glass .btn-next { border-radius: 10px; }
-.wizard-glass .security-note { color: rgba(255,255,255,0.3); }
 
 /* Contact note — glass */
 .wizard-glass .contact-note {
