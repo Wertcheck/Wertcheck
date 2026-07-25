@@ -211,4 +211,86 @@ async function versenden(kundendaten, bewertung, pdfBuffer) {
   console.log('📧 Elena: E-Mails versendet an', kundendaten.email, 'und', process.env.INTERN_EMAIL);
 }
 
-module.exports = { versenden };
+
+// ── FOLLOW-UP E-MAIL (3 Tage später) ──────────────────────────
+async function sendeFollowUp(kundendaten, bewertung) {
+  const followupMail = {
+    from: '"ImmowertChecker" <Wertermittlung1@outlook.de>',
+    to: kundendaten.email,
+    subject: 'Wie war Ihre Erfahrung mit ImmowertChecker?',
+    html: `
+<!DOCTYPE html>
+<html lang="de">
+<body style="margin:0;padding:0;background:#F0F9FB;font-family:Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 20px;">
+<tr><td align="center">
+<table width="580" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+
+  <tr><td style="background:#0D1B2A;padding:24px 32px;">
+    <span style="font-size:18px;font-weight:900;color:#fff;">Immo</span>
+    <span style="font-size:18px;font-weight:900;color:#0097B2;">Wert</span>
+    <span style="font-size:18px;font-weight:900;color:#fff;">Checker</span>
+  </td></tr>
+
+  <tr><td style="padding:32px 32px 0;">
+    <p style="font-size:15px;color:#1A2533;margin:0 0 8px;">Hallo ${kundendaten.vorname},</p>
+    <p style="font-size:14px;color:#6B7A8D;line-height:1.75;margin:0 0 24px;">
+      vor ein paar Tagen haben Sie eine kostenlose Immobilienbewertung bei uns angefragt. 
+      Wir hoffen, dass Ihnen das Ergebnis weitergeholfen hat!
+    </p>
+    <p style="font-size:14px;color:#1A2533;font-weight:600;margin:0 0 16px;">
+      Wie war Ihre Erfahrung mit ImmowertChecker?
+    </p>
+  </td></tr>
+
+  <!-- Sternebewertung per E-Mail -->
+  <tr><td style="padding:0 32px 24px;">
+    <table width="100%" style="background:#F0F9FB;border-radius:10px;">
+      <tr><td style="padding:20px;text-align:center;">
+        <p style="font-size:12px;color:#6B7A8D;margin:0 0 12px;">Klicken Sie auf die passende Bewertung:</p>
+        <div style="font-size:32px;letter-spacing:4px;">
+          <a href="mailto:Wertermittlung1@outlook.de?subject=Bewertung: 1 Stern&body=Meine Bewertung: 1/5 Stern" style="color:#C8E8EE;text-decoration:none;">★</a>
+          <a href="mailto:Wertermittlung1@outlook.de?subject=Bewertung: 2 Sterne&body=Meine Bewertung: 2/5 Sterne" style="color:#C8E8EE;text-decoration:none;">★</a>
+          <a href="mailto:Wertermittlung1@outlook.de?subject=Bewertung: 3 Sterne&body=Meine Bewertung: 3/5 Sterne" style="color:#C8E8EE;text-decoration:none;">★</a>
+          <a href="mailto:Wertermittlung1@outlook.de?subject=Bewertung: 4 Sterne&body=Meine Bewertung: 4/5 Sterne" style="color:#C8E8EE;text-decoration:none;">★</a>
+          <a href="mailto:Wertermittlung1@outlook.de?subject=Bewertung: 5 Sterne&body=Meine Bewertung: 5/5 Sterne - Ausgezeichnet!" style="color:#C8E8EE;text-decoration:none;">★</a>
+        </div>
+        <p style="font-size:11px;color:#6B7A8D;margin:12px 0 0;">Ihr Feedback hilft uns besser zu werden.</p>
+      </td></tr>
+    </table>
+  </td></tr>
+
+  <tr><td style="padding:0 32px 32px;">
+    <table width="100%" style="background:#F0F9FB;border-left:3px solid #0097B2;border-radius:0 8px 8px 0;">
+      <tr><td style="padding:14px 16px;">
+        <p style="font-size:12px;color:#1A2533;margin:0;line-height:1.7;">
+          Möchten Sie mehr über den Wert Ihrer Immobilie erfahren? 
+          Ein kostenloser Gesprächstermin mit einem Immobilienberater in Ihrer Region 
+          kann Ihnen eine präzisere Einschätzung geben.
+          <a href="https://immowertchecker.de" style="color:#0097B2;">Jetzt anfragen →</a>
+        </p>
+      </td></tr>
+    </table>
+  </td></tr>
+
+  <tr><td style="background:#0D1B2A;padding:16px 32px;">
+    <p style="color:rgba(255,255,255,0.25);font-size:10px;margin:0;">
+      ImmowertChecker · Sie erhalten diese E-Mail weil Sie eine Bewertung angefragt haben.
+    </p>
+  </td></tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>`
+  };
+
+  await transporter1().sendMail(followupMail);
+  console.log('📧 Elena: Follow-up E-Mail geplant für', kundendaten.email);
+}
+
+// Exportiere auch Follow-up Funktion
+module.exports.sendeFollowUp = sendeFollowUp;
+
+module.exports = { versenden, sendeFollowUp };
