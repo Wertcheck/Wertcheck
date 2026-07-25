@@ -30,9 +30,21 @@
 html { scroll-behavior:smooth; }
 body {
   font-family:var(--f-body); color:var(--text); overflow-x:hidden; line-height:1.6;
-  background:
-    url('header_png.png') center center / cover fixed;
   background-color: #08101C;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(rgba(8,16,28,0.82), rgba(8,16,28,0.82)),
+    url('header_png.png') center center / cover no-repeat;
+  z-index: 0;
+  pointer-events: none;
+}
+nav, section, footer, .mobile-menu {
+  position: relative;
+  z-index: 1;
 }
 /* Sections vollständig undurchsichtig — kein Hintergrundbild */
 .vorteile-bg { background: #ffffff !important; }
