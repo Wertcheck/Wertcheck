@@ -174,24 +174,22 @@ nav.scrolled {
    overrides (".hero-mobile-wizard .x"), so source order decides the
    winner. Keeping this block first lets the later mobile rules win. */
 .wizard-glass {
-  background: rgba(255,255,255,0.72);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.5);
+  background: #ffffff;
+  border: 1px solid var(--border);
   border-radius: 20px;
   padding: 24px 20px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.35);
 }
 .wizard-glass .step-label { color: var(--muted); }
-.wizard-glass .progress-bar { background: rgba(107,122,141,0.25); box-shadow: none; }
+.wizard-glass .progress-bar { background: var(--border); box-shadow: none; }
 .wizard-glass .wizard-question { color: var(--text); font-size:18px; }
 .wizard-glass .wizard-hint { color: var(--muted); }
 .wizard-glass .progress-pct { color: var(--orange); }
 
-/* Type buttons — glass theme, petrol icons */
+/* Type buttons — white theme, petrol icons */
 .wizard-glass .type-btn {
-  background: rgba(255,255,255,0.5);
-  border: 1px solid rgba(107,122,141,0.2);
+  background: var(--cream);
+  border: 1px solid var(--border);
   border-radius: 12px;
   transition: all .2s;
 }
@@ -199,7 +197,7 @@ nav.scrolled {
   border-color: var(--orange);
 }
 .wizard-glass .type-btn.selected {
-  background: rgba(255,255,255,0.85);
+  background: var(--cream);
   border-color: #0097B2;
   box-shadow: 0 0 0 1px #0097B2;
 }
@@ -207,10 +205,10 @@ nav.scrolled {
 .wizard-glass .type-icon svg { stroke: #0097B2; }
 .wizard-glass .type-btn.selected .type-icon svg { stroke: #0097B2; }
 
-/* Option buttons — glass theme */
+/* Option buttons — white theme */
 .wizard-glass .option-btn {
-  background: rgba(255,255,255,0.5);
-  border: 1px solid rgba(107,122,141,0.2);
+  background: var(--cream);
+  border: 1px solid var(--border);
   color: var(--text);
   border-radius: 10px;
 }
@@ -218,39 +216,39 @@ nav.scrolled {
   border-color: var(--orange);
 }
 .wizard-glass .option-btn.selected {
-  background: rgba(255,255,255,0.85);
+  background: var(--cream);
   border-color: #0097B2;
 }
 .wizard-glass .opt-icon { color: #0097B2; }
 
-/* Fields — glass theme */
+/* Fields — white theme */
 .wizard-glass .field-group label { color: var(--muted); }
 .wizard-glass .field-group input {
-  background: rgba(255,255,255,0.5);
-  border: 1px solid rgba(107,122,141,0.2);
+  background: var(--cream);
+  border: 1px solid var(--border);
   color: var(--text);
   border-radius: 10px;
 }
 .wizard-glass .field-group input::placeholder { color: rgba(107,122,141,0.5); }
 .wizard-glass .field-group input:focus {
   border-color: #0097B2;
-  background: rgba(255,255,255,0.9);
+  background: #fff;
   box-shadow: 0 0 0 3px rgba(0,151,178,0.15);
 }
 
-/* Slider — glass theme */
-.wizard-glass input[type="range"] { background: rgba(107,122,141,0.25); }
+/* Slider — white theme */
+.wizard-glass input[type="range"] { background: var(--border); }
 .wizard-glass .slider-label { color: var(--muted); }
-.wizard-glass .slider-number-wrap { background: rgba(255,255,255,0.5); border: 1px solid rgba(107,122,141,0.2); }
+.wizard-glass .slider-number-wrap { background: var(--cream); border: 1px solid var(--border); }
 .wizard-glass .slider-number { color: var(--text); }
 .wizard-glass .slider-unit { color: var(--muted); }
 .wizard-glass .slider-minmax { color: var(--muted); }
 
-/* Nav buttons — glass theme */
+/* Nav buttons — white theme */
 .wizard-glass .btn-back {
-  border: 1px solid rgba(107,122,141,0.2);
+  border: 1px solid var(--border);
   color: var(--muted);
-  background: rgba(255,255,255,0.5);
+  background: var(--cream);
   border-radius: 10px;
 }
 .wizard-glass .btn-back:hover { border-color: var(--orange); color: var(--text); }
@@ -259,10 +257,10 @@ nav.scrolled {
 
 /* Mini-Logo oben links in der Wizard-Karte */
 .wizard-brand {
-  display: flex; align-items: center;
-  margin-bottom: 16px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
 }
-.wizard-brand img { height: 20px; width: auto; }
+.wizard-brand img { height: 34px; width: auto; }
 
 /* Contact note — glass */
 .wizard-glass .contact-note {
@@ -576,13 +574,11 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   }
   .hero-mobile-wizard .wizard-glass {
     padding: 15px 13px;
-    background: rgba(255,255,255,0.72);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.5);
+    background: #ffffff;
+    border: 1px solid var(--border);
   }
-  .hero-mobile-wizard .wizard-brand { margin-bottom: 12px; }
-  .hero-mobile-wizard .wizard-brand img { height: 16px; }
+  .hero-mobile-wizard .wizard-brand { margin-bottom: 14px; }
+  .hero-mobile-wizard .wizard-brand img { height: 26px; }
   .hero-mobile-wizard .wizard-header { margin-bottom: 14px; row-gap: 7px; }
   .hero-mobile-wizard .wizard-question { font-size:14px; margin-bottom:4px; }
   .hero-mobile-wizard .wizard-hint { font-size:11px; margin-bottom:9px; }
