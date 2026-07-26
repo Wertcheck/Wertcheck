@@ -88,4 +88,32 @@ async function versende(daten, analyse, pdfBuffer) {
   console.log(`[Elena] Interne Benachrichtigung an ${INTERN_EMAIL} verschickt.`);
 }
 
-module.exports = { versende };
+// Verschickt den 6-stelligen Bestätigungscode an den Kunden, bevor
+// die eigentliche Bewertung (PDF) versendet wird.
+async function sendeCode(email, vorname, code) {
+  const anrede = vorname && vorname !== 'Kunde' ? vorname : 'Sie';
+  const mail = {
+    to: email,
+    from: { email: SENDER_EMAIL, name: 'ImmoWertChecker' },
+    replyTo: REPLY_TO_EMAIL,
+    subject: `Ihr Bestätigungscode: ${code}`,
+    text: `Hallo ${anrede},\n\nIhr Bestätigungscode lautet: ${code}\n\nDer Code ist 10 Minuten gültig.\n\nHerzliche Grüße\nIhr ImmoWertChecker-Team`,
+    html: `
+      <div style="font-family:Arial,sans-serif; max-width:480px; margin:0 auto; color:#0D1B2A;">
+        <div style="background:#0D1B2A; padding:24px; border-radius:12px 12px 0 0;">
+          <span style="color:#fff; font-size:20px; font-weight:bold;">IMMOWERT</span><span style="color:#0097B2; font-size:20px; font-weight:bold;">CHECKER</span>
+        </div>
+        <div style="padding:28px; border:1px solid #eee; border-top:none; border-radius:0 0 12px 12px; text-align:center;">
+          <p>Hallo ${anrede},</p>
+          <p>bitte bestätigen Sie Ihre E-Mail-Adresse mit diesem Code:</p>
+          <div style="font-size:32px; font-weight:bold; letter-spacing:0.2em; color:#0097B2; background:#F0F9FB; border-radius:10px; padding:16px; margin:20px 0;">${code}</div>
+          <p style="font-size:13px; color:#6B7A8D;">Der Code ist 10 Minuten gültig.</p>
+        </div>
+      </div>`
+  };
+
+  await sgMail.send(mail);
+  console.log(`[Elena] Bestätigungscode an ${email} verschickt.`);
+}
+
+module.exports = { versende, sendeCode };
