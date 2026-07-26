@@ -811,6 +811,10 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 .fak-a.open { display:block; }
 
 </style>
+<!-- WICHTIG: DEIN_GOOGLE_API_KEY muss durch einen echten Google Maps API-Key ersetzt werden
+     (Google Cloud Console → "Places API (New)" aktivieren → API-Key erstellen → auf eure Domain
+     einschränken). Ohne gültigen Key funktioniert die Adress-Autovervollständigung nicht. -->
+<script src="https://maps.googleapis.com/maps/api/js?key=DEIN_GOOGLE_API_KEY&libraries=places&loading=async&language=de&region=DE" async defer></script>
 </head>
 <body>
 
@@ -1420,6 +1424,14 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
     html += `</div>`;
     step.fields.slice(2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
     html += `<label class="consent-check" for="${bodyId}_consent"><input type="checkbox" id="${bodyId}_consent" ${answers.zustimmung ? 'checked' : ''} onchange="answers.zustimmung=this.checked"/><span>Ich bin damit einverstanden, dass ein Immobilienberater von ImmoWertChecker mich zu meiner Bewertung kontaktieren darf.</span></label>`;
+  } else if (step.type === 'address') {
+    html += `<div class="field-group">
+        <label>Straße und Hausnummer</label>
+        <div id="${bodyId}_address_wrap"></div>
+      </div>
+      <p id="${bodyId}_address_error" style="display:none; color:#ef4444; font-size:12px; margin:-8px 0 12px;">Bitte wählen Sie eine Adresse aus den Vorschlägen aus.</p>
+      <div id="${bodyId}_address_confirmed" style="display:${answers._adresseBestaetigt ? 'block' : 'none'}; background:var(--cream); border-radius:8px; padding:10px 14px; font-size:13px; color:var(--text); margin-bottom:12px;">✓ <span id="${bodyId}_address_text">${answers.strasse || ''}, ${answers.plz || ''} ${answers.ort || ''}</span></div>`;
+    setTimeout(() => initAddressAutocomplete(bodyId, suffix, true), 50);
   } else if (step.type === 'email-verify') {
     html += `<div class="contact-note">Code gesendet an <strong>${answers.email||''}</strong>. Bitte im Postfach (auch Spam-Ordner) nachschauen.</div>
       <div class="field-group">
@@ -1499,7 +1511,59 @@ function validateStepS(suffix) {
     }
     return false;
   }
+  if (step.type === 'address' && !answers._adresseBestaetigt) {
+    const errorEl = document.getElementById(`${bodyId}_address_error`);
+    if (errorEl) errorEl.style.display = 'block';
+    return false;
+  }
   return true;
+}
+
+// ── ADRESS-AUTOVERVOLLSTÄNDIGUNG (Google Places) ───────────────────
+async function initAddressAutocomplete(bodyId, suffix, isMobileInstance) {
+  const wrap = document.getElementById(`${bodyId}_address_wrap`);
+  if (!wrap || wrap.dataset.initialized) return; // nicht doppelt initialisieren bei Re-Renders
+  wrap.dataset.initialized = '1';
+
+  if (typeof google === 'undefined' || !google.maps || !google.maps.importLibrary) {
+    console.warn('Google Maps API nicht geladen — bitte gültigen API-Key in <head> eintragen.');
+    wrap.innerHTML = `<input type="text" id="${bodyId}_address_fallback" placeholder="Straße und Hausnummer" style="width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:10px;font-size:16px;font-family:var(--f-body);" oninput="answers.strasse=this.value; answers._adresseBestaetigt=false;">`;
+    return;
+  }
+
+  const { PlaceAutocompleteElement } = await google.maps.importLibrary('places');
+  const autocompleteEl = new PlaceAutocompleteElement({
+    componentRestrictions: { country: 'de' },
+    types: ['address']
+  });
+  wrap.appendChild(autocompleteEl);
+
+  autocompleteEl.addEventListener('gmp-placeselect', async (e) => {
+    try {
+      const place = e.detail.place;
+      await place.fetchFields({ fields: ['addressComponents', 'formattedAddress'] });
+      let strasse = '', hausnummer = '', plz = '', ort = '';
+      (place.addressComponents || []).forEach(c => {
+        if (c.types.includes('route')) strasse = c.longText;
+        if (c.types.includes('street_number')) hausnummer = c.longText;
+        if (c.types.includes('postal_code')) plz = c.longText;
+        if (c.types.includes('locality')) ort = c.longText;
+      });
+      answers.strasse = hausnummer ? `${strasse} ${hausnummer}` : strasse;
+      if (plz) answers.plz = plz;
+      if (ort) answers.ort = ort;
+      answers._adresseBestaetigt = true;
+
+      const confirmedEl = document.getElementById(`${bodyId}_address_confirmed`);
+      const textEl = document.getElementById(`${bodyId}_address_text`);
+      const errorEl = document.getElementById(`${bodyId}_address_error`);
+      if (textEl) textEl.textContent = `${answers.strasse}, ${answers.plz || ''} ${answers.ort || ''}`;
+      if (confirmedEl) confirmedEl.style.display = 'block';
+      if (errorEl) errorEl.style.display = 'none';
+    } catch (err) {
+      console.error('Adresse konnte nicht verarbeitet werden:', err.message);
+    }
+  });
 }
 
 // ── E-MAIL-VERIFIZIERUNG (mobil) ───────────────────────────────────
@@ -1672,7 +1736,8 @@ const steps = [
    ]},
   {id:12,question:"Wohin sollen wir Ihre Bewertung senden?",hint:"Ihre Daten werden vertraulich behandelt.",type:"contact",
    fields:[{key:"vorname",label:"Vorname",placeholder:"Max",type:"text"},{key:"nachname",label:"Nachname",placeholder:"Mustermann",type:"text"},{key:"email",label:"E-Mail-Adresse",placeholder:"max@beispiel.de",type:"email"},{key:"telefon",label:"Telefon (optional)",placeholder:"+49 123 456789",type:"tel"}]},
-  {id:13,question:"Bestätigen Sie Ihre E-Mail-Adresse",hint:"Wir haben Ihnen einen 6-stelligen Code geschickt.",type:"email-verify",key:"code"}
+  {id:13,question:"Wie lautet die genaue Adresse?",hint:"Damit wir Ihre Immobilie realistisch einschätzen können, benötigen wir die vollständige Adresse statt nur Postleitzahl und Ort.",type:"address",key:"adresse"},
+  {id:14,question:"Bestätigen Sie Ihre E-Mail-Adresse",hint:"Wir haben Ihnen einen 6-stelligen Code geschickt.",type:"email-verify",key:"code"}
 ];
 
 // Filtert Steps, die nur unter bestimmten Bedingungen gezeigt werden (z.B. Grundstück nur bei Häusern)
@@ -1735,6 +1800,14 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
     html += `</div>`;
     step.fields.slice(2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
     html += `<label class="consent-check" for="${bodyId}_consent"><input type="checkbox" id="${bodyId}_consent" ${answers.zustimmung ? 'checked' : ''} onchange="answers.zustimmung=this.checked"/><span>Ich bin damit einverstanden, dass ein Immobilienberater von ImmoWertChecker mich zu meiner Bewertung kontaktieren darf.</span></label>`;
+  } else if (step.type === 'address') {
+    html += `<div class="field-group">
+        <label>Straße und Hausnummer</label>
+        <div id="${bodyId}_address_wrap"></div>
+      </div>
+      <p id="${bodyId}_address_error" style="display:none; color:#ef4444; font-size:12px; margin:-8px 0 12px;">Bitte wählen Sie eine Adresse aus den Vorschlägen aus.</p>
+      <div id="${bodyId}_address_confirmed" style="display:${answers._adresseBestaetigt ? 'block' : 'none'}; background:var(--cream); border-radius:8px; padding:10px 14px; font-size:13px; color:var(--text); margin-bottom:12px;">✓ <span id="${bodyId}_address_text">${answers.strasse || ''}, ${answers.plz || ''} ${answers.ort || ''}</span></div>`;
+    setTimeout(() => initAddressAutocomplete(bodyId, '', false), 50);
   } else if (step.type === 'email-verify') {
     html += `<div class="contact-note">Code gesendet an <strong>${answers.email||''}</strong>. Bitte im Postfach (auch Spam-Ordner) nachschauen.</div>
       <div class="field-group">
@@ -1846,6 +1919,11 @@ function validateStep() {
       requestAnimationFrame(() => { label.style.animation = 'shake .4s'; });
       setTimeout(() => { label.style.color = ''; }, 2000);
     }
+    return false;
+  }
+  if (step.type === 'address' && !answers._adresseBestaetigt) {
+    const errorEl = document.getElementById(`${bodyId}_address_error`);
+    if (errorEl) errorEl.style.display = 'block';
     return false;
   }
   return true;
