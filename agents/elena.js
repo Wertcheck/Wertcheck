@@ -14,6 +14,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const SENDER_EMAIL   = process.env.SENDER_EMAIL   || 'bewertung@immowertchecker.de';
 const REPLY_TO_EMAIL = process.env.REPLY_TO_EMAIL || 'info@immowertchecker.de';
 const INTERN_EMAIL   = process.env.INTERN_EMAIL   || 'Datenchecker@outlook.de';
+const SITE_URL       = process.env.SITE_URL       || 'https://immowertchecker.de';
 
 async function versende(daten, analyse, pdfBuffer) {
   const pdfBase64 = pdfBuffer.toString('base64');
@@ -116,4 +117,47 @@ async function sendeCode(email, vorname, code) {
   console.log(`[Elena] Bestätigungscode an ${email} verschickt.`);
 }
 
-module.exports = { versende, sendeCode };
+// Verschickt die Bewertungsanfrage per E-Mail (Sterne + Freitext),
+// statt die Sterne direkt im Wizard abzufragen.
+async function sendeBewertungsanfrage(email, vorname) {
+  const anrede = vorname && vorname !== 'Kunde' ? vorname : 'Sie';
+  const link = `${SITE_URL}/bewerten?email=${encodeURIComponent(email)}`;
+
+  const mail = {
+    to: email,
+    from: { email: SENDER_EMAIL, name: 'ImmoWertChecker' },
+    replyTo: REPLY_TO_EMAIL,
+    subject: `Wie war Ihre Erfahrung mit ImmoWertChecker, ${anrede}?`,
+    text: `Hallo ${anrede},\n\nwir würden uns über Ihre Rückmeldung freuen: ${link}\n\nHerzliche Grüße\nIhr ImmoWertChecker-Team`,
+    html: `
+      <div style="font-family:Arial,sans-serif; max-width:480px; margin:0 auto; color:#0D1B2A;">
+        <div style="background:#0D1B2A; padding:24px; border-radius:12px 12px 0 0;">
+          <span style="color:#fff; font-size:20px; font-weight:bold;">IMMOWERT</span><span style="color:#0097B2; font-size:20px; font-weight:bold;">CHECKER</span>
+        </div>
+        <div style="padding:28px; border:1px solid #eee; border-top:none; border-radius:0 0 12px 12px; text-align:center;">
+          <p>Hallo ${anrede},</p>
+          <p>wie war Ihre Erfahrung mit ImmoWertChecker? Ihre Rückmeldung hilft uns und anderen Nutzern.</p>
+          <a href="${link}" style="display:inline-block; background:#0097B2; color:#fff; text-decoration:none; font-weight:bold; padding:14px 28px; border-radius:10px; margin:16px 0;">Jetzt bewerten</a>
+          <p style="font-size:12px; color:#6B7A8D;">Dauert nur eine Minute.</p>
+        </div>
+      </div>`
+  };
+
+  await sgMail.send(mail);
+  console.log(`[Elena] Bewertungsanfrage an ${email} verschickt.`);
+}
+
+// Leitet eine abgegebene Kundenbewertung intern weiter, damit das
+// Team echte Testimonials für die Website kuratieren kann.
+async function sendeKundenbewertung(email, sterne, text) {
+  const mail = {
+    to: INTERN_EMAIL,
+    from: { email: SENDER_EMAIL, name: 'ImmoWertChecker Bot' },
+    subject: `Neue Kundenbewertung: ${sterne}/5 Sterne`,
+    text: `Neue Bewertung eingegangen:\n\nVon: ${email}\nSterne: ${sterne}/5\nText: ${text || '(kein Text angegeben)'}`
+  };
+  await sgMail.send(mail);
+  console.log(`[Elena] Kundenbewertung (${sterne}/5) von ${email} intern weitergeleitet.`);
+}
+
+module.exports = { versende, sendeCode, sendeBewertungsanfrage, sendeKundenbewertung };

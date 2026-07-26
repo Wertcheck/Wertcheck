@@ -56,6 +56,16 @@ async function verarbeiten(rohdaten) {
   await elena.versende(daten, analyse, pdfBuffer);
   console.log(`[Jonas] Elena hat alles verschickt. Vorgang abgeschlossen.`);
 
+  // Bewertungsanfrage per E-Mail, statt Sterne direkt im Wizard abzufragen
+  if (daten.email) {
+    try {
+      await elena.sendeBewertungsanfrage(daten.email, daten.vorname);
+    } catch (err) {
+      // Nicht kritisch — die Hauptbewertung ist schon raus, also nur loggen statt abzubrechen
+      console.error('[Jonas] Bewertungsanfrage konnte nicht verschickt werden:', err.message);
+    }
+  }
+
   return { daten, analyse };
 }
 
