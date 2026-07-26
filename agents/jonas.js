@@ -1,51 +1,62 @@
 /**
  * JONAS — Koordinator
- * Empfängt die Kundendaten und koordiniert Clara, Tim und Elena.
- * Er entscheidet die Reihenfolge und gibt Aufgaben weiter.
+ * ────────────────────
+ * Profil: Ruhig, strukturiert, behält den Überblick über das ganze Team.
+ * Nimmt die rohen Wizard-Daten entgegen, bereitet sie einheitlich auf
+ * und reicht sie durchs Team: Clara → Tim → Elena.
  */
 
 const clara = require('./clara');
 const tim   = require('./tim');
 const elena = require('./elena');
 
-async function verarbeiten(kundendaten) {
-  console.log('🟡 Jonas: Neue Anfrage empfangen von', kundendaten.vorname);
-
-  // ── SCHRITT 1: Clara erstellt die Bewertung ─────────────────
-  console.log('🔵 Jonas → Clara: Bewertung anfordern...');
-  const bewertung = await clara.bewerten(kundendaten);
-  console.log('✅ Clara: Bewertung fertig');
-
-  // ── SCHRITT 2: Tim erstellt das PDF ─────────────────────────
-  console.log('🔵 Jonas → Tim: PDF erstellen...');
-  const pdfBuffer = await tim.erstellePDF(kundendaten, bewertung);
-  console.log('✅ Tim: PDF fertig');
-
-  // ── SCHRITT 3: Elena versendet alles ────────────────────────
-  console.log('🔵 Jonas → Elena: E-Mails versenden...');
-  await elena.versenden(kundendaten, bewertung, pdfBuffer);
-  console.log('✅ Elena: E-Mails versendet');
-
-  console.log('🟢 Jonas: Auftrag abgeschlossen für', kundendaten.email);
-
-  // ── FOLLOW-UP E-MAIL nach 3 Tagen ────────────────────────────
-  const drei_tage_ms = 3 * 24 * 60 * 60 * 1000;
-  setTimeout(async () => {
-    try {
-      await elena.sendeFollowUp(kundendaten, bewertung);
-      console.log('📧 Jonas: Follow-up E-Mail versendet an', kundendaten.email);
-    } catch(e) {
-      console.error('Follow-up Fehler:', e.message);
-    }
-  }, drei_tage_ms);
+// Der Wizard im Frontend hat zwei leicht unterschiedliche Absende-Wege
+// (Desktop vs. Mobile) — die Feldnamen weichen teils voneinander ab
+// (z.B. "type" vs. "typ", merkmale als Array oder als String).
+// Jonas vereinheitlicht das hier an einer Stelle, damit sich Clara,
+// Tim und Elena nicht selbst darum kümmern müssen.
+function normalisiere(rohdaten) {
+  const merkmale = Array.isArray(rohdaten.merkmale)
+    ? rohdaten.merkmale
+    : (typeof rohdaten.merkmale === 'string' && rohdaten.merkmale !== '–'
+        ? rohdaten.merkmale.split(',').map(s => s.trim()).filter(Boolean)
+        : []);
 
   return {
-    status: 'abgeschlossen',
-    kunde: kundendaten.email,
-    wert_low: bewertung.wert_low,
-    wert_high: bewertung.wert_high,
-    wert_avg: bewertung.wert_avg,
+    vorname: rohdaten.vorname || 'Kunde',
+    nachname: rohdaten.nachname || '',
+    email: rohdaten.email || '',
+    telefon: rohdaten.telefon && rohdaten.telefon !== '–' ? rohdaten.telefon : '',
+    typ: rohdaten.typ || rohdaten.type || 'Immobilie',
+    plz: rohdaten.plz || '',
+    ort: rohdaten.ort || '',
+    wohnflaeche: parseInt(rohdaten.wohnflaeche) || 100,
+    grundstueck: parseInt(rohdaten.grundstueck) || null,
+    baujahr: rohdaten.baujahr || 'unbekannt',
+    zustand: rohdaten.zustand || 'gepflegt',
+    ausstattung: rohdaten.ausstattung || 'normal',
+    heizung: rohdaten.heizung || 'unbekannt',
+    merkmale,
+    ziel: rohdaten.ziel || 'neugier',
+    zeitplan: rohdaten.zeitplan || 'unbekannt',
+    rating: rohdaten.rating || rohdaten._rating || null
   };
 }
 
-module.exports = { verarbeiten };
+async function verarbeiten(rohdaten) {
+  const daten = normalisiere(rohdaten);
+  console.log(`[Jonas] Neue Anfrage von ${daten.vorname} ${daten.nachname}. Übergebe an Clara …`);
+
+  const analyse = await clara.analysiere(daten);
+  console.log(`[Jonas] Clara ist fertig (Preisspanne: ${analyse.wert.low}–${analyse.wert.high} €). Übergebe an Tim …`);
+
+  const pdfBuffer = await tim.erstellePDF(daten, analyse);
+  console.log(`[Jonas] Tim hat das PDF fertig (${pdfBuffer.length} Bytes). Übergebe an Elena …`);
+
+  await elena.versende(daten, analyse, pdfBuffer);
+  console.log(`[Jonas] Elena hat alles verschickt. Vorgang abgeschlossen.`);
+
+  return { daten, analyse };
+}
+
+module.exports = { verarbeiten, normalisiere };
