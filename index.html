@@ -1582,7 +1582,7 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
   } else {
     html += `<button class="btn-next" onclick="${isLast ? `submitFormS('${suffix}')` : `goNextS('${suffix}')`}">${isLast ? 'Bewertung anfordern' : (currentStep === 1 ? 'Jetzt kostenlos bewerten <span class="btn-arrow">→</span>' : 'Weiter <span class="btn-arrow">→</span>')}</button></div>`;
   }
-  html += `<div class="security-note">Verschlüsselt · DSGVO-konform</div>`;
+  html += `<div class="security-note"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 4l3 3M19 7l2 2"/></svg>Verschlüsselt ·<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;margin-left:8px;"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z"/><rect x="9" y="11" width="6" height="5" rx="1"/><path d="M10.5 11V9a1.5 1.5 0 013 0v2"/></svg>DSGVO-konform</div>`;
 
   const body = document.getElementById(bodyId);
   if(body) body.innerHTML = html;
@@ -2012,7 +2012,7 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
     ${isLast ? 'Bewertung anfordern' : (currentStep === 1 ? 'Jetzt kostenlos bewerten <span class="btn-arrow">→</span>' : 'Weiter <span class="btn-arrow">→</span>')}
   </button></div>`;
   }
-  html += `<div class="security-note">Verschlüsselt · DSGVO-konform</div>`;
+  html += `<div class="security-note"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 4l3 3M19 7l2 2"/></svg>Verschlüsselt ·<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;margin-left:8px;"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z"/><rect x="9" y="11" width="6" height="5" rx="1"/><path d="M10.5 11V9a1.5 1.5 0 013 0v2"/></svg>DSGVO-konform</div>`;
 
   document.getElementById(bodyId).innerHTML = html;
 }
