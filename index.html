@@ -54,7 +54,7 @@ nav, section, footer, .mobile-menu {
 
 #faq { background: #ffffff !important; }
 
-#wizard-mobile-section { background: #F0F9FB !important; }
+#wizard-mobile-section { background: transparent !important; }
 
 /* ── NAV ────────────────────────────────────────────────────────── */
 nav {
@@ -413,6 +413,13 @@ input[type="range"]::-moz-range-thumb { width:20px; height:20px; border-radius:5
 /* ── SECTIONS ────────────────────────────────────────────────────── */
 section { padding:88px 5%; }
 .section-center { max-width:1200px; margin:0 auto; text-align:center; }
+/* Floating panel — helle Sections schweben als eigenständige Karte über dem dunklen Hintergrund, statt kantenbündig durchzulaufen */
+.light-panel {
+  background: var(--cream);
+  border-radius: 28px;
+  box-shadow: 0 30px 70px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
+  padding: 64px 48px;
+}
 .section-eyebrow { display:inline-block; font-size:10px; font-weight:700; letter-spacing:0.22em; text-transform:uppercase; color:var(--orange); margin-bottom:14px; padding-left:12px; border-left:2px solid var(--orange); }
 .section-title { font-family:var(--f-head); font-size:clamp(24px,2.8vw,38px); font-weight:800; color:var(--text); margin-bottom:12px; line-height:1.2; letter-spacing:-0.02em; }
 .section-title em { font-style:normal; color:var(--orange); }
@@ -594,6 +601,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   /* Sections */
   section { padding:44px 5%; }
   .ergebnis-section { padding:44px 5%; }
+  .light-panel { padding:36px 24px; border-radius:20px; }
   .section-title { font-size:22px; }
   .section-sub { font-size:14px; margin-bottom:24px; }
 
@@ -868,7 +876,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 </section>
 
 <!-- WIZARD MOBILE SECTION (unter Hero, nur Mobile) -->
-<section id="wizard-mobile-section" style="padding:32px 5%; background:var(--cream); display:none;">
+<section id="wizard-mobile-section" style="padding:32px 5%; display:none;">
   <div style="max-width:480px; margin:0 auto;">
     <div class="wizard-card" id="wizard-mobile">
       <div class="wizard-header">
@@ -999,8 +1007,8 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 
 
 <!-- HOW IT WORKS -->
-<section id="how" style="background:#F0F9FB;">
-  <div class="section-center">
+<section id="how">
+  <div class="section-center light-panel">
     <span class="section-eyebrow fade-in">Der Prozess</span>
     <h2 class="section-title fade-in">So <em>einfach</em> geht's</h2>
     <p class="section-sub fade-in">Keine Vorkenntnisse nötig. Einfach die drei Schritte durchgehen — das war's.</p>
@@ -1155,15 +1163,15 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 
 
 <!-- TESTIMONIALS -->
-<section id="testimonials" style="background:#ffffff; padding:88px 5%;">
-  <div style="max-width:1200px; margin:0 auto; text-align:center;">
+<section id="testimonials">
+  <div class="light-panel" style="max-width:1200px; margin:0 auto; text-align:center;">
     <span class="section-eyebrow fade-in" style="justify-content:center;">Was andere sagen</span>
     <h2 class="section-title fade-in">Erfahrungen unserer <em>Nutzer</em></h2>
     <p class="section-sub fade-in" style="margin:0 auto 52px;">Menschen wie Sie — die einfach wissen wollten was ihre Immobilie wert ist.</p>
 
     <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:24px;" class="fade-in">
 
-      <div style="background:#F0F9FB; border-radius:12px; padding:32px 28px; text-align:left; position:relative;">
+      <div style="background:#ffffff; border-radius:12px; padding:32px 28px; text-align:left; position:relative; box-shadow:0 8px 24px rgba(0,0,0,0.06);">
         <div style="color:#0097B2; font-size:32px; line-height:1; margin-bottom:16px;">"</div>
         <p style="font-size:15px; color:#1A2533; line-height:1.75; margin-bottom:20px; font-weight:300;">
           Meine Mutter hat eine Wohnung geerbt und wir hatten absolut keine Ahnung was die wert ist. 
@@ -1179,7 +1187,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
         </div>
       </div>
 
-      <div style="background:#F0F9FB; border-radius:12px; padding:32px 28px; text-align:left; position:relative;">
+      <div style="background:#ffffff; border-radius:12px; padding:32px 28px; text-align:left; position:relative; box-shadow:0 8px 24px rgba(0,0,0,0.06);">
         <div style="color:#0097B2; font-size:32px; line-height:1; margin-bottom:16px;">"</div>
         <p style="font-size:15px; color:#1A2533; line-height:1.75; margin-bottom:20px; font-weight:300;">
           Ich wollte einfach nur wissen ob sich ein Verkauf lohnt. 
@@ -1196,7 +1204,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
         </div>
       </div>
 
-      <div style="background:#F0F9FB; border-radius:12px; padding:32px 28px; text-align:left; position:relative;">
+      <div style="background:#ffffff; border-radius:12px; padding:32px 28px; text-align:left; position:relative; box-shadow:0 8px 24px rgba(0,0,0,0.06);">
         <div style="color:#0097B2; font-size:32px; line-height:1; margin-bottom:16px;">"</div>
         <p style="font-size:15px; color:#1A2533; line-height:1.75; margin-bottom:20px; font-weight:300;">
           Hatte keine Lust auf einen Termin mit einem Immobilienberater nur um zu sehen 
