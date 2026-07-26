@@ -174,102 +174,106 @@ nav.scrolled {
    overrides (".hero-mobile-wizard .x"), so source order decides the
    winner. Keeping this block first lets the later mobile rules win. */
 .wizard-glass {
-  background: rgba(8,16,28,0.55);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: #ffffff;
+  border: 1px solid var(--border);
   border-radius: 20px;
   padding: 24px 20px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
 }
-.wizard-glass .step-label { color: rgba(255,255,255,0.5); }
-.wizard-glass .progress-bar { background: rgba(255,255,255,0.14); box-shadow: inset 0 1px 2px rgba(0,0,0,0.25); }
-.wizard-glass .wizard-question { color: #ffffff; font-size:18px; }
-.wizard-glass .wizard-hint { color: rgba(255,255,255,0.55); }
-.wizard-glass .progress-pct { color: #4FD8EE; }
+.wizard-glass .step-label { color: var(--muted); }
+.wizard-glass .progress-bar { background: var(--border); box-shadow: none; }
+.wizard-glass .wizard-question { color: var(--text); font-size:18px; }
+.wizard-glass .wizard-hint { color: var(--muted); }
+.wizard-glass .progress-pct { color: var(--orange); }
 
-/* Type buttons — glass style */
+/* Type buttons — white theme, petrol icons */
 .wizard-glass .type-btn {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: var(--cream);
+  border: 1px solid var(--border);
   border-radius: 12px;
   transition: all .2s;
 }
 .wizard-glass .type-btn:hover {
-  background: rgba(0,151,178,0.2);
-  border-color: rgba(0,151,178,0.5);
+  border-color: var(--orange);
 }
 .wizard-glass .type-btn.selected {
-  background: rgba(0,151,178,0.25);
+  background: var(--cream);
   border-color: #0097B2;
   box-shadow: 0 0 0 1px #0097B2;
 }
-.wizard-glass .type-label { color: #ffffff; font-size:12px; }
-.wizard-glass .type-icon svg { stroke: rgba(255,255,255,0.8); }
+.wizard-glass .type-label { color: var(--text); font-size:12px; }
+.wizard-glass .type-icon svg { stroke: #0097B2; }
 .wizard-glass .type-btn.selected .type-icon svg { stroke: #0097B2; }
 
-/* Option buttons — glass style */
+/* Option buttons — white theme */
 .wizard-glass .option-btn {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  color: #ffffff;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  color: var(--text);
   border-radius: 10px;
 }
 .wizard-glass .option-btn:hover {
-  background: rgba(0,151,178,0.2);
-  border-color: rgba(0,151,178,0.5);
+  border-color: var(--orange);
 }
 .wizard-glass .option-btn.selected {
-  background: rgba(0,151,178,0.25);
+  background: var(--cream);
   border-color: #0097B2;
 }
+.wizard-glass .opt-icon { color: #0097B2; }
 
-/* Fields — glass style */
-.wizard-glass .field-group label { color: rgba(255,255,255,0.5); }
+/* Fields — white theme */
+.wizard-glass .field-group label { color: var(--muted); }
 .wizard-glass .field-group input {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: #ffffff;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  color: var(--text);
   border-radius: 10px;
 }
-.wizard-glass .field-group input::placeholder { color: rgba(255,255,255,0.3); }
+.wizard-glass .field-group input::placeholder { color: rgba(107,122,141,0.5); }
 .wizard-glass .field-group input:focus {
   border-color: #0097B2;
-  background: rgba(0,151,178,0.15);
-  box-shadow: 0 0 0 3px rgba(0,151,178,0.2);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(0,151,178,0.15);
 }
 
-/* Slider — glass */
-.wizard-glass input[type="range"] { background: rgba(255,255,255,0.15); }
-.wizard-glass .slider-label { color: rgba(255,255,255,0.5); }
-.wizard-glass .slider-number-wrap { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); }
-.wizard-glass .slider-number { color: #ffffff; }
-.wizard-glass .slider-unit { color: rgba(255,255,255,0.5); }
-.wizard-glass .slider-minmax { color: rgba(255,255,255,0.4); }
+/* Slider — white theme */
+.wizard-glass input[type="range"] { background: var(--border); }
+.wizard-glass .slider-label { color: var(--muted); }
+.wizard-glass .slider-number-wrap { background: var(--cream); border: 1px solid var(--border); }
+.wizard-glass .slider-number { color: var(--text); }
+.wizard-glass .slider-unit { color: var(--muted); }
+.wizard-glass .slider-minmax { color: var(--muted); }
 
-/* Nav buttons — glass */
+/* Nav buttons — white theme */
 .wizard-glass .btn-back {
-  border: 1px solid rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.6);
-  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: var(--cream);
   border-radius: 10px;
 }
-.wizard-glass .btn-back:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
+.wizard-glass .btn-back:hover { border-color: var(--orange); color: var(--text); }
 .wizard-glass .btn-next { border-radius: 10px; }
-.wizard-glass .security-note { color: rgba(255,255,255,0.3); }
+.wizard-glass .security-note { color: var(--muted); }
+
+/* Mini-Logo oben links in der Wizard-Karte */
+.wizard-brand {
+  display: flex; align-items: center;
+  margin-bottom: 16px;
+}
+.wizard-brand img { height: 20px; width: auto; }
 
 /* Contact note — glass */
 .wizard-glass .contact-note {
-  background: rgba(0,151,178,0.15);
+  background: rgba(0,151,178,0.08);
   border-left: 2px solid #0097B2;
-  color: rgba(255,255,255,0.7);
+  color: var(--muted);
 }
 
 /* Success state — glass */
-.wizard-glass .value-range { background: rgba(0,0,0,0.3); }
-.wizard-glass .vr-label { color: rgba(255,255,255,0.4); }
-.wizard-glass .email-note { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
-.wizard-glass .email-note strong { color: #fff; }
+.wizard-glass .value-range { background: var(--cream); }
+.wizard-glass .vr-label { color: var(--muted); }
+.wizard-glass .email-note { background: var(--cream); color: var(--muted); }
+.wizard-glass .email-note strong { color: var(--text); }
 .hero-checks { list-style:none; margin-bottom:32px; }
 .hero-checks li {
   display:flex; align-items:flex-start; gap:12px;
@@ -574,9 +578,11 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   }
   .hero-mobile-wizard .wizard-glass {
     padding: 15px 13px;
-    background: rgba(8,16,28,0.38);
-    border: 1px solid rgba(255,255,255,0.14);
+    background: #ffffff;
+    border: 1px solid var(--border);
   }
+  .hero-mobile-wizard .wizard-brand { margin-bottom: 12px; }
+  .hero-mobile-wizard .wizard-brand img { height: 16px; }
   .hero-mobile-wizard .wizard-header { margin-bottom: 14px; row-gap: 7px; }
   .hero-mobile-wizard .wizard-question { font-size:14px; margin-bottom:4px; }
   .hero-mobile-wizard .wizard-hint { font-size:11px; margin-bottom:9px; }
@@ -770,20 +776,6 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 }
 .fak-a.open { display:block; }
 
-
-/* Contact note — glass */
-.wizard-glass .contact-note {
-  background: rgba(0,151,178,0.15);
-  border-left: 2px solid #0097B2;
-  color: rgba(255,255,255,0.7);
-}
-
-/* Success state — glass */
-.wizard-glass .value-range { background: rgba(0,0,0,0.3); }
-.wizard-glass .vr-label { color: rgba(255,255,255,0.4); }
-.wizard-glass .email-note { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
-.wizard-glass .email-note strong { color: #fff; }
-
 </style>
 </head>
 <body>
@@ -839,6 +831,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     </div>
     <!-- Wizard: nur Desktop -->
     <div class="wizard-card" id="wizard">
+      <div class="wizard-brand"><img src="logo_png.png" alt="ImmoWertChecker"></div>
       <div class="wizard-header">
         <div class="step-label" id="step-label">Schritt 1 von 12</div>
         <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
@@ -851,6 +844,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   <!-- Mobile: Glass Wizard direkt sichtbar, außerhalb des Grids -->
   <div class="hero-mobile-wizard" id="hero-wizard-mobile">
     <div class="wizard-glass" id="wizard-glass-card">
+      <div class="wizard-brand"><img src="logo_png.png" alt="ImmoWertChecker"></div>
       <div class="wizard-header">
         <div class="step-label" id="step-label-hm">Schritt 1 von 12</div>
         <div class="progress-bar"><div class="progress-fill" id="progress-fill-hm" style="width:0%"></div></div>
@@ -875,6 +869,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 <section id="wizard-mobile-section" style="padding:32px 5%; display:none;">
   <div style="max-width:480px; margin:0 auto;">
     <div class="wizard-card" id="wizard-mobile">
+      <div class="wizard-brand"><img src="logo_png.png" alt="ImmoWertChecker"></div>
       <div class="wizard-header">
         <div class="step-label" id="step-label-m">Schritt 1 von 12</div>
         <div class="progress-bar"><div class="progress-fill" id="progress-fill-m" style="width:0%"></div></div>
