@@ -123,8 +123,8 @@ nav.scrolled {
   padding: 108px 5% 60px;
 }
 .hero-inner {
-  max-width: 1280px; margin:0 auto; width:100%;
-  display: grid; grid-template-columns:1fr 500px;
+  max-width: 1360px; margin:0 auto; width:100%;
+  display: grid; grid-template-columns:1fr 620px;
   gap: 56px; align-items:center;
 }
 .hero-text-top {
@@ -149,7 +149,7 @@ nav.scrolled {
 .hero-rating {
   display: flex;
   align-items: baseline;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 4px 14px;
   margin-bottom: 24px;
   flex-wrap: wrap;
@@ -169,7 +169,7 @@ nav.scrolled {
   font-size: 12px;
   font-weight: 300;
   color: rgba(255,255,255,0.45);
-  text-align: center;
+  text-align: left;
 }
 .hero-rating-mobile-dup { display: none; }
 
@@ -301,7 +301,7 @@ nav.scrolled {
 
 /* ── WIZARD CARD ────────────────────────────────────────────────── */
 .wizard-card {
-  background:#fff; border-radius:20px; padding:40px 36px; overflow:hidden;
+  background:#fff; border-radius:20px; padding:52px 48px; overflow:hidden;
   box-shadow:0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.08);
 }
 /* Wizard header — Label + % in einer Zeile, Bar darunter (Apple-inspiriert) */
@@ -340,8 +340,8 @@ nav.scrolled {
   transition: width .6s cubic-bezier(.4,0,.2,1);
   box-shadow: 0 0 8px rgba(0,151,178,0.55);
 }
-.wizard-question { font-family:var(--f-head); font-size:18px; font-weight:700; color:var(--text); margin-bottom:5px; line-height:1.3; text-align:center; }
-.wizard-hint { font-size:13px; color:var(--muted); margin-bottom:20px; font-weight:300; text-align:center; }
+.wizard-question { font-family:var(--f-head); font-size:22px; font-weight:700; color:var(--text); margin-bottom:6px; line-height:1.3; text-align:center; }
+.wizard-hint { font-size:14px; color:var(--muted); margin-bottom:24px; font-weight:300; text-align:center; }
 .type-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px; }
 .type-btn {
   border:2px solid var(--border); border-radius:10px; padding:16px 10px;
@@ -351,8 +351,8 @@ nav.scrolled {
 }
 .type-btn:hover { border-color:var(--orange); background:var(--cream); }
 .type-btn.selected { border-color:var(--orange); background:var(--cream); box-shadow:inset 0 0 0 1px var(--orange); }
-.type-icon { width:36px; height:36px; color:var(--orange); display:flex; align-items:center; justify-content:center; }
-.type-icon svg { width:36px; height:36px; }
+.type-icon { width:48px; height:48px; color:var(--orange); display:flex; align-items:center; justify-content:center; }
+.type-icon svg { width:48px; height:48px; }
 .type-icon img { width:100%; height:100%; object-fit:contain; }
 .type-btn.selected .type-icon { color:var(--orange2); }
 .type-label { font-size:13px; font-weight:600; color:var(--text); }
@@ -520,6 +520,8 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   .vorteile-grid { grid-template-columns:1fr 1fr; }
   .steps-grid { grid-template-columns:1fr; }
   .steps-grid::before { display:none; }
+}
+@media (max-width:800px) {
   .ergebnis-inner { grid-template-columns:1fr; gap:48px; }
   .ergebnis-inner .phone-mockup { margin: 0 auto !important; }
 }
@@ -591,7 +593,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   .hero-mobile-wizard .wizard-hint { font-size:12px; margin-bottom:12px; }
   .hero-mobile-wizard .type-grid { gap:9px; margin-bottom:12px; }
   .hero-mobile-wizard .type-btn { padding:14px 9px; }
-  .hero-mobile-wizard .type-icon { width:40px; height:40px; }
+  .hero-mobile-wizard .type-icon { width:52px; height:52px; }
   .hero-mobile-wizard .type-label { font-size:11px; }
   .hero-mobile-wizard .option-list { gap:7px; margin-bottom:12px; }
   .hero-mobile-wizard .option-btn { padding:10px 13px; font-size:13px; }
@@ -1394,7 +1396,7 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
   const isLast = currentStep === getTotalSteps();
   html += `<div class="wizard-nav">`;
   if (currentStep > 1) html += `<button class="btn-back" onclick="goBackS('${suffix}')">←</button>`;
-  html += `<button class="btn-next" onclick="${isLast ? `submitFormS('${suffix}')` : `goNextS('${suffix}')`}">${isLast ? 'Bewertung anfordern' : 'Jetzt Kostenlos bewerten →'}</button></div>`;
+  html += `<button class="btn-next" onclick="${isLast ? `submitFormS('${suffix}')` : `goNextS('${suffix}')`}">${isLast ? 'Bewertung anfordern' : (currentStep === 1 ? 'Jetzt kostenlos bewerten →' : 'Weiter →')}</button></div>`;
   html += `<div class="security-note">Verschlüsselt · DSGVO-konform</div>`;
 
   const body = document.getElementById(bodyId);
@@ -1637,7 +1639,7 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
   html += `<div class="wizard-nav">`;
   if (currentStep > 1) html += `<button class="btn-back" onclick="goBack()">←</button>`;
   html += `<button class="btn-next" onclick="${isLast ? 'submitForm()' : 'goNext()'}">
-    ${isLast ? 'Bewertung anfordern' : 'Weiter →'}
+    ${isLast ? 'Bewertung anfordern' : (currentStep === 1 ? 'Jetzt kostenlos bewerten →' : 'Weiter →')}
   </button></div>`;
   html += `<div class="security-note">Verschlüsselt · DSGVO-konform</div>`;
 
