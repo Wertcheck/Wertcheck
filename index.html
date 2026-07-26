@@ -47,8 +47,6 @@ nav, section, footer, .mobile-menu {
   z-index: 1;
 }
 /* Sections vollständig undurchsichtig — kein Hintergrundbild */
-.vorteile-bg { background: #ffffff !important; }
-#how { background: #F0F9FB !important; }
 .ergebnis-section { background: rgba(8,16,28,0.78); }
 #faktoren { background: #ffffff !important; }
 
@@ -426,7 +424,6 @@ section { padding:88px 5%; }
 .section-sub { font-size:16px; font-weight:300; color:var(--muted); max-width:500px; margin:0 auto 48px; line-height:1.7; }
 
 /* ── VORTEILE ────────────────────────────────────────────────────── */
-.vorteile-bg { background:var(--white); }
 .vorteile-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-top:40px; }
 .vorteil-card { padding:28px 20px; background:#fff; text-align:center; border-radius:12px; border:1px solid var(--border); transition:transform .2s, box-shadow .2s; }
 .vorteil-card:hover { transform:translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,0.08); }
@@ -437,7 +434,6 @@ section { padding:88px 5%; }
 .vorteil-card p { font-size:13px; font-weight:300; color:var(--muted); line-height:1.65; }
 
 /* ── HOW IT WORKS ────────────────────────────────────────────────── */
-#how { background:var(--cream); }
 .steps-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:40px; margin-top:40px; position:relative; text-align:center; }
 .steps-grid::before { content:''; position:absolute; top:38px; left:22%; right:22%; height:1px; border-top:2px dashed var(--border); z-index:0; }
 .step-item { position:relative; z-index:1; }
@@ -891,7 +887,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 
 <!-- VORTEILE -->
 <section class="vorteile-bg" id="vorteile">
-  <div class="section-center">
+  <div class="section-center light-panel">
     <span class="section-eyebrow fade-in">Warum ImmowertChecker</span>
     <h2 class="section-title fade-in">Einfach den <em>Immobilienwert</em><br>herausfinden</h2>
     <div class="vorteile-grid fade-in">
