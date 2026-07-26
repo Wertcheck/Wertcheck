@@ -442,7 +442,6 @@ section { padding:88px 5%; }
 .section-sub { font-size:16px; font-weight:300; color:var(--muted); max-width:500px; margin:0 auto 48px; line-height:1.7; }
 
 /* ── VORTEILE ────────────────────────────────────────────────────── */
-.vorteile-illustration { display:flex; justify-content:center; margin:32px 0 8px; opacity:0.9; }
 .vorteile-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-top:40px; }
 .vorteil-card { padding:28px 20px; background:#fff; text-align:center; border-radius:12px; border:1px solid var(--border); transition:transform .2s, box-shadow .2s; }
 .vorteil-card:hover { transform:translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,0.08); }
@@ -545,7 +544,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 @media (max-width:600px) {
 
   /* NAV */
-  nav { height:60px; padding:0 calc(4% + 10px); }
+  nav { height:60px; padding:0 4%; }
   .logo-img { height:48px; }
 
   /* HERO — vollflächig, Bild sichtbar */
@@ -579,7 +578,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     justify-content: center;
     gap: 4px 6px;
     width: 94%;
-    margin: 14px auto 0;
+    margin: 10px auto 0;
   }
   .hero-rating-mobile-dup .hero-rating-stars { font-size:11px; letter-spacing:0.5px; flex-shrink:0; }
   .hero-rating-mobile-dup .hero-rating-score { font-size:11px; flex-shrink:0; }
@@ -592,23 +591,23 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   .hero-mobile-wizard {
     display: block;
     width: 97%;
-    margin: clamp(20px, 5vh, 44px) auto 0;
+    margin: clamp(10px, 2vh, 20px) auto 0;
   }
   .hero-mobile-wizard .wizard-glass {
-    padding: 22px 18px;
+    padding: 18px 18px;
     background: #ffffff;
     border: 1px solid var(--border);
   }
-  .hero-mobile-wizard .wizard-brand { margin-bottom: 16px; }
+  .hero-mobile-wizard .wizard-brand { margin-bottom: 10px; }
   .hero-mobile-wizard .wizard-brand img { height: 28px; }
-  .hero-mobile-wizard .wizard-header { margin-bottom: 16px; row-gap: 8px; }
-  .hero-mobile-wizard .wizard-question { font-size:16px; margin-bottom:5px; }
-  .hero-mobile-wizard .wizard-hint { font-size:12px; margin-bottom:12px; }
-  .hero-mobile-wizard .type-grid { gap:9px; margin-bottom:12px; }
-  .hero-mobile-wizard .type-btn { padding:14px 9px; }
+  .hero-mobile-wizard .wizard-header { margin-bottom: 10px; row-gap: 8px; }
+  .hero-mobile-wizard .wizard-question { font-size:16px; margin-bottom:4px; }
+  .hero-mobile-wizard .wizard-hint { font-size:12px; margin-bottom:8px; }
+  .hero-mobile-wizard .type-grid { gap:9px; margin-bottom:8px; }
+  .hero-mobile-wizard .type-btn { padding:12px 9px; }
   .hero-mobile-wizard .type-icon { width:52px; height:52px; }
   .hero-mobile-wizard .type-label { font-size:11px; }
-  .hero-mobile-wizard .option-list { gap:7px; margin-bottom:12px; }
+  .hero-mobile-wizard .option-list { gap:7px; margin-bottom:8px; }
   .hero-mobile-wizard .option-btn { padding:10px 13px; font-size:13px; }
   .hero-mobile-wizard .field-group input { font-size:16px; padding:10px 13px; }
   .hero-mobile-wizard .input-row { grid-template-columns:1fr; }
@@ -627,8 +626,6 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   .section-sub { font-size:14px; margin-bottom:24px; }
 
   /* Vorteile 2-col */
-  .vorteile-illustration svg { width:130px; height:59px; }
-  .vorteile-illustration { margin:20px 0 4px; }
   .vorteile-grid { grid-template-columns:1fr 1fr; gap:10px; margin-top:20px; }
   .vorteil-card { padding:16px 10px; border-radius:10px; }
   .vorteil-icon-wrap { width:46px; height:46px; margin-bottom:10px; }
@@ -903,16 +900,6 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   <div class="section-center light-panel">
     <span class="section-eyebrow fade-in">Warum ImmowertChecker</span>
     <h2 class="section-title fade-in">Einfach den <em>Immobilienwert</em><br>herausfinden</h2>
-    <div class="vorteile-illustration fade-in">
-      <svg viewBox="0 0 200 90" width="180" height="81">
-        <path d="M10 65 L45 65 L45 40 L70 40 L70 65 L105 65" stroke="#0097B2" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
-        <circle cx="150" cy="30" r="26" fill="#F0F9FB"/>
-        <path d="M138 30l8 8 16-18" stroke="#0097B2" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M10 75h180" stroke="#C8E8EE" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="45" cy="65" r="3" fill="#0097B2"/>
-        <circle cx="105" cy="65" r="3" fill="#0097B2"/>
-      </svg>
-    </div>
     <div class="vorteile-grid fade-in">
       <div class="vorteil-card">
         <div class="vorteil-icon-wrap"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 9v12M9 13h6"/></svg></div>
