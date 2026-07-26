@@ -201,11 +201,15 @@ nav.scrolled {
 }
 .wizard-glass .type-btn:hover {
   border-color: var(--orange);
+  transform: scale(1.02);
+  box-shadow: 0 6px 16px rgba(0,151,178,0.15);
 }
 .wizard-glass .type-btn.selected {
   background: var(--cream);
   border-color: #0097B2;
-  box-shadow: 0 0 0 1px #0097B2;
+  border-width: 2.5px;
+  transform: scale(1.02);
+  box-shadow: 0 6px 18px rgba(0,151,178,0.25), 0 0 0 1px #0097B2;
 }
 .wizard-glass .type-label { color: var(--text); font-size:12px; }
 .wizard-glass .type-icon svg { stroke: #0097B2; }
@@ -220,10 +224,15 @@ nav.scrolled {
 }
 .wizard-glass .option-btn:hover {
   border-color: var(--orange);
+  transform: scale(1.02);
+  box-shadow: 0 6px 16px rgba(0,151,178,0.15);
 }
 .wizard-glass .option-btn.selected {
   background: var(--cream);
   border-color: #0097B2;
+  border-width: 2.5px;
+  transform: scale(1.02);
+  box-shadow: 0 6px 18px rgba(0,151,178,0.25);
 }
 .wizard-glass .opt-icon { color: #0097B2; }
 
@@ -347,10 +356,10 @@ nav.scrolled {
   border:2px solid var(--border); border-radius:10px; padding:16px 10px;
   background:#fff; cursor:pointer; text-align:center;
   display:flex; flex-direction:column; align-items:center; gap:8px;
-  transition:border-color .2s, background .2s;
+  transition:border-color .2s, background .2s, transform .2s, box-shadow .2s;
 }
-.type-btn:hover { border-color:var(--orange); background:var(--cream); }
-.type-btn.selected { border-color:var(--orange); background:var(--cream); box-shadow:inset 0 0 0 1px var(--orange); }
+.type-btn:hover { border-color:var(--orange); background:var(--cream); transform:scale(1.02); box-shadow:0 6px 16px rgba(0,151,178,0.15); }
+.type-btn.selected { border-color:var(--orange); border-width:2.5px; background:var(--cream); transform:scale(1.02); box-shadow:0 6px 18px rgba(0,151,178,0.25), inset 0 0 0 1px var(--orange); }
 .type-icon { width:48px; height:48px; color:var(--orange); display:flex; align-items:center; justify-content:center; }
 .type-icon svg { width:48px; height:48px; }
 .type-icon img { width:100%; height:100%; object-fit:contain; }
@@ -363,8 +372,8 @@ nav.scrolled {
   font-weight:400; color:var(--text); font-family:var(--f-body);
   display:flex; align-items:center; gap:12px; transition:all .18s;
 }
-.option-btn:hover { border-color:var(--orange); background:var(--cream); }
-.option-btn.selected { border-color:var(--orange); background:var(--cream); box-shadow:inset 0 0 0 1px var(--orange); }
+.option-btn:hover { border-color:var(--orange); background:var(--cream); transform:scale(1.02); box-shadow:0 6px 16px rgba(0,151,178,0.15); }
+.option-btn.selected { border-color:var(--orange); border-width:2.5px; background:var(--cream); transform:scale(1.02); box-shadow:0 6px 18px rgba(0,151,178,0.25), inset 0 0 0 1px var(--orange); }
 .opt-icon { width:20px; height:20px; color:var(--orange); flex-shrink:0; display:flex; align-items:center; }
 .opt-icon svg { width:20px; height:20px; }
 .field-group { margin-bottom:16px; }
@@ -398,8 +407,10 @@ input[type="range"]::-moz-range-thumb { width:20px; height:20px; border-radius:5
 .wizard-nav { display:flex; gap:8px; margin-top:4px; }
 .btn-back { flex:0 0 auto; padding:13px 16px; border:2px solid var(--border); border-radius:10px; background:transparent; cursor:pointer; font-size:15px; color:var(--muted); transition:all .2s; font-family:var(--f-body); }
 .btn-back:hover { border-color:var(--muted); color:var(--text); }
-.btn-next { flex:1; padding:14px; background:var(--orange); border:none; border-radius:10px; cursor:pointer; font-size:14px; font-weight:700; color:#ffffff; display:flex; align-items:center; justify-content:center; gap:8px; transition:background .2s, transform .15s; font-family:var(--f-body); }
-.btn-next:hover { background:var(--orange2); transform:translateY(-1px); }
+.btn-next { flex:1; min-height:62px; padding:14px 20px; background:linear-gradient(135deg, var(--orange), var(--orange2)); border:none; border-radius:12px; cursor:pointer; font-size:15px; font-weight:700; color:#ffffff; display:flex; align-items:center; justify-content:center; gap:8px; transition:box-shadow .2s, transform .15s; font-family:var(--f-body); box-shadow:0 8px 20px rgba(0,151,178,0.35); }
+.btn-next:hover { box-shadow:0 10px 26px rgba(0,151,178,0.5); transform:translateY(-1px); }
+.btn-arrow { display:inline-block; transition:transform .2s; }
+.btn-next:hover .btn-arrow { transform:translateX(4px); }
 .security-note { font-size:11px; color:var(--muted); margin-top:10px; text-align:center; font-weight:300; }
 .success-state { text-align:center; padding:12px 0; }
 .success-icon { width:60px; height:60px; background:var(--orange); border-radius:50%; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; animation:popIn .4s cubic-bezier(.68,-.55,.265,1.55); }
@@ -431,12 +442,13 @@ section { padding:88px 5%; }
 .section-sub { font-size:16px; font-weight:300; color:var(--muted); max-width:500px; margin:0 auto 48px; line-height:1.7; }
 
 /* ── VORTEILE ────────────────────────────────────────────────────── */
+.vorteile-illustration { display:flex; justify-content:center; margin:32px 0 8px; opacity:0.9; }
 .vorteile-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-top:40px; }
 .vorteil-card { padding:28px 20px; background:#fff; text-align:center; border-radius:12px; border:1px solid var(--border); transition:transform .2s, box-shadow .2s; }
 .vorteil-card:hover { transform:translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,0.08); }
-.vorteil-icon-wrap { width:60px; height:60px; background:var(--cream); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; transition:all .3s; }
+.vorteil-icon-wrap { width:76px; height:76px; background:var(--cream); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 18px; transition:all .3s; }
 .vorteil-card:hover .vorteil-icon-wrap { background:rgba(0,151,178,0.15); }
-.vorteil-icon-wrap svg { width:26px; height:26px; stroke:var(--orange); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+.vorteil-icon-wrap svg { width:34px; height:34px; stroke:var(--orange); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
 .vorteil-card h3 { font-family:var(--f-head); font-size:15px; font-weight:700; color:var(--text); margin-bottom:8px; }
 .vorteil-card p { font-size:13px; font-weight:300; color:var(--muted); line-height:1.65; }
 
@@ -478,8 +490,9 @@ section { padding:88px 5%; }
 .result-checks li { display:flex; align-items:flex-start; gap:14px; color:rgba(255,255,255,0.6); font-size:15px; font-weight:300; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.06); line-height:1.5; }
 .result-checks li:last-child { border-bottom:none; }
 .rc-dot { width:14px; height:14px; flex-shrink:0; margin-top:3px; background:var(--orange); clip-path:polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%); }
-.btn-primary { display:inline-flex; align-items:center; gap:10px; background:var(--orange); color:#ffffff; font-weight:700; font-size:14px; padding:16px 32px; border-radius:10px; border:none; cursor:pointer; text-decoration:none; transition:background .2s, transform .15s; font-family:var(--f-body); }
-.btn-primary:hover { background:var(--orange2); transform:translateY(-1px); }
+.btn-primary { display:inline-flex; align-items:center; gap:10px; min-height:62px; background:linear-gradient(135deg, var(--orange), var(--orange2)); color:#ffffff; font-weight:700; font-size:15px; padding:16px 32px; border-radius:12px; border:none; cursor:pointer; text-decoration:none; transition:box-shadow .2s, transform .15s; font-family:var(--f-body); box-shadow:0 8px 20px rgba(0,151,178,0.35); }
+.btn-primary:hover { box-shadow:0 10px 26px rgba(0,151,178,0.5); transform:translateY(-1px); }
+.btn-primary:hover .btn-arrow { transform:translateX(4px); }
 
 /* ── FAQ ─────────────────────────────────────────────────────────── */
 .faq-list { max-width:680px; margin:0 auto; text-align:left; }
@@ -532,7 +545,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 @media (max-width:600px) {
 
   /* NAV */
-  nav { height:60px; padding:0 4%; }
+  nav { height:60px; padding:0 calc(4% + 10px); }
   .logo-img { height:48px; }
 
   /* HERO — vollflächig, Bild sichtbar */
@@ -614,6 +627,8 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   .section-sub { font-size:14px; margin-bottom:24px; }
 
   /* Vorteile 2-col */
+  .vorteile-illustration svg { width:130px; height:59px; }
+  .vorteile-illustration { margin:20px 0 4px; }
   .vorteile-grid { grid-template-columns:1fr 1fr; gap:10px; margin-top:20px; }
   .vorteil-card { padding:16px 10px; border-radius:10px; }
   .vorteil-icon-wrap { width:46px; height:46px; margin-bottom:10px; }
@@ -888,26 +903,36 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   <div class="section-center light-panel">
     <span class="section-eyebrow fade-in">Warum ImmowertChecker</span>
     <h2 class="section-title fade-in">Einfach den <em>Immobilienwert</em><br>herausfinden</h2>
+    <div class="vorteile-illustration fade-in">
+      <svg viewBox="0 0 200 90" width="180" height="81">
+        <path d="M10 65 L45 65 L45 40 L70 40 L70 65 L105 65" stroke="#0097B2" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+        <circle cx="150" cy="30" r="26" fill="#F0F9FB"/>
+        <path d="M138 30l8 8 16-18" stroke="#0097B2" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10 75h180" stroke="#C8E8EE" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="45" cy="65" r="3" fill="#0097B2"/>
+        <circle cx="105" cy="65" r="3" fill="#0097B2"/>
+      </svg>
+    </div>
     <div class="vorteile-grid fade-in">
       <div class="vorteil-card">
         <div class="vorteil-icon-wrap"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 9v12M9 13h6"/></svg></div>
         <h3>Keine Vorkenntnisse nötig</h3>
-        <p>Egal ob geerbt, geschenkt oder schon lange im Besitz — einfach ein paar Fragen beantworten und fertig.</p>
+        <p>Egal ob geerbt, geschenkt oder schon lange im Besitz — ein paar Fragen beantworten, fertig.</p>
       </div>
       <div class="vorteil-card">
         <div class="vorteil-icon-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
         <h3>In 3 Minuten fertig</h3>
-        <p>Kein langes Formular, kein Termin, kein Warten. Sofort eine erste Einschätzung — direkt auf Ihr Handy.</p>
+        <p>Kein langes Formular, kein Termin, kein Warten — Einschätzung direkt auf Ihr Handy.</p>
       </div>
       <div class="vorteil-card">
         <div class="vorteil-icon-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></div>
         <h3>Wirklich kostenlos</h3>
-        <p>Keine versteckten Kosten, kein Abo, keine Falle. Die Bewertung ist und bleibt kostenlos — versprochen.</p>
+        <p>Keine versteckten Kosten, kein Abo, keine Falle — bleibt kostenlos, versprochen.</p>
       </div>
       <div class="vorteil-card">
         <div class="vorteil-icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
         <h3>Ihre Daten bleiben sicher</h3>
-        <p>DSGVO-konform, SSL-verschlüsselt. Ihre Daten werden niemals ohne Ihre Zustimmung weitergegeben.</p>
+        <p>DSGVO-konform und SSL-verschlüsselt — niemals ohne Ihre Zustimmung weitergegeben.</p>
       </div>
     </div>
   </div>
@@ -994,7 +1019,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
         <li><span class="rc-dot"></span>Wie gefragt Ihre Immobilie aktuell ist</li>
         <li><span class="rc-dot"></span>Empfehlung: ob und wann ein Immobilienberater sinnvoll ist</li>
       </ul>
-      <a href="#wizard" class="btn-primary" onclick="scrollToWizard(event)">Jetzt kostenlos bewerten →</a>
+      <a href="#wizard" class="btn-primary" onclick="scrollToWizard(event)">Jetzt kostenlos bewerten <span class="btn-arrow">→</span></a>
     </div>
   </div>
 </section>
@@ -1396,7 +1421,7 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
   const isLast = currentStep === getTotalSteps();
   html += `<div class="wizard-nav">`;
   if (currentStep > 1) html += `<button class="btn-back" onclick="goBackS('${suffix}')">←</button>`;
-  html += `<button class="btn-next" onclick="${isLast ? `submitFormS('${suffix}')` : `goNextS('${suffix}')`}">${isLast ? 'Bewertung anfordern' : (currentStep === 1 ? 'Jetzt kostenlos bewerten →' : 'Weiter →')}</button></div>`;
+  html += `<button class="btn-next" onclick="${isLast ? `submitFormS('${suffix}')` : `goNextS('${suffix}')`}">${isLast ? 'Bewertung anfordern' : (currentStep === 1 ? 'Jetzt kostenlos bewerten <span class="btn-arrow">→</span>' : 'Weiter <span class="btn-arrow">→</span>')}</button></div>`;
   html += `<div class="security-note">Verschlüsselt · DSGVO-konform</div>`;
 
   const body = document.getElementById(bodyId);
@@ -1639,7 +1664,7 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
   html += `<div class="wizard-nav">`;
   if (currentStep > 1) html += `<button class="btn-back" onclick="goBack()">←</button>`;
   html += `<button class="btn-next" onclick="${isLast ? 'submitForm()' : 'goNext()'}">
-    ${isLast ? 'Bewertung anfordern' : (currentStep === 1 ? 'Jetzt kostenlos bewerten →' : 'Weiter →')}
+    ${isLast ? 'Bewertung anfordern' : (currentStep === 1 ? 'Jetzt kostenlos bewerten <span class="btn-arrow">→</span>' : 'Weiter <span class="btn-arrow">→</span>')}
   </button></div>`;
   html += `<div class="security-note">Verschlüsselt · DSGVO-konform</div>`;
 
