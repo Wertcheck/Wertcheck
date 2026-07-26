@@ -260,6 +260,12 @@ nav.scrolled {
   display: flex; align-items: center; justify-content: center;
   margin-bottom: 20px;
 }
+.wizard-brand-badge {
+  display: inline-flex; align-items: center;
+  background: #0B1622;
+  border-radius: 8px;
+  padding: 8px 16px;
+}
 .wizard-brand img { height: 34px; width: auto; }
 
 /* Contact note — glass */
@@ -578,6 +584,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     border: 1px solid var(--border);
   }
   .hero-mobile-wizard .wizard-brand { margin-bottom: 14px; }
+  .hero-mobile-wizard .wizard-brand-badge { padding: 6px 12px; border-radius: 7px; }
   .hero-mobile-wizard .wizard-brand img { height: 26px; }
   .hero-mobile-wizard .wizard-header { margin-bottom: 14px; row-gap: 7px; }
   .hero-mobile-wizard .wizard-question { font-size:14px; margin-bottom:4px; }
@@ -827,7 +834,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     </div>
     <!-- Wizard: nur Desktop -->
     <div class="wizard-card" id="wizard">
-      <div class="wizard-brand"><img src="logo_png.png" alt="ImmoWertChecker"></div>
+      <div class="wizard-brand"><div class="wizard-brand-badge"><img src="logo_png.png" alt="ImmoWertChecker"></div></div>
       <div class="wizard-header">
         <div class="step-label" id="step-label">Schritt 1 von 12</div>
         <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
@@ -840,7 +847,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   <!-- Mobile: Glass Wizard direkt sichtbar, außerhalb des Grids -->
   <div class="hero-mobile-wizard" id="hero-wizard-mobile">
     <div class="wizard-glass" id="wizard-glass-card">
-      <div class="wizard-brand"><img src="logo_png.png" alt="ImmoWertChecker"></div>
+      <div class="wizard-brand"><div class="wizard-brand-badge"><img src="logo_png.png" alt="ImmoWertChecker"></div></div>
       <div class="wizard-header">
         <div class="step-label" id="step-label-hm">Schritt 1 von 12</div>
         <div class="progress-bar"><div class="progress-fill" id="progress-fill-hm" style="width:0%"></div></div>
@@ -865,7 +872,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 <section id="wizard-mobile-section" style="padding:32px 5%; display:none;">
   <div style="max-width:480px; margin:0 auto;">
     <div class="wizard-card" id="wizard-mobile">
-      <div class="wizard-brand"><img src="logo_png.png" alt="ImmoWertChecker"></div>
+      <div class="wizard-brand"><div class="wizard-brand-badge"><img src="logo_png.png" alt="ImmoWertChecker"></div></div>
       <div class="wizard-header">
         <div class="step-label" id="step-label-m">Schritt 1 von 12</div>
         <div class="progress-bar"><div class="progress-fill" id="progress-fill-m" style="width:0%"></div></div>
