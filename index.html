@@ -351,8 +351,9 @@ nav.scrolled {
 }
 .type-btn:hover { border-color:var(--orange); background:var(--cream); }
 .type-btn.selected { border-color:var(--orange); background:var(--cream); box-shadow:inset 0 0 0 1px var(--orange); }
-.type-icon { width:24px; height:24px; color:var(--orange); display:flex; align-items:center; }
-.type-icon svg { width:24px; height:24px; }
+.type-icon { width:36px; height:36px; color:var(--orange); display:flex; align-items:center; justify-content:center; }
+.type-icon svg { width:36px; height:36px; }
+.type-icon img { width:100%; height:100%; object-fit:contain; }
 .type-btn.selected .type-icon { color:var(--orange2); }
 .type-label { font-size:13px; font-weight:600; color:var(--text); }
 .option-list { display:flex; flex-direction:column; gap:8px; margin-bottom:18px; }
@@ -567,7 +568,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   }
   .hero-rating-mobile-dup .hero-rating-stars { font-size:11px; letter-spacing:0.5px; flex-shrink:0; }
   .hero-rating-mobile-dup .hero-rating-score { font-size:11px; flex-shrink:0; }
-  .hero-rating-mobile-dup .hero-rating-sub { flex-basis:100%; font-size:9.5px; white-space:nowrap; text-align:center; }
+  .hero-rating-mobile-dup .hero-rating-sub { flex-basis:auto; font-size:9.5px; white-space:nowrap; text-align:center; }
 
   /* CTA Button verstecken auf Mobile — Wizard ist direkt da */
   .hero-mobile-cta { display: none !important; }
@@ -575,29 +576,30 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   /* Glass Wizard direkt im Hero auf Mobile — kompakt, dunkles Glas, transparenter als vorher */
   .hero-mobile-wizard {
     display: block;
-    width: 94%;
+    width: 97%;
     margin: clamp(20px, 5vh, 44px) auto 0;
   }
   .hero-mobile-wizard .wizard-glass {
-    padding: 15px 13px;
+    padding: 22px 18px;
     background: #ffffff;
     border: 1px solid var(--border);
   }
-  .hero-mobile-wizard .wizard-brand { margin-bottom: 14px; }
-  .hero-mobile-wizard .wizard-brand img { height: 26px; }
-  .hero-mobile-wizard .wizard-header { margin-bottom: 14px; row-gap: 7px; }
-  .hero-mobile-wizard .wizard-question { font-size:14px; margin-bottom:4px; }
-  .hero-mobile-wizard .wizard-hint { font-size:11px; margin-bottom:9px; }
-  .hero-mobile-wizard .type-grid { gap:7px; margin-bottom:9px; }
-  .hero-mobile-wizard .type-btn { padding:9px 7px; }
-  .hero-mobile-wizard .type-label { font-size:10px; }
-  .hero-mobile-wizard .option-list { gap:5px; margin-bottom:9px; }
-  .hero-mobile-wizard .option-btn { padding:8px 11px; font-size:12px; }
-  .hero-mobile-wizard .field-group input { font-size:16px; padding:8px 11px; }
+  .hero-mobile-wizard .wizard-brand { margin-bottom: 16px; }
+  .hero-mobile-wizard .wizard-brand img { height: 28px; }
+  .hero-mobile-wizard .wizard-header { margin-bottom: 16px; row-gap: 8px; }
+  .hero-mobile-wizard .wizard-question { font-size:16px; margin-bottom:5px; }
+  .hero-mobile-wizard .wizard-hint { font-size:12px; margin-bottom:12px; }
+  .hero-mobile-wizard .type-grid { gap:9px; margin-bottom:12px; }
+  .hero-mobile-wizard .type-btn { padding:14px 9px; }
+  .hero-mobile-wizard .type-icon { width:40px; height:40px; }
+  .hero-mobile-wizard .type-label { font-size:11px; }
+  .hero-mobile-wizard .option-list { gap:7px; margin-bottom:12px; }
+  .hero-mobile-wizard .option-btn { padding:10px 13px; font-size:13px; }
+  .hero-mobile-wizard .field-group input { font-size:16px; padding:10px 13px; }
   .hero-mobile-wizard .input-row { grid-template-columns:1fr; }
-  .hero-mobile-wizard .btn-next { padding:11px; font-size:13px; color:#fff; }
-  .hero-mobile-wizard .btn-back { padding:11px; }
-  .hero-mobile-wizard .security-note { font-size:9.5px; margin-top:7px; }
+  .hero-mobile-wizard .btn-next { padding:13px; font-size:14px; color:#fff; }
+  .hero-mobile-wizard .btn-back { padding:13px; }
+  .hero-mobile-wizard .security-note { font-size:10px; margin-top:8px; }
 
   /* Wizard Section unter Hero ausblenden auf Mobile */
   #wizard-mobile-section { display:none !important; }
