@@ -164,8 +164,10 @@ nav.scrolled {
    overrides (".hero-mobile-wizard .x"), so source order decides the
    winner. Keeping this block first lets the later mobile rules win. */
 .wizard-glass {
-  background: var(--panel);
-  border: 1px solid var(--panel-border);
+  background: rgba(10,10,10,0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.15);
   border-radius: 20px;
   padding: 24px 20px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.35);
@@ -286,8 +288,9 @@ nav.scrolled {
 
 /* ── WIZARD CARD ────────────────────────────────────────────────── */
 .wizard-card {
-  background:var(--panel); border-radius:20px; padding:40px 36px; overflow:hidden;
-  box-shadow:0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.08);
+  background:rgba(10,10,10,0.72); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  border-radius:20px; padding:40px 36px; overflow:hidden;
+  box-shadow:0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.12);
 }
 /* Wizard header — Label + % in einer Zeile, Bar darunter (Apple-inspiriert) */
 .wizard-header {
@@ -568,8 +571,10 @@ footer { background: var(--panel); color:rgba(255,255,255,0.35); padding:44px 5%
   }
   .hero-mobile-wizard .wizard-glass {
     padding: 15px 13px;
-    background: var(--panel);
-    border: 1px solid var(--panel-border);
+    background: rgba(10,10,10,0.72);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.15);
   }
   .hero-mobile-wizard .wizard-brand { margin-bottom: 14px; }
   .hero-mobile-wizard .wizard-brand img { height: 26px; }
