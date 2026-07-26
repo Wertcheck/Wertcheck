@@ -404,6 +404,15 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:20px;
 input[type="range"]::-moz-range-thumb { width:20px; height:20px; border-radius:50%; background:var(--orange); cursor:pointer; border:3px solid #fff; box-shadow:0 2px 8px rgba(0,151,178,0.4); }
 .slider-minmax { display:flex; justify-content:space-between; font-size:11px; color:var(--muted); }
 .contact-note { background:rgba(0,151,178,0.08); border-left:2px solid var(--orange); padding:10px 14px; font-size:12px; color:var(--text); margin-bottom:16px; font-weight:300; }
+.consent-check {
+  display: flex; align-items: flex-start; gap: 10px;
+  margin: 4px 0 16px; cursor: pointer;
+  font-size: 12px; color: var(--muted); line-height: 1.5;
+}
+.consent-check input[type="checkbox"] {
+  flex-shrink: 0; margin-top: 2px; width: 16px; height: 16px;
+  accent-color: var(--orange); cursor: pointer;
+}
 .wizard-nav { display:flex; gap:8px; margin-top:4px; }
 .btn-back { flex:0 0 auto; padding:13px 16px; border:2px solid var(--border); border-radius:10px; background:transparent; cursor:pointer; font-size:15px; color:var(--muted); transition:all .2s; font-family:var(--f-body); }
 .btn-back:hover { border-color:var(--muted); color:var(--text); }
@@ -416,6 +425,13 @@ input[type="range"]::-moz-range-thumb { width:20px; height:20px; border-radius:5
 .success-icon { width:60px; height:60px; background:var(--orange); border-radius:50%; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; animation:popIn .4s cubic-bezier(.68,-.55,.265,1.55); }
 .success-icon svg { width:26px; height:26px; stroke:#fff; fill:none; stroke-width:2.5; }
 @keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
 .success-state h3 { font-family:var(--f-head); font-size:19px; font-weight:700; color:var(--text); margin-bottom:8px; }
 .success-state p { color:var(--muted); font-size:14px; margin-bottom:18px; font-weight:300; }
 .value-range { background:var(--night); border-radius:10px; padding:20px; margin-bottom:16px; }
@@ -1403,12 +1419,29 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
     step.fields.slice(0,2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
     html += `</div>`;
     step.fields.slice(2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
+    html += `<label class="consent-check" for="${bodyId}_consent"><input type="checkbox" id="${bodyId}_consent" ${answers.zustimmung ? 'checked' : ''} onchange="answers.zustimmung=this.checked"/><span>Ich bin damit einverstanden, dass ein Immobilienberater von ImmoWertChecker mich zu meiner Bewertung kontaktieren darf.</span></label>`;
+  } else if (step.type === 'email-verify') {
+    html += `<div class="contact-note">Code gesendet an <strong>${answers.email||''}</strong>. Bitte im Postfach (auch Spam-Ordner) nachschauen.</div>
+      <div class="field-group">
+        <label>Bestätigungscode</label>
+        <input type="text" inputmode="numeric" maxlength="6" placeholder="123456" id="${bodyId}_field_code" style="letter-spacing:0.3em; text-align:center; font-size:20px; font-weight:700;" oninput="answers.code=this.value"/>
+      </div>
+      <p id="${bodyId}_code_error" style="display:none; color:#ef4444; font-size:12px; margin:-8px 0 12px;">Der Code ist leider nicht korrekt. Bitte prüfen und erneut versuchen.</p>
+      <p style="text-align:center; font-size:12px; margin-bottom:4px;"><a href="#" onclick="event.preventDefault(); sendVerificationCodeS('${suffix}', true)" style="color:var(--orange); text-decoration:none;" id="${bodyId}_resend">Code erneut senden</a></p>`;
+    if (!window.__codeSentFor || window.__codeSentFor !== answers.email) {
+      window.__codeSentFor = answers.email;
+      setTimeout(() => sendVerificationCodeS(suffix, false), 50);
+    }
   }
 
   const isLast = currentStep === getTotalSteps();
   html += `<div class="wizard-nav">`;
   if (currentStep > 1) html += `<button class="btn-back" onclick="goBackS('${suffix}')">←</button>`;
-  html += `<button class="btn-next" onclick="${isLast ? `submitFormS('${suffix}')` : `goNextS('${suffix}')`}">${isLast ? 'Bewertung anfordern' : (currentStep === 1 ? 'Jetzt kostenlos bewerten <span class="btn-arrow">→</span>' : 'Weiter <span class="btn-arrow">→</span>')}</button></div>`;
+  if (step.type === 'email-verify') {
+    html += `<button class="btn-next" onclick="confirmCodeS('${suffix}')">Bestätigen</button></div>`;
+  } else {
+    html += `<button class="btn-next" onclick="${isLast ? `submitFormS('${suffix}')` : `goNextS('${suffix}')`}">${isLast ? 'Bewertung anfordern' : (currentStep === 1 ? 'Jetzt kostenlos bewerten <span class="btn-arrow">→</span>' : 'Weiter <span class="btn-arrow">→</span>')}</button></div>`;
+  }
   html += `<div class="security-note">Verschlüsselt · DSGVO-konform</div>`;
 
   const body = document.getElementById(bodyId);
@@ -1420,7 +1453,7 @@ function selectOptS(key, value, el, cls, suffix) {
   el.closest('.type-grid, .option-list').querySelectorAll(`.${cls}`).forEach(b => b.classList.remove('selected'));
   el.classList.add('selected');
   const step = visibleSteps()[currentStep-1];
-  if (step.type === 'type-grid' || step.type === 'options') setTimeout(() => goNextS(suffix), 260);
+  if (step.type === 'options') setTimeout(() => goNextS(suffix), 260);
 }
 
 function goNextS(suffix) {
@@ -1435,6 +1468,16 @@ function goBackS(suffix) {
 function validateStepS(suffix) {
   const step = visibleSteps()[currentStep-1];
   const bodyId = suffix ? `wizard-body-${suffix}` : 'wizard-body';
+  if (step.type === 'type-grid') {
+    if (!answers[step.key]) {
+      const grid = document.getElementById(bodyId).querySelector('.type-grid');
+      if (grid) {
+        grid.style.animation = 'none';
+        requestAnimationFrame(() => { grid.style.animation = 'shake .4s'; });
+      }
+      return false;
+    }
+  }
   if (step.type === 'fields' || step.type === 'contact') {
     const required = step.fields.filter(f => f.type !== 'tel');
     for (const f of required) {
@@ -1446,7 +1489,58 @@ function validateStepS(suffix) {
       }
     }
   }
+  if (step.type === 'contact' && !answers.zustimmung) {
+    const label = document.getElementById(`${bodyId}_consent`)?.closest('.consent-check');
+    if (label) {
+      label.style.color = '#ef4444';
+      label.style.animation = 'none';
+      requestAnimationFrame(() => { label.style.animation = 'shake .4s'; });
+      setTimeout(() => { label.style.color = ''; }, 2000);
+    }
+    return false;
+  }
   return true;
+}
+
+// ── E-MAIL-VERIFIZIERUNG (mobil) ───────────────────────────────────
+async function sendVerificationCodeS(suffix, isResend) {
+  const bodyId = suffix ? `wizard-body-${suffix}` : 'wizard-body';
+  const resendEl = document.getElementById(`${bodyId}_resend`);
+  if (isResend && resendEl) resendEl.textContent = 'Wird gesendet …';
+  try {
+    await fetch('https://wertcheck.onrender.com/send-code', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email: answers.email, vorname: answers.vorname })
+    });
+    if (isResend && resendEl) { resendEl.textContent = 'Code erneut gesendet ✓'; setTimeout(() => { resendEl.textContent = 'Code erneut senden'; }, 3000); }
+  } catch (e) {
+    console.log('Code-Versand fehlgeschlagen:', e.message);
+    if (resendEl) resendEl.textContent = 'Fehler — nochmal versuchen';
+  }
+}
+
+async function confirmCodeS(suffix) {
+  const bodyId = suffix ? `wizard-body-${suffix}` : 'wizard-body';
+  const errorEl = document.getElementById(`${bodyId}_code_error`);
+  const code = (answers.code || '').trim();
+  if (!code) { if (errorEl) errorEl.style.display = 'block'; return; }
+  try {
+    const res = await fetch('https://wertcheck.onrender.com/verify-code', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email: answers.email, code })
+    });
+    const data = await res.json();
+    if (data.success) {
+      if (errorEl) errorEl.style.display = 'none';
+      submitFormS(suffix);
+    } else {
+      if (errorEl) errorEl.style.display = 'block';
+      const input = document.getElementById(`${bodyId}_field_code`);
+      if (input) { input.style.borderColor = '#ef4444'; input.style.animation = 'none'; requestAnimationFrame(() => { input.style.animation = 'shake .4s'; }); }
+    }
+  } catch (e) {
+    if (errorEl) { errorEl.textContent = 'Verbindung fehlgeschlagen — bitte erneut versuchen.'; errorEl.style.display = 'block'; }
+  }
 }
 
 async function submitFormS(suffix) {
@@ -1472,12 +1566,6 @@ async function submitFormS(suffix) {
         <div class="vr-label">Geschätzter Marktwert</div>
         <div class="vr-amount">${low.toLocaleString('de-DE')} € – ${high.toLocaleString('de-DE')} €</div>
         <div class="vr-avg">Durchschnitt: <span>${avg.toLocaleString('de-DE')} €</span></div>
-      </div>
-      <div style="margin:12px 0; padding:12px; background:rgba(0,151,178,0.1); border-radius:8px;">
-        <p style="font-size:13px;color:var(--text);margin-bottom:8px;font-weight:600;">Wie war Ihre Erfahrung?</p>
-        <div style="display:flex;justify-content:center;gap:6px;">
-          ${[1,2,3,4,5].map(i=>`<button onclick="rateStar(${i})" id="star-${i}" style="background:none;border:none;font-size:26px;cursor:pointer;color:#C8E8EE;transition:color .2s;">★</button>`).join('')}
-        </div>
       </div>
       <button class="btn-next" style="width:100%;color:#fff;" onclick="resetWizard()">Neue Bewertung ↺</button>
     </div>`;
@@ -1583,7 +1671,8 @@ const steps = [
      {value:"unbekannt",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>`,label:"Noch unklar"}
    ]},
   {id:12,question:"Wohin sollen wir Ihre Bewertung senden?",hint:"Ihre Daten werden vertraulich behandelt.",type:"contact",
-   fields:[{key:"vorname",label:"Vorname",placeholder:"Max",type:"text"},{key:"nachname",label:"Nachname",placeholder:"Mustermann",type:"text"},{key:"email",label:"E-Mail-Adresse",placeholder:"max@beispiel.de",type:"email"},{key:"telefon",label:"Telefon (optional)",placeholder:"+49 123 456789",type:"tel"}]}
+   fields:[{key:"vorname",label:"Vorname",placeholder:"Max",type:"text"},{key:"nachname",label:"Nachname",placeholder:"Mustermann",type:"text"},{key:"email",label:"E-Mail-Adresse",placeholder:"max@beispiel.de",type:"email"},{key:"telefon",label:"Telefon (optional)",placeholder:"+49 123 456789",type:"tel"}]},
+  {id:13,question:"Bestätigen Sie Ihre E-Mail-Adresse",hint:"Wir haben Ihnen einen 6-stelligen Code geschickt.",type:"email-verify",key:"code"}
 ];
 
 // Filtert Steps, die nur unter bestimmten Bedingungen gezeigt werden (z.B. Grundstück nur bei Häusern)
@@ -1645,14 +1734,31 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
     step.fields.slice(0,2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
     html += `</div>`;
     step.fields.slice(2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
+    html += `<label class="consent-check" for="${bodyId}_consent"><input type="checkbox" id="${bodyId}_consent" ${answers.zustimmung ? 'checked' : ''} onchange="answers.zustimmung=this.checked"/><span>Ich bin damit einverstanden, dass ein Immobilienberater von ImmoWertChecker mich zu meiner Bewertung kontaktieren darf.</span></label>`;
+  } else if (step.type === 'email-verify') {
+    html += `<div class="contact-note">Code gesendet an <strong>${answers.email||''}</strong>. Bitte im Postfach (auch Spam-Ordner) nachschauen.</div>
+      <div class="field-group">
+        <label>Bestätigungscode</label>
+        <input type="text" inputmode="numeric" maxlength="6" placeholder="123456" id="${bodyId}_field_code" style="letter-spacing:0.3em; text-align:center; font-size:20px; font-weight:700;" oninput="answers.code=this.value"/>
+      </div>
+      <p id="${bodyId}_code_error" style="display:none; color:#ef4444; font-size:12px; margin:-8px 0 12px;">Der Code ist leider nicht korrekt. Bitte prüfen und erneut versuchen.</p>
+      <p style="text-align:center; font-size:12px; margin-bottom:4px;"><a href="#" onclick="event.preventDefault(); sendVerificationCode(true)" style="color:var(--orange); text-decoration:none;" id="${bodyId}_resend">Code erneut senden</a></p>`;
+    if (!window.__codeSentFor || window.__codeSentFor !== answers.email) {
+      window.__codeSentFor = answers.email;
+      setTimeout(() => sendVerificationCode(false), 50);
+    }
   }
 
   const isLast = currentStep === getTotalSteps();
   html += `<div class="wizard-nav">`;
   if (currentStep > 1) html += `<button class="btn-back" onclick="goBack()">←</button>`;
-  html += `<button class="btn-next" onclick="${isLast ? 'submitForm()' : 'goNext()'}">
+  if (step.type === 'email-verify') {
+    html += `<button class="btn-next" onclick="confirmCode()">Bestätigen</button></div>`;
+  } else {
+    html += `<button class="btn-next" onclick="${isLast ? 'submitForm()' : 'goNext()'}">
     ${isLast ? 'Bewertung anfordern' : (currentStep === 1 ? 'Jetzt kostenlos bewerten <span class="btn-arrow">→</span>' : 'Weiter <span class="btn-arrow">→</span>')}
   </button></div>`;
+  }
   html += `<div class="security-note">Verschlüsselt · DSGVO-konform</div>`;
 
   document.getElementById(bodyId).innerHTML = html;
@@ -1671,7 +1777,7 @@ function selectOpt(key, value, el, cls) {
   el.closest('.type-grid, .option-list').querySelectorAll(`.${cls}`).forEach(b => b.classList.remove('selected'));
   el.classList.add('selected');
   const step = visibleSteps()[currentStep-1];
-  if (step.type === 'type-grid' || step.type === 'options') setTimeout(() => goNext(), 260);
+  if (step.type === 'options') setTimeout(() => goNext(), 260);
 }
 
 function toggleMulti(key, value, el) {
@@ -1714,6 +1820,16 @@ function validateStep() {
   const step = visibleSteps()[currentStep-1];
   const suffix = isMobile() ? 'm' : '';
   const bodyId = suffix ? 'wizard-body-m' : 'wizard-body';
+  if (step.type === 'type-grid') {
+    if (!answers[step.key]) {
+      const grid = document.getElementById(bodyId).querySelector('.type-grid');
+      if (grid) {
+        grid.style.animation = 'none';
+        requestAnimationFrame(() => { grid.style.animation = 'shake .4s'; });
+      }
+      return false;
+    }
+  }
   if (step.type === 'fields' || step.type === 'contact') {
     const required = step.fields.filter(f => !f.label.includes('optional') && f.type !== 'tel');
     for (const f of required) {
@@ -1721,6 +1837,16 @@ function validateStep() {
       if (!el || !el.value.trim()) { el && el.focus(); el && (el.style.borderColor='#ef4444'); setTimeout(()=>{if(el)el.style.borderColor='';},2000); return false; }
     }
     step.fields.forEach(f => { const el = document.getElementById(`${bodyId}_field_${f.key}`); if(el) answers[f.key]=el.value; });
+  }
+  if (step.type === 'contact' && !answers.zustimmung) {
+    const label = document.getElementById(`${bodyId}_consent`)?.closest('.consent-check');
+    if (label) {
+      label.style.color = '#ef4444';
+      label.style.animation = 'none';
+      requestAnimationFrame(() => { label.style.animation = 'shake .4s'; });
+      setTimeout(() => { label.style.color = ''; }, 2000);
+    }
+    return false;
   }
   return true;
 }
@@ -1788,6 +1914,49 @@ function showError(name, low, high, avg) {
     </div>`;
 }
 
+// ── E-MAIL-VERIFIZIERUNG (Desktop / mobile Sektion) ────────────────
+async function sendVerificationCode(isResend) {
+  const suffix = isMobile() ? 'm' : '';
+  const bodyId = suffix ? 'wizard-body-m' : 'wizard-body';
+  const resendEl = document.getElementById(`${bodyId}_resend`);
+  if (isResend && resendEl) resendEl.textContent = 'Wird gesendet …';
+  try {
+    await fetch('https://wertcheck.onrender.com/send-code', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email: answers.email, vorname: answers.vorname })
+    });
+    if (isResend && resendEl) { resendEl.textContent = 'Code erneut gesendet ✓'; setTimeout(() => { resendEl.textContent = 'Code erneut senden'; }, 3000); }
+  } catch (e) {
+    console.log('Code-Versand fehlgeschlagen:', e.message);
+    if (resendEl) resendEl.textContent = 'Fehler — nochmal versuchen';
+  }
+}
+
+async function confirmCode() {
+  const suffix = isMobile() ? 'm' : '';
+  const bodyId = suffix ? 'wizard-body-m' : 'wizard-body';
+  const errorEl = document.getElementById(`${bodyId}_code_error`);
+  const code = (answers.code || '').trim();
+  if (!code) { if (errorEl) errorEl.style.display = 'block'; return; }
+  try {
+    const res = await fetch('https://wertcheck.onrender.com/verify-code', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email: answers.email, code })
+    });
+    const data = await res.json();
+    if (data.success) {
+      if (errorEl) errorEl.style.display = 'none';
+      submitForm();
+    } else {
+      if (errorEl) errorEl.style.display = 'block';
+      const input = document.getElementById(`${bodyId}_field_code`);
+      if (input) { input.style.borderColor = '#ef4444'; input.style.animation = 'none'; requestAnimationFrame(() => { input.style.animation = 'shake .4s'; }); }
+    }
+  } catch (e) {
+    if (errorEl) { errorEl.textContent = 'Verbindung fehlgeschlagen — bitte erneut versuchen.'; errorEl.style.display = 'block'; }
+  }
+}
+
 async function submitForm() {
   if (!validateStep()) return;
 
@@ -1851,19 +2020,7 @@ async function submitForm() {
 }
 
 
-function rateStar(rating) {
-  const labels = ['','Nicht zufrieden','Verbesserungswürdig','In Ordnung','Gut','Ausgezeichnet!'];
-  for(let i=1; i<=5; i++) {
-    const s = document.getElementById('star-'+i);
-    if(s) s.style.color = i <= rating ? '#0097B2' : '#C8E8EE';
-  }
-  const fb = document.getElementById('star-feedback');
-  if(fb) fb.textContent = labels[rating];
-  // Bewertung speichern für spätere Follow-up E-Mail
-  answers._rating = rating;
-}
-
-function resetWizard() { currentStep=1; answers={}; if(isHeroMobile()){ renderAll(); } else { render(); } }
+function resetWizard() { currentStep=1; answers={}; window.__codeSentFor=null; if(isHeroMobile()){ renderAll(); } else { render(); } }
 
 
 function toggleFak(btn) {
