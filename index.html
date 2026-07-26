@@ -174,22 +174,24 @@ nav.scrolled {
    overrides (".hero-mobile-wizard .x"), so source order decides the
    winner. Keeping this block first lets the later mobile rules win. */
 .wizard-glass {
-  background: #ffffff;
-  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.5);
   border-radius: 20px;
   padding: 24px 20px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.35);
 }
 .wizard-glass .step-label { color: var(--muted); }
-.wizard-glass .progress-bar { background: var(--border); box-shadow: none; }
+.wizard-glass .progress-bar { background: rgba(107,122,141,0.25); box-shadow: none; }
 .wizard-glass .wizard-question { color: var(--text); font-size:18px; }
 .wizard-glass .wizard-hint { color: var(--muted); }
 .wizard-glass .progress-pct { color: var(--orange); }
 
-/* Type buttons — white theme, petrol icons */
+/* Type buttons — glass theme, petrol icons */
 .wizard-glass .type-btn {
-  background: var(--cream);
-  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.5);
+  border: 1px solid rgba(107,122,141,0.2);
   border-radius: 12px;
   transition: all .2s;
 }
@@ -197,7 +199,7 @@ nav.scrolled {
   border-color: var(--orange);
 }
 .wizard-glass .type-btn.selected {
-  background: var(--cream);
+  background: rgba(255,255,255,0.85);
   border-color: #0097B2;
   box-shadow: 0 0 0 1px #0097B2;
 }
@@ -205,10 +207,10 @@ nav.scrolled {
 .wizard-glass .type-icon svg { stroke: #0097B2; }
 .wizard-glass .type-btn.selected .type-icon svg { stroke: #0097B2; }
 
-/* Option buttons — white theme */
+/* Option buttons — glass theme */
 .wizard-glass .option-btn {
-  background: var(--cream);
-  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.5);
+  border: 1px solid rgba(107,122,141,0.2);
   color: var(--text);
   border-radius: 10px;
 }
@@ -216,39 +218,39 @@ nav.scrolled {
   border-color: var(--orange);
 }
 .wizard-glass .option-btn.selected {
-  background: var(--cream);
+  background: rgba(255,255,255,0.85);
   border-color: #0097B2;
 }
 .wizard-glass .opt-icon { color: #0097B2; }
 
-/* Fields — white theme */
+/* Fields — glass theme */
 .wizard-glass .field-group label { color: var(--muted); }
 .wizard-glass .field-group input {
-  background: var(--cream);
-  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.5);
+  border: 1px solid rgba(107,122,141,0.2);
   color: var(--text);
   border-radius: 10px;
 }
 .wizard-glass .field-group input::placeholder { color: rgba(107,122,141,0.5); }
 .wizard-glass .field-group input:focus {
   border-color: #0097B2;
-  background: #fff;
+  background: rgba(255,255,255,0.9);
   box-shadow: 0 0 0 3px rgba(0,151,178,0.15);
 }
 
-/* Slider — white theme */
-.wizard-glass input[type="range"] { background: var(--border); }
+/* Slider — glass theme */
+.wizard-glass input[type="range"] { background: rgba(107,122,141,0.25); }
 .wizard-glass .slider-label { color: var(--muted); }
-.wizard-glass .slider-number-wrap { background: var(--cream); border: 1px solid var(--border); }
+.wizard-glass .slider-number-wrap { background: rgba(255,255,255,0.5); border: 1px solid rgba(107,122,141,0.2); }
 .wizard-glass .slider-number { color: var(--text); }
 .wizard-glass .slider-unit { color: var(--muted); }
 .wizard-glass .slider-minmax { color: var(--muted); }
 
-/* Nav buttons — white theme */
+/* Nav buttons — glass theme */
 .wizard-glass .btn-back {
-  border: 1px solid var(--border);
+  border: 1px solid rgba(107,122,141,0.2);
   color: var(--muted);
-  background: var(--cream);
+  background: rgba(255,255,255,0.5);
   border-radius: 10px;
 }
 .wizard-glass .btn-back:hover { border-color: var(--orange); color: var(--text); }
@@ -301,18 +303,14 @@ nav.scrolled {
 /* Wizard header — Label + % in einer Zeile, Bar darunter (Apple-inspiriert) */
 .wizard-header {
   display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-areas: "label pct" "bar bar";
-  column-gap: 12px;
+  grid-template-columns: 1fr;
+  grid-template-areas: "pct" "bar";
   row-gap: 9px;
   align-items: center;
   margin-bottom: 22px;
 }
 .step-label {
-  grid-area: label;
-  font-size: 11px; font-weight: 600; letter-spacing: 0.09em;
-  text-transform: uppercase; color: var(--muted);
-  margin-bottom: 0;
+  display: none;
 }
 .progress-pct {
   grid-area: pct;
@@ -578,8 +576,10 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   }
   .hero-mobile-wizard .wizard-glass {
     padding: 15px 13px;
-    background: #ffffff;
-    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.5);
   }
   .hero-mobile-wizard .wizard-brand { margin-bottom: 12px; }
   .hero-mobile-wizard .wizard-brand img { height: 16px; }
