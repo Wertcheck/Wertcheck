@@ -179,6 +179,7 @@ nav.scrolled {
   border-radius: 20px;
   padding: 24px 20px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  overflow: hidden;
 }
 .wizard-glass .step-label { color: var(--muted); }
 .wizard-glass .progress-bar { background: var(--border); box-shadow: none; }
@@ -258,20 +259,19 @@ nav.scrolled {
 /* Mini-Logo oben links in der Wizard-Karte */
 .wizard-brand {
   display: flex; align-items: center; justify-content: center;
-  margin-bottom: 20px;
-}
-.wizard-brand-badge {
-  display: inline-flex; align-items: center; justify-content: center;
+  margin: -40px -36px 24px -36px;
+  padding: 20px 36px;
   background:
-    linear-gradient(rgba(8,16,28,0.45), rgba(8,16,28,0.45)),
+    linear-gradient(rgba(8,16,28,0.4), rgba(8,16,28,0.4)),
     url('header_png.png') center center / cover fixed;
-  border-radius: 10px;
-  padding: 10px 22px;
-  border: 1px solid rgba(255,255,255,0.18);
   box-shadow:
-    inset 0 2px 5px rgba(0,0,0,0.4),
-    inset 0 -1px 0 rgba(255,255,255,0.08),
-    0 1px 1px rgba(255,255,255,0.35);
+    inset 0 -1px 0 rgba(0,0,0,0.15),
+    inset 0 2px 4px rgba(0,0,0,0.25);
+}
+/* Im schmaleren Glass-Wizard: eigener Innenabstand ausgleichen */
+.wizard-glass .wizard-brand {
+  margin: -24px -20px 20px -20px;
+  padding: 16px 20px;
 }
 .wizard-brand img { height: 34px; width: auto; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4)); }
 
@@ -308,7 +308,7 @@ nav.scrolled {
 
 /* ── WIZARD CARD ────────────────────────────────────────────────── */
 .wizard-card {
-  background:#fff; border-radius:20px; padding:40px 36px;
+  background:#fff; border-radius:20px; padding:40px 36px; overflow:hidden;
   box-shadow:0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.08);
 }
 /* Wizard header — Label + % in einer Zeile, Bar darunter (Apple-inspiriert) */
@@ -590,8 +590,10 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     background: #ffffff;
     border: 1px solid var(--border);
   }
-  .hero-mobile-wizard .wizard-brand { margin-bottom: 14px; }
-  .hero-mobile-wizard .wizard-brand-badge { padding: 6px 12px; border-radius: 7px; }
+  .hero-mobile-wizard .wizard-brand {
+    margin: -15px -13px 14px -13px;
+    padding: 12px 13px;
+  }
   .hero-mobile-wizard .wizard-brand img { height: 26px; }
   .hero-mobile-wizard .wizard-header { margin-bottom: 14px; row-gap: 7px; }
   .hero-mobile-wizard .wizard-question { font-size:14px; margin-bottom:4px; }
@@ -841,7 +843,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     </div>
     <!-- Wizard: nur Desktop -->
     <div class="wizard-card" id="wizard">
-      <div class="wizard-brand"><div class="wizard-brand-badge"><img src="logo_png.png" alt="ImmoWertChecker"></div></div>
+      <div class="wizard-brand"><img src="logo_png.png" alt="ImmoWertChecker"></div>
       <div class="wizard-header">
         <div class="step-label" id="step-label">Schritt 1 von 12</div>
         <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
@@ -854,7 +856,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   <!-- Mobile: Glass Wizard direkt sichtbar, außerhalb des Grids -->
   <div class="hero-mobile-wizard" id="hero-wizard-mobile">
     <div class="wizard-glass" id="wizard-glass-card">
-      <div class="wizard-brand"><div class="wizard-brand-badge"><img src="logo_png.png" alt="ImmoWertChecker"></div></div>
+      <div class="wizard-brand"><img src="logo_png.png" alt="ImmoWertChecker"></div>
       <div class="wizard-header">
         <div class="step-label" id="step-label-hm">Schritt 1 von 12</div>
         <div class="progress-bar"><div class="progress-fill" id="progress-fill-hm" style="width:0%"></div></div>
@@ -879,7 +881,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 <section id="wizard-mobile-section" style="padding:32px 5%; display:none;">
   <div style="max-width:480px; margin:0 auto;">
     <div class="wizard-card" id="wizard-mobile">
-      <div class="wizard-brand"><div class="wizard-brand-badge"><img src="logo_png.png" alt="ImmoWertChecker"></div></div>
+      <div class="wizard-brand"><img src="logo_png.png" alt="ImmoWertChecker"></div>
       <div class="wizard-header">
         <div class="step-label" id="step-label-m">Schritt 1 von 12</div>
         <div class="progress-bar"><div class="progress-fill" id="progress-fill-m" style="width:0%"></div></div>
