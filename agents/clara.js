@@ -1,135 +1,95 @@
 /**
- * CLARA — Bewertungs-Agentin
- * Analysiert die Immobiliendaten und erstellt eine professionelle
- * Marktwerteinschätzung mit individuellen Texten per Claude API.
+ * CLARA — Immobilienanalystin
+ * ────────────────────────────
+ * Profil: Sachlich, präzise, aber nahbar. Erklärt Bewertungen so, dass
+ * sie auch Laien ohne Vorkenntnisse sofort verstehen — ohne
+ * Fachchinesisch, ohne Übertreibung, immer ehrlich in der Einschätzung.
  */
 
 const Anthropic = require('@anthropic-ai/sdk');
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-// ── WERTBERECHNUNG ─────────────────────────────────────────────
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+const fmt = (n) => n.toLocaleString('de-DE') + ' €';
+
+// Dieselbe Formel wie im Frontend-Wizard (calcWert), damit die
+// Bewertung serverseitig unabhängig und konsistent nachvollzogen wird —
+// wir verlassen uns nicht auf ggf. bereits vom Client mitgeschickte Werte.
 function berechneWert(daten) {
-  const wfl = parseInt(daten.wohnflaeche) || 100;
-  let basis = 3000;
+  const wfl = daten.wohnflaeche;
+  let base = 3000;
+  if (daten.ausstattung === 'gehoben') base = 4200;
+  if (daten.ausstattung === 'luxus') base = 6000;
+  if (daten.ausstattung === 'einfach') base = 2200;
+  if (daten.zustand === 'vollsaniert') base *= 1.15;
+  if (daten.zustand === 'renovierungsbedarf') base *= 0.80;
+  if (daten.baujahr === 'nach2015') base *= 1.12;
+  if (daten.baujahr === 'vor1950') base *= 0.90;
 
-  // Ausstattung
-  if (daten.ausstattung === 'luxus')    basis = 6000;
-  if (daten.ausstattung === 'gehoben')  basis = 4200;
-  if (daten.ausstattung === 'normal')   basis = 3000;
-  if (daten.ausstattung === 'einfach')  basis = 2200;
-
-  // Zustand
-  if (daten.zustand === 'vollsaniert')       basis *= 1.15;
-  if (daten.zustand === 'teilmodernisiert')  basis *= 1.05;
-  if (daten.zustand === 'renovierungsbedarf') basis *= 0.80;
-
-  // Baujahr
-  if (daten.baujahr === 'nach2015')   basis *= 1.12;
-  if (daten.baujahr === '2000-2015')  basis *= 1.05;
-  if (daten.baujahr === '1950-1979')  basis *= 0.92;
-  if (daten.baujahr === 'vor1950')    basis *= 0.88;
-
-  // Heizung (Energieeffizienz)
-  if (daten.heizung === 'waermepumpe') basis *= 1.08;
-  if (daten.heizung === 'solar')       basis *= 1.06;
-  if (daten.heizung === 'oel')         basis *= 0.95;
-
-  const avg  = Math.round((wfl * basis) / 1000) * 1000;
-  const low  = Math.round((avg * 0.92) / 1000) * 1000;
-  const high = Math.round((avg * 1.08) / 1000) * 1000;
-
-  return { wert_low: low, wert_avg: avg, wert_high: high, qm_preis: Math.round(basis) };
+  const low = Math.round((wfl * base * 0.95) / 1000) * 1000;
+  const high = Math.round((wfl * base * 1.05) / 1000) * 1000;
+  const avg = Math.round((low + high) / 2 / 1000) * 1000;
+  return { low, high, avg };
 }
 
-// ── KI-BEWERTUNGSTEXT ──────────────────────────────────────────
-async function bewerten(daten) {
-  // Lokale Berechnung
-  const werte = berechneWert(daten);
+function fallbackText(daten, wert) {
+  return {
+    einschaetzung: `Ihre ${daten.typ} in ${daten.ort || 'Ihrer Region'} liegt mit einer geschätzten ` +
+      `Preisspanne von ${fmt(wert.low)} bis ${fmt(wert.high)} im marktüblichen Rahmen für ` +
+      `vergleichbare Objekte dieser Größe und Ausstattung.`,
+    highlights: [
+      daten.zustand === 'vollsaniert' ? 'Vollsanierter Zustand steigert den Wert' : 'Solider Gesamtzustand',
+      daten.baujahr === 'nach2015' ? 'Neubau-Standard wirkt sich positiv aus' : 'Baujahr im marktüblichen Rahmen',
+      daten.merkmale.length ? `Zusatzmerkmale wie ${daten.merkmale[0]} steigern die Attraktivität` : 'Solide Grundausstattung'
+    ],
+    kaeuferprofil: 'Vor allem Käufer, die eine Immobilie zur Eigennutzung oder als Kapitalanlage suchen.'
+  };
+}
 
-  // System-Prompt: Claras Persönlichkeit und Auftrag
-  const systemPrompt = `Du bist Clara, eine erfahrene Immobilienbewertungs-Expertin bei WertCheck.
-Du erstellst professionelle, präzise und vertrauenswürdige Immobilienbewertungen für Eigentümer in Deutschland.
+async function analysiere(daten) {
+  const wert = berechneWert(daten);
 
-Deine Tonalität:
-- Professionell aber persönlich
-- Sachlich und datenbasiert
-- Niemals übertrieben positiv oder negativ
-- Immer auf Deutsch
+  const systemPrompt =
+    'Du bist Clara, Immobilienanalystin bei ImmoWertChecker. Sachlich, präzise, aber nahbar. ' +
+    'Du schreibst ausschließlich auf Deutsch, in kurzen, klaren Sätzen ohne Floskeln oder Fachchinesisch.';
 
-Wichtige Regeln:
-- Niemals "Makler" schreiben — immer "Immobilienberater"
-- Keine unrealistischen Versprechen
-- Immer darauf hinweisen dass dies eine Ersteinschätzung ist`;
+  const userPrompt = `
+Erstelle eine kurze, verständliche Einschätzung für folgende Immobilie:
 
-  // User-Prompt mit den Kundendaten
-  const userPrompt = `Erstelle eine professionelle Immobilienbewertung für folgendes Objekt:
-
-OBJEKTDATEN:
-- Typ: ${daten.typ || '–'}
-- Ort: ${daten.plz} ${daten.ort}
+- Typ: ${daten.typ}
+- Lage: ${daten.plz} ${daten.ort}
 - Wohnfläche: ${daten.wohnflaeche} m²
-- Grundstück: ${daten.grundstueck} m²
-- Baujahr: ${daten.baujahr}
+${daten.grundstueck ? `- Grundstück: ${daten.grundstueck} m²\n` : ''}- Baujahr: ${daten.baujahr}
 - Zustand: ${daten.zustand}
 - Ausstattung: ${daten.ausstattung}
 - Heizung: ${daten.heizung}
-- Besonderheiten: ${Array.isArray(daten.merkmale) ? daten.merkmale.join(', ') : (daten.merkmale || 'keine')}
-- Ziel des Eigentümers: ${daten.ziel}
-- Zeitplan: ${daten.zeitplan}
+- Besondere Merkmale: ${daten.merkmale.length ? daten.merkmale.join(', ') : 'keine angegeben'}
+- Geschätzte Preisspanne: ${fmt(wert.low)} – ${fmt(wert.high)} (Durchschnitt ${fmt(wert.avg)})
 
-BERECHNETER MARKTWERT:
-- Niedrig: ${werte.wert_low.toLocaleString('de-DE')} €
-- Durchschnitt: ${werte.wert_avg.toLocaleString('de-DE')} €
-- Hoch: ${werte.wert_high.toLocaleString('de-DE')} €
-- Preis pro m²: ${werte.qm_preis.toLocaleString('de-DE')} €
-
-Erstelle folgende Texte (jeweils 2-4 Sätze):
-1. ZUSAMMENFASSUNG: Kurze Einschätzung des Objekts und seiner Marktposition
-2. LAGEANALYSE: Einschätzung der Lage basierend auf PLZ/Ort
-3. WERTTREIBER: Was den Wert dieser Immobilie positiv beeinflusst
-4. HANDLUNGSEMPFEHLUNG: Konkrete nächste Schritte für den Eigentümer
-
-Antworte NUR als JSON in diesem Format:
+Antworte NUR mit JSON in exakt diesem Format, kein weiterer Text:
 {
-  "zusammenfassung": "...",
-  "lageanalyse": "...",
-  "werttreiber": "...",
-  "handlungsempfehlung": "..."
+  "einschaetzung": "2-3 Sätze allgemeine Einordnung des Werts",
+  "highlights": ["3 kurze Stichpunkte, was den Wert positiv beeinflusst"],
+  "kaeuferprofil": "1 Satz, welche Zielgruppe typischerweise an so einer Immobilie interessiert ist"
 }`;
 
   try {
-    const response = await client.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 1000,
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-5',
+      max_tokens: 500,
       system: systemPrompt,
       messages: [{ role: 'user', content: userPrompt }]
     });
 
-    const text = response.content[0].text;
-    const texte = JSON.parse(text.replace(/```json|```/g, '').trim());
+    const text = response.content[0].text.trim();
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    const text_parsed = JSON.parse(jsonMatch ? jsonMatch[0] : text);
 
-    return {
-      ...werte,
-      ...texte,
-      kunde_name: `${daten.vorname} ${daten.nachname}`,
-      datum: new Date().toLocaleDateString('de-DE', {
-        day: '2-digit', month: '2-digit', year: 'numeric'
-      }),
-    };
-
-  } catch (error) {
-    console.error('Clara API Fehler:', error.message);
-    // Fallback ohne KI-Text
-    return {
-      ...werte,
-      zusammenfassung: `Ihre Immobilie in ${daten.plz} ${daten.ort} wurde auf Basis Ihrer Angaben bewertet.`,
-      lageanalyse: `Die Lage in ${daten.ort} wurde in unsere Bewertung einbezogen.`,
-      werttreiber: `${daten.ausstattung} Ausstattung und ${daten.zustand}er Zustand beeinflussen den Wert positiv.`,
-      handlungsempfehlung: 'Wir empfehlen ein persönliches Gespräch mit einem erfahrenen Immobilienberater.',
-      kunde_name: `${daten.vorname} ${daten.nachname}`,
-      datum: new Date().toLocaleDateString('de-DE'),
-    };
+    return { wert, text: text_parsed };
+  } catch (err) {
+    console.error('[Clara] Claude-Anfrage fehlgeschlagen, nutze Fallback-Text:', err.message);
+    return { wert, text: fallbackText(daten, wert) };
   }
 }
 
-module.exports = { bewerten };
+module.exports = { analysiere, berechneWert, fmt };
