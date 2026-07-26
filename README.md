@@ -1,4 +1,4 @@
-# WertCheck Backend
+# ImmoWertChecker Backend
 
 KI-Agenten-Team für die automatische Immobilienbewertung.
 

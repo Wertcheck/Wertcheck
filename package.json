@@ -1,7 +1,7 @@
 {
-  "name": "wertcheck-backend",
+  "name": "immowertchecker-backend",
   "version": "2.0.0",
-  "description": "WertCheck KI-Agenten Backend (Jonas, Clara, Tim, Elena)",
+  "description": "ImmoWertChecker KI-Agenten Backend (Jonas, Clara, Tim, Elena)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

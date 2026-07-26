@@ -34,5 +34,5 @@ app.post('/bewertung', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ WertCheck Backend läuft auf Port ${PORT}`);
+  console.log(`✅ ImmoWertChecker Backend läuft auf Port ${PORT}`);
 });
