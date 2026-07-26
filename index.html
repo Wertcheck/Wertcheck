@@ -140,7 +140,7 @@ nav.scrolled {
   font-weight:800; color:#fff; line-height:1.08;
   margin-bottom:22px; letter-spacing:-0.03em;
 }
-.hero-accent { color:#0097B2; font-style:italic; }
+.hero-accent { color:#0097B2; }
 .hero-desc { font-size:16px; font-weight:300; color:rgba(255,255,255,0.65); max-width:420px; margin-bottom:28px; }
 /* Rating Badge — base rules must stay before the media queries below,
    otherwise their equal-specificity selectors win the cascade on every
@@ -168,6 +168,7 @@ nav.scrolled {
   font-weight: 300;
   color: rgba(255,255,255,0.45);
 }
+.hero-rating-mobile-dup { display: none; }
 
 /* ── GLASMORPHISM WIZARD (Mobile) — base rules must stay before the
    media queries below: many of these use two-class selectors
@@ -243,6 +244,10 @@ nav.scrolled {
 /* Slider — glass */
 .wizard-glass input[type="range"] { background: rgba(255,255,255,0.15); }
 .wizard-glass .slider-label { color: rgba(255,255,255,0.5); }
+.wizard-glass .slider-number-wrap { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); }
+.wizard-glass .slider-number { color: #ffffff; }
+.wizard-glass .slider-unit { color: rgba(255,255,255,0.5); }
+.wizard-glass .slider-minmax { color: rgba(255,255,255,0.4); }
 
 /* Nav buttons — glass */
 .wizard-glass .btn-back {
@@ -363,11 +368,26 @@ nav.scrolled {
 .field-group input:focus { border-color:var(--orange); box-shadow:0 0 0 3px rgba(0,151,178,0.15); }
 .input-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .slider-wrap { margin-bottom:18px; }
-.slider-label-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; }
+.slider-label-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; }
 .slider-label { font-size:11px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
 .slider-value { font-family:var(--f-head); font-size:20px; font-weight:700; color:var(--orange); }
+.slider-input-row { display:flex; align-items:center; gap:14px; margin-bottom:10px; }
+.slider-input-row input[type="range"] { flex:1; margin:0; }
+.slider-number-wrap {
+  display:flex; align-items:center; gap:6px; flex-shrink:0;
+  background:var(--cream); border:1px solid var(--border); border-radius:10px;
+  padding:8px 10px;
+}
+.slider-number {
+  width:64px; border:none; background:none; outline:none;
+  font-family:var(--f-head); font-size:16px; font-weight:700; color:var(--text);
+  text-align:right; -moz-appearance:textfield;
+}
+.slider-number::-webkit-outer-spin-button, .slider-number::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+.slider-unit { font-size:12px; color:var(--muted); font-weight:600; }
 input[type="range"] { width:100%; -webkit-appearance:none; height:2px; background:var(--border); outline:none; border-radius:99px; }
 input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:var(--orange); cursor:pointer; border:3px solid #fff; box-shadow:0 2px 8px rgba(0,151,178,0.4); }
+input[type="range"]::-moz-range-thumb { width:20px; height:20px; border-radius:50%; background:var(--orange); cursor:pointer; border:3px solid #fff; box-shadow:0 2px 8px rgba(0,151,178,0.4); }
 .slider-minmax { display:flex; justify-content:space-between; font-size:11px; color:var(--muted); }
 .contact-note { background:rgba(0,151,178,0.08); border-left:2px solid var(--orange); padding:10px 14px; font-size:12px; color:var(--text); margin-bottom:16px; font-weight:300; }
 .wizard-nav { display:flex; gap:8px; margin-top:4px; }
@@ -517,23 +537,28 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   .hero-inner { grid-template-columns:1fr; gap:0; display:block; }
   .hero-inner .wizard-card { display:none !important; }
 
-  /* Kompakte Headline — 2 statt 3 Zeilen */
-  .hero-eyebrow { font-size:9px; letter-spacing:0.16em; margin-bottom:8px; padding-left:12px; }
-  .hero-left h1 { font-size:24px; line-height:1.18; margin-bottom:10px; }
+  /* Kompakte Headline — 2 statt 3 Zeilen, zentriert und größer */
+  .hero-left { text-align: center; }
+  .hero-eyebrow { font-size:9px; letter-spacing:0.16em; margin-bottom:10px; padding-left:0; border-left:none; display:inline-block; }
+  .hero-left h1 { font-size:30px; line-height:1.16; margin-bottom:10px; }
   .hero-brk-1 { display:none; }
   .hero-desc { display:none; }
   .hero-checks { display:none; }
 
-  /* Rating auf Mobile — Sterne, Zahl und Text in einer Zeile */
-  .hero-rating {
+  /* Rating auf Mobile — Original ausblenden, stattdessen als Duplikat unter dem Wizard zeigen */
+  .hero-rating:not(.hero-rating-mobile-dup) { display: none; }
+  .hero-rating-mobile-dup {
+    display: flex;
     flex-wrap: nowrap;
     align-items: baseline;
+    justify-content: center;
     gap: 4px 6px;
-    margin-bottom: 12px;
+    width: 94%;
+    margin: 14px auto 0;
   }
-  .hero-rating-stars { font-size:11px; letter-spacing:0.5px; flex-shrink:0; }
-  .hero-rating-score { font-size:11px; flex-shrink:0; }
-  .hero-rating-sub { flex-basis:auto; font-size:9.5px; white-space:nowrap; }
+  .hero-rating-mobile-dup .hero-rating-stars { font-size:11px; letter-spacing:0.5px; flex-shrink:0; }
+  .hero-rating-mobile-dup .hero-rating-score { font-size:11px; flex-shrink:0; }
+  .hero-rating-mobile-dup .hero-rating-sub { flex-basis:100%; font-size:9.5px; white-space:nowrap; text-align:center; }
 
   /* CTA Button verstecken auf Mobile — Wizard ist direkt da */
   .hero-mobile-cta { display: none !important; }
@@ -791,7 +816,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   <div class="hero-inner">
     <div class="hero-left">
       <div class="hero-eyebrow">Kostenlos · Unverbindlich · In 3 Minuten</div>
-      <h1>Was ist Ihre <br class="hero-brk hero-brk-1"><span class="hero-accent">Immobilie</span><br class="hero-brk hero-brk-2">wirklich wert?</h1>
+      <h1>Was ist <span class="hero-accent">Ihre <br class="hero-brk hero-brk-1">Immobilie</span><br class="hero-brk hero-brk-2">wirklich Wert?</h1>
       <p class="hero-desc" style="font-size:15px; color:rgba(255,255,255,0.7); margin-bottom:20px; font-weight:300; line-height:1.7;">
         Erfahren Sie in nur 3 Minuten den Wert Ihrer Immobilie — kostenlos &amp; unverbindlich.
       </p>
@@ -829,6 +854,12 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
       </div>
       <div id="wizard-body-hm"></div>
     </div>
+  </div>
+  <!-- Rating Badge — Mobile-Duplikat, erscheint unter dem Wizard -->
+  <div class="hero-rating hero-rating-mobile-dup">
+    <span class="hero-rating-stars">★★★★★</span>
+    <span class="hero-rating-score">4,9 / 5</span>
+    <span class="hero-rating-sub">basierend auf ersten Nutzerbewertungen</span>
   </div>
   <!-- Scroll hint desktop -->
   <div class="scroll-hint">
@@ -1306,12 +1337,12 @@ function renderAll() {
 }
 
 function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
-  const step = steps[currentStep - 1];
-  const pct = Math.round(((currentStep - 1) / totalSteps) * 100);
+  const step = visibleSteps()[currentStep - 1];
+  const pct = Math.round(((currentStep - 1) / getTotalSteps()) * 100);
   const lbl = document.getElementById(labelId);
   const fill = document.getElementById(fillId);
   const pct_el = document.getElementById(pctId);
-  if(lbl) lbl.textContent = `Schritt ${step.id} von ${totalSteps}`;
+  if(lbl) lbl.textContent = `Schritt ${currentStep} von ${getTotalSteps()}`;
   if(fill) fill.style.width = pct + '%';
   if(pct_el) pct_el.textContent = pct + '%';
 
@@ -1333,8 +1364,9 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
     html += `</div>`;
   } else if (step.type === 'multi') {
     if (!answers[step.key]) answers[step.key] = [];
+    const visOpts = step.options.filter(o => !o.gewerbeOnly || answers.type === 'gewerbe');
     html += `<div class="type-grid">`;
-    step.options.forEach(opt => {
+    visOpts.forEach(opt => {
       const sel = (answers[step.key]||[]).includes(opt.value) ? 'selected' : '';
       html += `<button class="type-btn ${sel}" onclick="toggleMulti('${step.key}','${opt.value}',this)"><span class="type-icon">${opt.icon}</span><span class="type-label">${opt.label}</span></button>`;
     });
@@ -1346,7 +1378,8 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
     });
   } else if (step.type === 'slider') {
     const val = answers[step.key] !== undefined ? answers[step.key] : step.default;
-    html += `<div class="slider-wrap"><div class="slider-label-row"><span class="slider-label">${step.label}</span><span class="slider-value" id="${bodyId}_sv">${val.toLocaleString('de-DE')} ${step.unit}</span></div><input type="range" min="${step.min}" max="${step.max}" step="${step.step}" value="${val}" oninput="updateSlider('${step.key}',this.value,'${step.unit}','${bodyId}_sv')"/><div class="slider-minmax"><span>${step.min} ${step.unit}</span><span>${step.max.toLocaleString('de-DE')} ${step.unit}</span></div></div>`;
+    const rId = `${bodyId}_sr_${step.key}`, nId = `${bodyId}_sn_${step.key}`;
+    html += `<div class="slider-wrap"><div class="slider-label-row"><span class="slider-label">${step.label}</span></div><div class="slider-input-row"><input type="range" id="${rId}" min="${step.min}" max="${step.max}" step="${step.step}" value="${val}" oninput="updateSlider('${step.key}',this.value,'${nId}')"/><div class="slider-number-wrap"><input type="number" class="slider-number" id="${nId}" min="${step.min}" max="${step.max}" step="${step.step}" value="${val}" oninput="updateSliderNumber('${step.key}',this.value,'${rId}')" onchange="clampSliderNumber('${step.key}',${step.min},${step.max},'${nId}','${rId}')"/><span class="slider-unit">${step.unit}</span></div></div><div class="slider-minmax"><span>${step.min} ${step.unit}</span><span>${step.max.toLocaleString('de-DE')} ${step.unit}</span></div></div>`;
     answers[step.key] = val;
   } else if (step.type === 'contact') {
     html += `<div class="contact-note">Ihre Daten werden vertraulich behandelt.</div>`;
@@ -1356,7 +1389,7 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
     step.fields.slice(2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
   }
 
-  const isLast = currentStep === totalSteps;
+  const isLast = currentStep === getTotalSteps();
   html += `<div class="wizard-nav">`;
   if (currentStep > 1) html += `<button class="btn-back" onclick="goBackS('${suffix}')">←</button>`;
   html += `<button class="btn-next" onclick="${isLast ? `submitFormS('${suffix}')` : `goNextS('${suffix}')`}">${isLast ? 'Bewertung anfordern' : 'Weiter →'}</button></div>`;
@@ -1370,13 +1403,13 @@ function selectOptS(key, value, el, cls, suffix) {
   answers[key] = value;
   el.closest('.type-grid, .option-list').querySelectorAll(`.${cls}`).forEach(b => b.classList.remove('selected'));
   el.classList.add('selected');
-  const step = steps[currentStep-1];
+  const step = visibleSteps()[currentStep-1];
   if (step.type === 'type-grid' || step.type === 'options') setTimeout(() => goNextS(suffix), 260);
 }
 
 function goNextS(suffix) {
   if (!validateStepS(suffix)) return;
-  if (currentStep < totalSteps) { currentStep++; renderAll(); }
+  if (currentStep < getTotalSteps()) { currentStep++; renderAll(); }
 }
 
 function goBackS(suffix) {
@@ -1384,7 +1417,7 @@ function goBackS(suffix) {
 }
 
 function validateStepS(suffix) {
-  const step = steps[currentStep-1];
+  const step = visibleSteps()[currentStep-1];
   const bodyId = suffix ? `wizard-body-${suffix}` : 'wizard-body';
   if (step.type === 'fields' || step.type === 'contact') {
     const required = step.fields.filter(f => f.type !== 'tel');
@@ -1463,7 +1496,6 @@ if (isMobile()) {
 }
 
 // ── WIZARD STATE ──────────────────────────────────────────────────
-const totalSteps = 12;
 let currentStep = 1;
 let answers = {};
 
@@ -1513,7 +1545,7 @@ const steps = [
    ]},
   {id:2,question:"Wo befindet sich die Immobilie?",hint:"Geben Sie die Postleitzahl und den Ort ein.",type:"fields",
    fields:[{key:"plz",label:"Postleitzahl",placeholder:"z. B. 80331",type:"text"},{key:"ort",label:"Stadt / Gemeinde",placeholder:"z. B. München",type:"text"}]},
-  {id:3,question:"Wie groß ist die Wohnfläche?",hint:"Geben Sie die Wohnfläche in Quadratmetern an.",type:"slider",key:"wohnflaeche",min:20,max:500,default:100,step:5,unit:"m²",label:"Wohnfläche"},
+  {id:3,question:"Wie groß ist die Wohnfläche?",hint:"Geben Sie die Wohnfläche in Quadratmetern an.",type:"slider",key:"wohnflaeche",min:20,max:500,default:100,step:1,unit:"m²",label:"Wohnfläche"},
   {id:4,question:"In welchem Jahr wurde die Immobilie gebaut?",hint:"Das Baujahr beeinflusst den Wert erheblich.",type:"options",key:"baujahr",
    options:[
      {value:"vor1950",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V9l8-6 8 6v12M9 21v-6h6v6"/></svg>`,label:"Vor 1950"},
@@ -1544,7 +1576,8 @@ const steps = [
      {value:"oel",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4.03 3-9 3S3 13.66 3 12"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/></svg>`,label:"Öl"},
      {value:"solar",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="20" height="12" rx="2"/><path d="M6 8V6a2 2 0 012-2h8a2 2 0 012 2v2"/></svg>`,label:"Solar / Sonstige"}
    ]},
-  {id:8,question:"Wie groß ist das Grundstück?",hint:"Bei Häusern relevant.",type:"slider",key:"grundstueck",min:0,max:2000,default:300,step:10,unit:"m²",label:"Grundstücksfläche"},
+  {id:8,question:"Wie groß ist das Grundstück?",hint:"Bei Häusern relevant.",type:"slider",key:"grundstueck",min:0,max:2000,default:300,step:10,unit:"m²",label:"Grundstücksfläche",
+   condition:(a)=> a.type==="einfamilienhaus" || a.type==="mehrfamilienhaus"},
   {id:9,question:"Gibt es besondere Merkmale?",hint:"Mehrfachauswahl möglich.",type:"multi",key:"merkmale",
    options:[
      {value:"garage",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="1"/><path d="M2 11h20M12 3v4"/></svg>`,label:"Garage / Carport"},
@@ -1552,7 +1585,8 @@ const steps = [
      {value:"balkon",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18v3H3zM6 17V9M18 17V9M3 9h18"/></svg>`,label:"Balkon / Terrasse"},
      {value:"pool",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 16c1.5 0 3-1 4.5-1s3 1 4.5 1 3-1 4.5-1 3 1 4.5 1"/></svg>`,label:"Pool / Sauna"},
      {value:"barrierefrei",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="1.5"/><path d="M9 8h6M9 8l-2 8M15 8l2 5h-5l-1 4"/></svg>`,label:"Barrierefrei"},
-     {value:"solar",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="20" height="12" rx="2"/><path d="M6 8V6a2 2 0 012-2h8a2 2 0 012 2v2"/></svg>`,label:"Photovoltaik"}
+     {value:"solar",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="20" height="12" rx="2"/><path d="M6 8V6a2 2 0 012-2h8a2 2 0 012 2v2"/></svg>`,label:"Photovoltaik"},
+     {value:"grundstueck_vorhanden",gewerbeOnly:true,icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 15l5-5 4 4 5-6 4 4"/></svg>`,label:"Eigenes Grundstück"}
    ]},
   {id:10,question:"Was ist Ihr Ziel?",hint:"Hilft uns, Ihre Bewertung optimal anzupassen.",type:"options",key:"ziel",
    options:[
@@ -1572,10 +1606,18 @@ const steps = [
    fields:[{key:"vorname",label:"Vorname",placeholder:"Max",type:"text"},{key:"nachname",label:"Nachname",placeholder:"Mustermann",type:"text"},{key:"email",label:"E-Mail-Adresse",placeholder:"max@beispiel.de",type:"email"},{key:"telefon",label:"Telefon (optional)",placeholder:"+49 123 456789",type:"tel"}]}
 ];
 
+// Filtert Steps, die nur unter bestimmten Bedingungen gezeigt werden (z.B. Grundstück nur bei Häusern)
+function visibleSteps() {
+  return steps.filter(s => !s.condition || s.condition(answers));
+}
+function getTotalSteps() {
+  return visibleSteps().length;
+}
+
 function renderWizard(bodyId, labelId, fillId, pctId) {
-  const step = steps[currentStep - 1];
-  const pct = Math.round(((currentStep - 1) / totalSteps) * 100);
-  document.getElementById(labelId).textContent = `Schritt ${step.id} von ${totalSteps}`;
+  const step = visibleSteps()[currentStep - 1];
+  const pct = Math.round(((currentStep - 1) / getTotalSteps()) * 100);
+  document.getElementById(labelId).textContent = `Schritt ${currentStep} von ${getTotalSteps()}`;
   document.getElementById(fillId).style.width = pct + '%';
   document.getElementById(pctId).textContent = pct + '%';
 
@@ -1597,8 +1639,9 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
     html += `</div>`;
   } else if (step.type === 'multi') {
     if (!answers[step.key]) answers[step.key] = [];
+    const visOpts = step.options.filter(o => !o.gewerbeOnly || answers.type === 'gewerbe');
     html += `<div class="type-grid">`;
-    step.options.forEach(opt => {
+    visOpts.forEach(opt => {
       const sel = (answers[step.key]||[]).includes(opt.value) ? 'selected' : '';
       html += `<button class="type-btn ${sel}" onclick="toggleMulti('${step.key}','${opt.value}',this)"><span class="type-icon">${opt.icon}</span><span class="type-label">${opt.label}</span></button>`;
     });
@@ -1610,7 +1653,8 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
     });
   } else if (step.type === 'slider') {
     const val = answers[step.key] !== undefined ? answers[step.key] : step.default;
-    html += `<div class="slider-wrap"><div class="slider-label-row"><span class="slider-label">${step.label}</span><span class="slider-value" id="${bodyId}_sv">${val.toLocaleString('de-DE')} ${step.unit}</span></div><input type="range" min="${step.min}" max="${step.max}" step="${step.step}" value="${val}" oninput="updateSlider('${step.key}',this.value,'${step.unit}','${bodyId}_sv')"/><div class="slider-minmax"><span>${step.min.toLocaleString('de-DE')} ${step.unit}</span><span>${step.max.toLocaleString('de-DE')} ${step.unit}</span></div></div>`;
+    const rId = `${bodyId}_sr_${step.key}`, nId = `${bodyId}_sn_${step.key}`;
+    html += `<div class="slider-wrap"><div class="slider-label-row"><span class="slider-label">${step.label}</span></div><div class="slider-input-row"><input type="range" id="${rId}" min="${step.min}" max="${step.max}" step="${step.step}" value="${val}" oninput="updateSlider('${step.key}',this.value,'${nId}')"/><div class="slider-number-wrap"><input type="number" class="slider-number" id="${nId}" min="${step.min}" max="${step.max}" step="${step.step}" value="${val}" oninput="updateSliderNumber('${step.key}',this.value,'${rId}')" onchange="clampSliderNumber('${step.key}',${step.min},${step.max},'${nId}','${rId}')"/><span class="slider-unit">${step.unit}</span></div></div><div class="slider-minmax"><span>${step.min.toLocaleString('de-DE')} ${step.unit}</span><span>${step.max.toLocaleString('de-DE')} ${step.unit}</span></div></div>`;
     answers[step.key] = val;
   } else if (step.type === 'contact') {
     html += `<div class="contact-note">Ihre Daten werden vertraulich behandelt und nicht weitergegeben.</div>`;
@@ -1620,7 +1664,7 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
     step.fields.slice(2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
   }
 
-  const isLast = currentStep === totalSteps;
+  const isLast = currentStep === getTotalSteps();
   html += `<div class="wizard-nav">`;
   if (currentStep > 1) html += `<button class="btn-back" onclick="goBack()">←</button>`;
   html += `<button class="btn-next" onclick="${isLast ? 'submitForm()' : 'goNext()'}">
@@ -1643,7 +1687,7 @@ function selectOpt(key, value, el, cls) {
   answers[key] = value;
   el.closest('.type-grid, .option-list').querySelectorAll(`.${cls}`).forEach(b => b.classList.remove('selected'));
   el.classList.add('selected');
-  const step = steps[currentStep-1];
+  const step = visibleSteps()[currentStep-1];
   if (step.type === 'type-grid' || step.type === 'options') setTimeout(() => goNext(), 260);
 }
 
@@ -1654,14 +1698,37 @@ function toggleMulti(key, value, el) {
   else { answers[key].splice(i,1); el.classList.remove('selected'); }
 }
 
-function updateSlider(key, value, unit, displayId) {
-  answers[key] = parseInt(value);
-  const d = document.getElementById(displayId);
-  if (d) d.textContent = parseInt(value).toLocaleString('de-DE') + ' ' + unit;
+// Schieberegler bewegt -> Zahl im Eingabefeld nachziehen
+function updateSlider(key, rangeValue, numberId) {
+  const v = parseInt(rangeValue);
+  answers[key] = v;
+  const n = document.getElementById(numberId);
+  if (n) n.value = v;
+}
+// Eingabefeld getippt -> Schieberegler live nachziehen (ohne beim Tippen zu begrenzen)
+function updateSliderNumber(key, numberValue, rangeId) {
+  const v = parseInt(numberValue);
+  if (!isNaN(v)) {
+    answers[key] = v;
+    const r = document.getElementById(rangeId);
+    if (r) r.value = v;
+  }
+}
+// Beim Verlassen des Eingabefelds: Wert auf gültigen Bereich begrenzen
+function clampSliderNumber(key, min, max, numberId, rangeId) {
+  const n = document.getElementById(numberId);
+  if (!n) return;
+  let v = parseInt(n.value);
+  if (isNaN(v)) v = min;
+  v = Math.max(min, Math.min(max, v));
+  n.value = v;
+  answers[key] = v;
+  const r = document.getElementById(rangeId);
+  if (r) r.value = v;
 }
 
 function validateStep() {
-  const step = steps[currentStep-1];
+  const step = visibleSteps()[currentStep-1];
   const suffix = isMobile() ? 'm' : '';
   const bodyId = suffix ? 'wizard-body-m' : 'wizard-body';
   if (step.type === 'fields' || step.type === 'contact') {
@@ -1677,7 +1744,7 @@ function validateStep() {
 
 function goNext() {
   if (!validateStep()) return;
-  if (currentStep < totalSteps) { currentStep++; render(); }
+  if (currentStep < getTotalSteps()) { currentStep++; render(); }
 }
 
 function goBack() {
