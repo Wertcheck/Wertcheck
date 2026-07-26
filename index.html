@@ -184,10 +184,10 @@ nav.scrolled {
   box-shadow: 0 20px 60px rgba(0,0,0,0.4);
 }
 .wizard-glass .step-label { color: rgba(255,255,255,0.5); }
-.wizard-glass .progress-bar { background: rgba(255,255,255,0.12); }
+.wizard-glass .progress-bar { background: rgba(255,255,255,0.14); box-shadow: inset 0 1px 2px rgba(0,0,0,0.25); }
 .wizard-glass .wizard-question { color: #ffffff; font-size:18px; }
 .wizard-glass .wizard-hint { color: rgba(255,255,255,0.55); }
-.wizard-glass .progress-pct { color: rgba(255,255,255,0.4); }
+.wizard-glass .progress-pct { color: #4FD8EE; }
 
 /* Type buttons — glass style */
 .wizard-glass .type-btn {
@@ -291,10 +291,46 @@ nav.scrolled {
   background:#fff; border-radius:20px; padding:40px 36px;
   box-shadow:0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.08);
 }
-.step-label { font-size:10px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
-.progress-bar { height:6px; background:var(--border); border-radius:99px; overflow:hidden; margin-bottom:5px; }
-.progress-fill { height:100%; background:var(--orange); border-radius:99px; transition:width .5s cubic-bezier(.4,0,.2,1); }
-.progress-pct { font-size:10px; color:var(--muted); text-align:right; margin-bottom:20px; }
+/* Wizard header — Label + % in einer Zeile, Bar darunter (Apple-inspiriert) */
+.wizard-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: "label pct" "bar bar";
+  column-gap: 12px;
+  row-gap: 9px;
+  align-items: center;
+  margin-bottom: 22px;
+}
+.step-label {
+  grid-area: label;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 0;
+}
+.progress-pct {
+  grid-area: pct;
+  font-size: 12px; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--orange);
+  text-align: right;
+  margin-bottom: 0;
+}
+.progress-bar {
+  grid-area: bar;
+  height: 4px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 0;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--orange), var(--orange2));
+  border-radius: 99px;
+  transition: width .6s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 0 8px rgba(0,151,178,0.55);
+}
 .wizard-question { font-family:var(--f-head); font-size:18px; font-weight:700; color:var(--text); margin-bottom:5px; line-height:1.3; }
 .wizard-hint { font-size:13px; color:var(--muted); margin-bottom:20px; font-weight:300; }
 .type-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px; }
@@ -470,7 +506,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   /* HERO — vollflächig, Bild sichtbar */
   /* MOBILE HERO — kompakt oben, Wizard darunter */
   .hero {
-    min-height: auto;
+    min-height: 100svh;
     padding: 76px 5% 24px;
     background: transparent;
     display: flex;
@@ -502,7 +538,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   /* CTA Button verstecken auf Mobile — Wizard ist direkt da */
   .hero-mobile-cta { display: none !important; }
 
-  /* Glass Wizard direkt im Hero auf Mobile — kompakter & heller Glass-Look */
+  /* Glass Wizard direkt im Hero auf Mobile — kompakt, dunkles Glas, transparenter als vorher */
   .hero-mobile-wizard {
     display: block;
     width: 94%;
@@ -510,55 +546,22 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   }
   .hero-mobile-wizard .wizard-glass {
     padding: 15px 13px;
-    background: rgba(255,255,255,0.55);
-    border: 1px solid rgba(255,255,255,0.65);
+    background: rgba(8,16,28,0.38);
+    border: 1px solid rgba(255,255,255,0.14);
   }
-  .hero-mobile-wizard .step-label { color: rgba(26,37,51,0.55); }
-  .hero-mobile-wizard .progress-bar { background: rgba(26,37,51,0.15); }
-  .hero-mobile-wizard .progress-pct { color: rgba(26,37,51,0.5); }
-  .hero-mobile-wizard .wizard-question { font-size:14px; margin-bottom:4px; color:#1A2533; }
-  .hero-mobile-wizard .wizard-hint { font-size:11px; margin-bottom:9px; color:rgba(26,37,51,0.6); }
+  .hero-mobile-wizard .wizard-header { margin-bottom: 14px; row-gap: 7px; }
+  .hero-mobile-wizard .wizard-question { font-size:14px; margin-bottom:4px; }
+  .hero-mobile-wizard .wizard-hint { font-size:11px; margin-bottom:9px; }
   .hero-mobile-wizard .type-grid { gap:7px; margin-bottom:9px; }
-  .hero-mobile-wizard .type-btn {
-    padding:9px 7px;
-    background: rgba(255,255,255,0.55);
-    border: 1px solid rgba(26,37,51,0.15);
-  }
-  .hero-mobile-wizard .type-btn.selected {
-    background: rgba(0,151,178,0.18);
-    border-color: #0097B2;
-  }
-  .hero-mobile-wizard .type-label { font-size:10px; color:#1A2533; }
-  .hero-mobile-wizard .type-icon svg { stroke:#1A2533; }
-  .hero-mobile-wizard .type-btn.selected .type-icon svg { stroke:#0097B2; }
+  .hero-mobile-wizard .type-btn { padding:9px 7px; }
+  .hero-mobile-wizard .type-label { font-size:10px; }
   .hero-mobile-wizard .option-list { gap:5px; margin-bottom:9px; }
-  .hero-mobile-wizard .option-btn {
-    padding:8px 11px; font-size:12px;
-    background: rgba(255,255,255,0.55);
-    border: 1px solid rgba(26,37,51,0.15);
-    color:#1A2533;
-  }
-  .hero-mobile-wizard .option-btn.selected {
-    background: rgba(0,151,178,0.18);
-    border-color: #0097B2;
-  }
-  .hero-mobile-wizard .field-group label { color: rgba(26,37,51,0.6); }
-  .hero-mobile-wizard .field-group input {
-    font-size:16px; padding:8px 11px;
-    background: rgba(255,255,255,0.65);
-    border: 1px solid rgba(26,37,51,0.2);
-    color:#1A2533;
-  }
-  .hero-mobile-wizard .field-group input::placeholder { color: rgba(26,37,51,0.35); }
+  .hero-mobile-wizard .option-btn { padding:8px 11px; font-size:12px; }
+  .hero-mobile-wizard .field-group input { font-size:16px; padding:8px 11px; }
   .hero-mobile-wizard .input-row { grid-template-columns:1fr; }
   .hero-mobile-wizard .btn-next { padding:11px; font-size:13px; color:#fff; }
-  .hero-mobile-wizard .btn-back {
-    padding:11px;
-    background: rgba(255,255,255,0.4);
-    border: 1px solid rgba(26,37,51,0.15);
-    color: rgba(26,37,51,0.7);
-  }
-  .hero-mobile-wizard .security-note { font-size:9.5px; margin-top:7px; color:rgba(26,37,51,0.45); }
+  .hero-mobile-wizard .btn-back { padding:11px; }
+  .hero-mobile-wizard .security-note { font-size:9.5px; margin-top:7px; }
 
   /* Wizard Section unter Hero ausblenden auf Mobile */
   #wizard-mobile-section { display:none !important; }
@@ -819,9 +822,11 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   <!-- Mobile: Glass Wizard direkt sichtbar, außerhalb des Grids -->
   <div class="hero-mobile-wizard" id="hero-wizard-mobile">
     <div class="wizard-glass" id="wizard-glass-card">
-      <div class="step-label" id="step-label-hm">Schritt 1 von 12</div>
-      <div class="progress-bar"><div class="progress-fill" id="progress-fill-hm" style="width:0%"></div></div>
-      <div class="progress-pct" id="progress-pct-hm">0%</div>
+      <div class="wizard-header">
+        <div class="step-label" id="step-label-hm">Schritt 1 von 12</div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill-hm" style="width:0%"></div></div>
+        <div class="progress-pct" id="progress-pct-hm">0%</div>
+      </div>
       <div id="wizard-body-hm"></div>
     </div>
   </div>
