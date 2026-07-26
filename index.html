@@ -611,7 +611,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   .hero-mobile-wizard .option-btn { padding:10px 13px; font-size:13px; }
   .hero-mobile-wizard .field-group input { font-size:16px; padding:10px 13px; }
   .hero-mobile-wizard .input-row { grid-template-columns:1fr; }
-  .hero-mobile-wizard .btn-next { padding:13px; font-size:14px; color:#fff; }
+  .hero-mobile-wizard .btn-next { padding:15px; font-size:16px; color:#fff; }
   .hero-mobile-wizard .btn-back { padding:13px; }
   .hero-mobile-wizard .security-note { font-size:10px; margin-top:8px; }
 
@@ -1466,17 +1466,17 @@ async function submitFormS(suffix) {
   document.getElementById(bodyId).innerHTML = `
     <div class="success-state">
       <div class="success-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <h3 style="color:#fff;">Vielen Dank, ${name}!</h3>
-      <p style="color:rgba(255,255,255,0.6);">Ihre Bewertung wird per E-Mail zugesendet.</p>
+      <h3 style="color:var(--text);">Vielen Dank, ${name}!</h3>
+      <p style="color:var(--muted);">Ihre Bewertung wird per E-Mail zugesendet.</p>
       <div class="value-range">
         <div class="vr-label">Geschätzter Marktwert</div>
         <div class="vr-amount">${low.toLocaleString('de-DE')} € – ${high.toLocaleString('de-DE')} €</div>
         <div class="vr-avg">Durchschnitt: <span>${avg.toLocaleString('de-DE')} €</span></div>
       </div>
-      <div style="margin:12px 0; padding:12px; background:rgba(0,151,178,0.15); border-radius:8px;">
-        <p style="font-size:12px;color:#fff;margin-bottom:8px;font-weight:500;">Wie war Ihre Erfahrung?</p>
+      <div style="margin:12px 0; padding:12px; background:rgba(0,151,178,0.1); border-radius:8px;">
+        <p style="font-size:13px;color:var(--text);margin-bottom:8px;font-weight:600;">Wie war Ihre Erfahrung?</p>
         <div style="display:flex;justify-content:center;gap:6px;">
-          ${[1,2,3,4,5].map(i=>`<button onclick="rateStar(${i})" id="star-${suffix}-${i}" style="background:none;border:none;font-size:24px;cursor:pointer;color:rgba(255,255,255,0.2);transition:color .2s;">★</button>`).join('')}
+          ${[1,2,3,4,5].map(i=>`<button onclick="rateStar(${i})" id="star-${i}" style="background:none;border:none;font-size:26px;cursor:pointer;color:#C8E8EE;transition:color .2s;">★</button>`).join('')}
         </div>
       </div>
       <button class="btn-next" style="width:100%;color:#fff;" onclick="resetWizard()">Neue Bewertung ↺</button>

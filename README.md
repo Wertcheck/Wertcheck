@@ -1,16 +1,17 @@
 # ImmoWertChecker Backend
 
-KI-Agenten-Team für die automatische Immobilienbewertung.
+KI-Agenten-Team für die automatische Immobilienbewertung, inkl. E-Mail-Verifizierung.
 
 ## Struktur
 
 ```
-server.js              ← Einstiegspunkt: Express-Server + /bewertung-Endpunkt
+server.js              ← Einstiegspunkt: Express-Server + Endpunkte
 agents/
   jonas.js              ← Koordinator: nimmt Wizard-Daten entgegen, steuert den Ablauf
   clara.js              ← Immobilienanalystin: berechnet den Wert, schreibt die Analyse (Claude API)
   tim.js                ← Dokumenten-Spezialist: erstellt das PDF
   elena.js              ← Kundenkommunikation: verschickt E-Mails (SendGrid API)
+  verification.js        ← Hilfsmodul: Bestätigungscodes erzeugen/prüfen
 ```
 
 ## Das Team
@@ -20,26 +21,32 @@ agents/
 | **Jonas** | Koordinator | Vereinheitlicht die Wizard-Daten, reicht sie durchs Team, fängt Fehler ab |
 | **Clara** | Immobilienanalystin | Berechnet den Marktwert und schreibt die verständliche Einschätzung (via Claude API) |
 | **Tim** | Dokumenten-Spezialist | Baut daraus das fertige, gebrandete PDF |
-| **Elena** | Kundenkommunikation | Versendet die E-Mail an den Kunden (mit PDF) und die interne Benachrichtigung — über die SendGrid API |
+| **Elena** | Kundenkommunikation | Versendet den Bestätigungscode, die E-Mail an den Kunden (mit PDF) und die interne Benachrichtigung — über die SendGrid API |
 
-## Ablauf
+## Ablauf (inkl. E-Mail-Bestätigung)
 
 ```
-Kunde → Website Wizard → POST /bewertung
-                              ↓
-                           Jonas  (Daten vereinheitlichen)
-                              ↓
-                           Clara  (Marktwert + Analyse via Claude)
-                              ↓
-                            Tim   (PDF erstellen)
-                              ↓
-                           Elena  (E-Mail an Kunde + intern via SendGrid)
+Kunde füllt Wizard aus → gibt E-Mail ein
+        ↓
+POST /send-code           → Elena verschickt 6-stelligen Code
+        ↓
+Kunde gibt Code im Wizard ein
+        ↓
+POST /verify-code         → Code wird geprüft
+        ↓ (nur bei Erfolg)
+POST /bewertung           → Jonas → Clara → Tim → Elena
+                             (Marktwert, PDF, Versand an Kunde + intern)
 ```
+
+Die `/bewertung`-Route prüft server-seitig zusätzlich, ob die E-Mail
+tatsächlich verifiziert wurde — nicht nur, dass das Frontend das
+suggeriert. Ohne gültige, noch nicht abgelaufene Verifizierung wird
+die Anfrage mit Status 403 abgelehnt.
 
 ## Setup auf Render.com
 
 ### 1. GitHub Repository
-Alle Dateien hochladen — **inklusive dem `agents/`-Ordner mit allen vier Dateien**:
+Alle Dateien hochladen — **inklusive dem `agents/`-Ordner mit allen fünf Dateien**:
 ```
 server.js
 package.json
@@ -47,6 +54,7 @@ agents/jonas.js
 agents/clara.js
 agents/tim.js
 agents/elena.js
+agents/verification.js
 index.html   (die Website selbst)
 ```
 
@@ -68,28 +76,31 @@ REPLY_TO_EMAIL      = info@immowertchecker.de
 INTERN_EMAIL        = Datenchecker@outlook.de
 ```
 
-**Wichtig:** `SENDER_EMAIL` und `REPLY_TO_EMAIL` müssen bei SendGrid unter
-**Sender Authentication → Verified Senders** freigegeben sein, sonst lehnt
-SendGrid den Versand ab.
+**Wichtig:** `SENDER_EMAIL` muss bei SendGrid unter **Sender
+Authentication** verifiziert sein (bei euch bereits durch die
+Domain-Authentifizierung automatisch erledigt).
 
 ### 4. Website-URL prüfen
 
 Da `server.js` die `index.html` gleich selbst mit ausliefert (`express.static`),
-muss der `fetch(...)`-Aufruf im Wizard auf genau diese Render-URL zeigen:
-
-```js
-fetch('https://DEINE-RENDER-URL.onrender.com/bewertung', ...)
-```
+muss jeder `fetch(...)`-Aufruf im Wizard (`/send-code`, `/verify-code`,
+`/bewertung`) auf genau diese Render-URL zeigen.
 
 ## Testen
 
-Nach dem Deploy: die Website unter der Render-URL aufrufen, kompletten
-Wizard durchklicken, prüfen ob:
+1. Wizard komplett durchklicken, beim Kontakt-Schritt eine echte E-Mail eingeben
+2. Prüfen, ob die Code-Mail ankommt (auch Spam-Ordner)
+3. Code im Wizard eingeben und bestätigen
+4. Prüfen, ob danach die PDF-Mail + interne Benachrichtigung ankommen
 
-1. Die Erfolgsmeldung auf der Website erscheint
-2. Die PDF-E-Mail beim Test-Kunden ankommt
-3. Die interne Benachrichtigung bei `INTERN_EMAIL` ankommt
+Bei Problemen: Render-Dashboard → Service → **Logs** — jeder Agent
+loggt seinen Schritt (`[Jonas]`, `[Clara]`, `[Tim]`, `[Elena]`), das
+zeigt meist sofort, wo es hakt.
 
-Bei Problemen: Render-Dashboard → Service → **Logs** — jeder Agent loggt
-seinen Schritt (`[Jonas]`, `[Clara]`, `[Tim]`, `[Elena]`), das zeigt
-meist sofort, wo es hakt.
+## Bekannte Einschränkung
+
+Die Bestätigungscodes werden nur im Arbeitsspeicher gehalten (kein
+Datenbank-Backend). Startet der Render-Dienst neu (z.B. nach
+Inaktivität beim kostenlosen Plan), gehen noch offene, unbestätigte
+Codes verloren — der Kunde müsste sich in dem seltenen Fall einen
+neuen Code schicken lassen. Für den aktuellen Umfang unkritisch.
