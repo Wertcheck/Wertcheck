@@ -141,7 +141,7 @@ nav.scrolled {
   font-weight:800; color:#fff; line-height:1.08;
   margin-bottom:22px; letter-spacing:-0.03em;
 }
-.hero-accent { color:#ffffff; }
+.hero-accent { color:#0097B2; }
 .hero-desc { font-size:16px; font-weight:300; color:rgba(255,255,255,0.65); max-width:420px; margin-bottom:28px; }
 /* Rating Badge — base rules must stay before the media queries below,
    otherwise their equal-specificity selectors win the cascade on every
@@ -529,7 +529,7 @@ section { padding:88px 5%; }
 
 /* ── ERGEBNIS ────────────────────────────────────────────────────── */
 .ergebnis-section { padding:88px 5%; }
-.ergebnis-inner { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:280px 1fr; gap:80px; align-items:center; }
+.ergebnis-inner { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 300px; gap:80px; align-items:center; }
 .mock-report { background:#fff; border-radius:12px; padding:28px; box-shadow:0 32px 80px rgba(0,0,0,0.5); }
 .report-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid var(--border); }
 .report-header h4 { font-family:var(--f-head); font-size:15px; font-weight:700; margin-bottom:3px; }
@@ -549,6 +549,7 @@ section { padding:88px 5%; }
 .bar:last-child { opacity:1; }
 .ergebnis-right .section-eyebrow { border-left-color:var(--orange); color:var(--orange); }
 .ergebnis-right h2 { font-family:var(--f-head); font-size:clamp(24px,2.6vw,36px); font-weight:800; color:#fff; margin-bottom:24px; line-height:1.2; }
+.ergebnis-right h2 em { font-style:normal; color:var(--orange); }
 .result-checks { list-style:none; margin-bottom:32px; }
 .result-checks li { display:flex; align-items:flex-start; gap:14px; color:rgba(255,255,255,0.6); font-size:15px; font-weight:300; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.06); line-height:1.5; }
 .result-checks li:last-child { border-bottom:none; }
@@ -759,7 +760,8 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 /* ── SMARTPHONE MOCKUP ───────────────────────────────────────── */
 .phone-mockup {
   position: relative;
-  width: 240px;
+  width: 100%;
+  max-width: 300px;
   margin: 0 auto;
   flex-shrink: 0;
 }
@@ -902,7 +904,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   <div class="hero-inner">
     <div class="hero-left">
       <div class="hero-eyebrow">Kostenlos · Unverbindlich · In 3 Minuten</div>
-      <h1>Was ist <span class="hero-accent">Ihre <br class="hero-brk hero-brk-1">Immobilie</span><br class="hero-brk hero-brk-2">wirklich Wert?</h1>
+      <h1>Was ist Ihre <br class="hero-brk hero-brk-1"><span class="hero-accent">Immobilie</span><br class="hero-brk hero-brk-2">wirklich Wert?</h1>
       <p class="hero-desc" style="font-size:15px; color:rgba(255,255,255,0.7); margin-bottom:20px; font-weight:300; line-height:1.7;">
         Erfahren Sie in nur 3 Minuten den Wert Ihrer Immobilie — kostenlos &amp; unverbindlich.
       </p>
@@ -1000,74 +1002,6 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 <!-- ERGEBNIS -->
 <section class="ergebnis-section" id="ueber">
   <div class="ergebnis-inner">
-    <div class="phone-mockup fade-in" style="width:260px; margin:0;">
-      <div class="phone-frame">
-        <div class="phone-side-btn"></div>
-        <div class="phone-vol"><span></span><span></span></div>
-        <div class="phone-notch"></div>
-                <div class="phone-screen">
-          <div class="phone-orange-bar"></div>
-          <div class="phone-pdf-header">
-            <span class="wc">WERT</span><span class="ck">CHECK</span>
-            <span class="phone-pdf-badge">Bewertung</span>
-          </div>
-          <div class="phone-pdf-body">
-            <!-- Titel -->
-            <div style="font-size:9px; font-weight:700; color:#1A2533; text-align:center; margin-bottom:8px;">Ihr Immobilienwert</div>
-            <!-- Histogramm Balken -->
-            <div style="display:flex; align-items:flex-end; justify-content:center; gap:3px; height:40px; margin-bottom:6px;">
-              <div style="width:10px; height:20%; background:#DDD; border-radius:2px 2px 0 0;"></div>
-              <div style="width:10px; height:35%; background:#DDD; border-radius:2px 2px 0 0;"></div>
-              <div style="width:10px; height:55%; background:#0097B2; border-radius:2px 2px 0 0;"></div>
-              <div style="width:10px; height:75%; background:#0097B2; border-radius:2px 2px 0 0;"></div>
-              <div style="width:10px; height:100%; background:#0097B2; border-radius:2px 2px 0 0;"></div>
-              <div style="width:10px; height:100%; background:#0097B2; border-radius:2px 2px 0 0;"></div>
-              <div style="width:10px; height:90%; background:#0097B2; border-radius:2px 2px 0 0;"></div>
-              <div style="width:10px; height:70%; background:#0097B2; border-radius:2px 2px 0 0;"></div>
-              <div style="width:10px; height:45%; background:#DDD; border-radius:2px 2px 0 0;"></div>
-              <div style="width:10px; height:25%; background:#DDD; border-radius:2px 2px 0 0;"></div>
-            </div>
-            <!-- Slider Linie -->
-            <div style="position:relative; margin:0 8px 4px;">
-              <div style="height:2px; background:#C8E8EE; border-radius:99px;"></div>
-              <div style="position:absolute; top:50%; left:20%; right:20%; transform:translateY(-50%); height:2.5px; background:#0097B2; border-radius:99px;"></div>
-              <div style="position:absolute; top:50%; left:20%; transform:translate(-50%,-50%); width:10px; height:10px; background:#0097B2; border-radius:50%; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,0.2);"></div>
-              <div style="position:absolute; top:50%; right:20%; transform:translate(50%,-50%); width:10px; height:10px; background:#0097B2; border-radius:50%; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,0.2);"></div>
-            </div>
-            <!-- Preisspanne -->
-            <div style="font-size:11px; font-weight:800; color:#0097B2; text-align:center; margin-bottom:10px;">485.000 € – 525.000 €</div>
-            <!-- Divider -->
-            <div style="height:1px; background:#C8E8EE; margin-bottom:8px;"></div>
-            <!-- Highlights -->
-            <div style="font-size:7px; font-weight:700; color:#1A2533; margin-bottom:6px;">Highlights</div>
-            <div style="display:flex; align-items:center; gap:6px; margin-bottom:5px;">
-              <div style="width:18px; height:18px; background:#FFF3DC; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:8px;">🏗</div>
-              <div><div style="font-size:7px; font-weight:600; color:#1A2533;">Moderne Bauweise</div><div style="font-size:6px; color:#6B7A8D;">Steigert die Energieeffizienz</div></div>
-            </div>
-            <div style="display:flex; align-items:center; gap:6px; margin-bottom:5px;">
-              <div style="width:18px; height:18px; background:#FFF3DC; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:8px;">🌿</div>
-              <div><div style="font-size:7px; font-weight:600; color:#1A2533;">Garten / Grünfläche</div><div style="font-size:6px; color:#6B7A8D;">Erhöht den Erholungswert</div></div>
-            </div>
-            <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px;">
-              <div style="width:18px; height:18px; background:#FFF3DC; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:8px;">⚡</div>
-              <div><div style="font-size:7px; font-weight:600; color:#1A2533;">Nachhaltige Energie</div><div style="font-size:6px; color:#6B7A8D;">Niedrige Betriebskosten</div></div>
-            </div>
-            <!-- Divider -->
-            <div style="height:1px; background:#C8E8EE; margin-bottom:8px;"></div>
-            <!-- Käuferprofil -->
-            <div style="font-size:7px; font-weight:700; color:#1A2533; margin-bottom:5px;">Käuferprofil</div>
-            <div style="display:flex; align-items:center; gap:6px;">
-              <div style="width:20px; height:20px; background:#0097B2; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:9px;">👨‍👩‍👧</div>
-              <div><div style="font-size:7px; font-weight:600; color:#1A2533;">Zielgruppe</div><div style="font-size:6px; color:#6B7A8D;">Junge Familien</div></div>
-            </div>
-          </div>
-        </div>
-        </div>
-      </div>
-          </div>
-        </div>
-      </div>
-    </div>
     <div class="ergebnis-right fade-in">
       <span class="section-eyebrow">Ihr Ergebnis</span>
       <h2>Das steht in Ihrem<br><em>Bewertungsbericht</em></h2>
@@ -1079,6 +1013,9 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
         <li><span class="rc-dot"></span>Empfehlung: ob und wann ein Immobilienberater sinnvoll ist</li>
       </ul>
       <a href="#wizard" class="btn-primary" onclick="scrollToWizard(event)">Jetzt kostenlos bewerten <span class="btn-arrow">→</span></a>
+    </div>
+    <div class="phone-mockup fade-in">
+      <img src="bewertungsbericht_handy.png" alt="Beispiel Bewertungsbericht auf dem Handy" style="width:100%; height:auto; display:block;">
     </div>
   </div>
 </section>
