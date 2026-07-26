@@ -1394,7 +1394,7 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
   const isLast = currentStep === getTotalSteps();
   html += `<div class="wizard-nav">`;
   if (currentStep > 1) html += `<button class="btn-back" onclick="goBackS('${suffix}')">←</button>`;
-  html += `<button class="btn-next" onclick="${isLast ? `submitFormS('${suffix}')` : `goNextS('${suffix}')`}">${isLast ? 'Bewertung anfordern' : 'Weiter →'}</button></div>`;
+  html += `<button class="btn-next" onclick="${isLast ? `submitFormS('${suffix}')` : `goNextS('${suffix}')`}">${isLast ? 'Bewertung anfordern' : 'Jetzt Kostenlos bewerten →'}</button></div>`;
   html += `<div class="security-note">Verschlüsselt · DSGVO-konform</div>`;
 
   const body = document.getElementById(bodyId);
