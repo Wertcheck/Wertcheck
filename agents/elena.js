@@ -35,7 +35,7 @@ async function versende(daten, analyse, pdfBuffer) {
       html: `
         <div style="font-family:Arial,sans-serif; max-width:560px; margin:0 auto; color:#0D1B2A;">
           <div style="background:#0D1B2A; padding:24px; border-radius:12px 12px 0 0;">
-            <span style="color:#fff; font-size:20px; font-weight:bold;">WERT</span><span style="color:#0097B2; font-size:20px; font-weight:bold;">CHECK</span>
+            <span style="color:#fff; font-size:20px; font-weight:bold;">IMMOWERT</span><span style="color:#0097B2; font-size:20px; font-weight:bold;">CHECKER</span>
           </div>
           <div style="padding:28px; border:1px solid #eee; border-top:none; border-radius:0 0 12px 12px;">
             <p>Hallo ${anrede},</p>

@@ -25,8 +25,8 @@ function erstellePDF(daten, analyse) {
       // Header-Balken
       doc.rect(0, 0, doc.page.width, 90).fill(NIGHT);
       doc.fillColor('#ffffff').fontSize(22).font('Helvetica-Bold')
-        .text('WERT', 50, 32, { continued: true });
-      doc.fillColor(PETROL).text('CHECK', { continued: true });
+        .text('IMMOWERT', 50, 32, { continued: true });
+      doc.fillColor(PETROL).text('CHECKER', { continued: true });
       doc.fillColor('#ffffff').font('Helvetica').fontSize(11)
         .text('   Immobilienbewertung', { continued: false });
 
