@@ -453,12 +453,12 @@ input[type="range"]::-moz-range-thumb { width:20px; height:20px; border-radius:5
 }
 .checkbutton.active { border-color:var(--orange); background:var(--cream); color:var(--orange2); }
 .optional-toggle {
-  width:100%; display:flex; align-items:center; justify-content:space-between;
-  background:var(--cream); border:2px solid var(--border); border-radius:10px;
-  padding:13px 16px; font-size:13px; font-weight:600; color:var(--text);
-  cursor:pointer; font-family:var(--f-body); margin:8px 0 4px; transition:border-color .2s;
+  width:100%; display:flex; align-items:center; justify-content:center; gap:8px;
+  background:none; border:none; border-bottom:1px dashed var(--border);
+  padding:12px 0; font-size:13px; font-weight:600; color:var(--orange);
+  cursor:pointer; font-family:var(--f-body); margin:10px 0 4px; transition:opacity .15s;
 }
-.optional-toggle:hover { border-color:var(--orange); }
+.optional-toggle:hover { opacity:0.7; }
 .optional-toggle-arrow { transition:transform .2s; flex-shrink:0; }
 .optional-toggle.open .optional-toggle-arrow { transform:rotate(180deg); }
 .optional-content { margin-top:14px; }
@@ -1550,9 +1550,12 @@ function selectOptS(key, value, el, cls, suffix) {
 
 function scrollWizardIntoView(bodyId) {
   const container = document.getElementById(bodyId)?.closest('.wizard-glass, .wizard-card');
-  if (container) {
-    requestAnimationFrame(() => container.scrollIntoView({ behavior: 'smooth', block: 'start' }));
-  }
+  if (!container) return;
+  const nav = document.querySelector('nav');
+  const navHeight = nav ? nav.offsetHeight : 0;
+  const rect = container.getBoundingClientRect();
+  const targetY = window.scrollY + rect.top - navHeight - 12;
+  window.scrollTo({ top: Math.max(0, targetY), behavior: 'auto' });
 }
 
 function goNextS(suffix) {
