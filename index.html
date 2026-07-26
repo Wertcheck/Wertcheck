@@ -452,15 +452,16 @@ input[type="range"]::-moz-range-thumb { width:20px; height:20px; border-radius:5
   transition:all .15s; font-family:var(--f-body);
 }
 .checkbutton.active { border-color:var(--orange); background:var(--cream); color:var(--orange2); }
-.optional-divider {
-  font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted);
-  text-align:center; margin:20px 0 14px; position:relative;
+.optional-toggle {
+  width:100%; display:flex; align-items:center; justify-content:space-between;
+  background:var(--cream); border:2px solid var(--border); border-radius:10px;
+  padding:13px 16px; font-size:13px; font-weight:600; color:var(--text);
+  cursor:pointer; font-family:var(--f-body); margin:8px 0 4px; transition:border-color .2s;
 }
-.optional-divider::before, .optional-divider::after {
-  content:''; position:absolute; top:50%; width:calc(50% - 70px); height:1px; background:var(--border);
-}
-.optional-divider::before { left:0; }
-.optional-divider::after { right:0; }
+.optional-toggle:hover { border-color:var(--orange); }
+.optional-toggle-arrow { transition:transform .2s; flex-shrink:0; }
+.optional-toggle.open .optional-toggle-arrow { transform:rotate(180deg); }
+.optional-content { margin-top:14px; }
 .wizard-nav { display:flex; gap:8px; margin-top:4px; }
 .btn-back { flex:0 0 auto; padding:13px 16px; border:2px solid var(--border); border-radius:10px; background:transparent; cursor:pointer; font-size:15px; color:var(--muted); transition:all .2s; font-family:var(--f-body); }
 .btn-back:hover { border-color:var(--muted); color:var(--text); }
@@ -1252,7 +1253,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 <section id="faq">
   <div class="section-center">
     <span class="section-eyebrow fade-in">Fragen & Antworten</span>
-    <h2 class="section-title fade-in">Fragen die sich<br><em>viele stellen</em></h2>
+    <h2 class="section-title fade-in">Häufig gestellte<br><em>Fragen</em></h2>
     <div class="faq-list" style="margin-top:40px;">
       <div class="faq-item fade-in">
         <button class="faq-q" onclick="toggleFaq(this)">Wie genau ist die Bewertung?<span class="faq-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></button>
@@ -1400,7 +1401,11 @@ function renderWohnungDetailsHTML(step, bodyId) {
   let html = '';
   step.fields.forEach(f => { html += renderField(f); });
 
-  html += `<div class="optional-divider">Optionale Angaben</div>`;
+  html += `<button type="button" class="optional-toggle" id="${bodyId}_optional_toggle" onclick="toggleOptionalSection('${bodyId}')">
+    <span>Optionale Angaben</span>
+    <svg class="optional-toggle-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>`;
+  html += `<div class="optional-content" id="${bodyId}_optional_content" style="display:none;">`;
   const checkbuttons = step.optionalFields.filter(f => f.fieldType === 'checkbutton');
   if (checkbuttons.length) {
     html += `<div class="checkbutton-row">`;
@@ -1410,6 +1415,7 @@ function renderWohnungDetailsHTML(step, bodyId) {
     html += `</div>`;
   }
   step.optionalFields.filter(f => f.fieldType !== 'checkbutton').forEach(f => { html += renderField(f); });
+  html += `</div>`;
 
   return html;
 }
@@ -1431,6 +1437,15 @@ function toggleCheckbutton(key, bodyId) {
 function toggleInfo(id) {
   const el = document.getElementById(id);
   if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function toggleOptionalSection(bodyId) {
+  const content = document.getElementById(`${bodyId}_optional_content`);
+  const toggle = document.getElementById(`${bodyId}_optional_toggle`);
+  if (!content || !toggle) return;
+  const isOpen = content.style.display !== 'none';
+  content.style.display = isOpen ? 'none' : 'block';
+  toggle.classList.toggle('open', !isOpen);
 }
 
 function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
@@ -1533,13 +1548,22 @@ function selectOptS(key, value, el, cls, suffix) {
   if (step.type === 'options') setTimeout(() => goNextS(suffix), 260);
 }
 
+function scrollWizardIntoView(bodyId) {
+  const container = document.getElementById(bodyId)?.closest('.wizard-glass, .wizard-card');
+  if (container) {
+    requestAnimationFrame(() => container.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  }
+}
+
 function goNextS(suffix) {
   if (!validateStepS(suffix)) return;
   if (currentStep < getTotalSteps()) { currentStep++; renderAll(); }
+  scrollWizardIntoView(suffix ? `wizard-body-${suffix}` : 'wizard-body');
 }
 
 function goBackS(suffix) {
   if (currentStep > 1) { currentStep--; renderAll(); }
+  scrollWizardIntoView(suffix ? `wizard-body-${suffix}` : 'wizard-body');
 }
 
 function validateStepS(suffix) {
@@ -2057,10 +2081,12 @@ function validateStep() {
 function goNext() {
   if (!validateStep()) return;
   if (currentStep < getTotalSteps()) { currentStep++; render(); }
+  scrollWizardIntoView(isMobile() ? 'wizard-body-m' : 'wizard-body');
 }
 
 function goBack() {
   if (currentStep > 1) { currentStep--; render(); }
+  scrollWizardIntoView(isMobile() ? 'wizard-body-m' : 'wizard-body');
 }
 
 function calcWert() {
