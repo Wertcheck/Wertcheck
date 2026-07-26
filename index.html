@@ -413,6 +413,54 @@ input[type="range"]::-moz-range-thumb { width:20px; height:20px; border-radius:5
   flex-shrink: 0; margin-top: 2px; width: 16px; height: 16px;
   accent-color: var(--orange); cursor: pointer;
 }
+
+/* Wohnung-Details: Dropdown, Stepper, Checkbutton, Info-Icon */
+.field-label-row { display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+.field-label-row label { display:block; font-size:11px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:0; }
+.info-icon {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:16px; height:16px; border-radius:50%; background:var(--border); color:var(--text);
+  font-size:10px; font-weight:700; font-style:italic; cursor:pointer; flex-shrink:0; user-select:none;
+}
+.info-text {
+  font-size:12px; color:var(--muted); background:var(--cream); border-radius:8px;
+  padding:8px 12px; margin:-2px 0 10px; line-height:1.5;
+}
+.field-dropdown {
+  width:100%; padding:11px 14px; border:2px solid var(--border); border-radius:10px;
+  font-size:16px; font-family:var(--f-body); color:var(--text); background:var(--cream);
+  outline:none; transition:border-color .2s; appearance:none;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236B7A8D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
+  background-repeat:no-repeat; background-position:right 14px center;
+}
+.field-dropdown:focus { border-color:var(--orange); }
+.stepper {
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--cream); border:2px solid var(--border); border-radius:10px; padding:6px 8px;
+}
+.stepper button {
+  width:36px; height:36px; border-radius:8px; border:none; background:#fff;
+  color:var(--orange); font-size:20px; font-weight:700; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:background .15s;
+}
+.stepper button:hover { background:var(--border); }
+.stepper span { font-size:16px; font-weight:700; color:var(--text); min-width:32px; text-align:center; }
+.checkbutton-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+.checkbutton {
+  flex:1; min-width:calc(33% - 6px); padding:12px 8px; border:2px solid var(--border); border-radius:10px;
+  background:#fff; color:var(--text); font-size:13px; font-weight:600; cursor:pointer; text-align:center;
+  transition:all .15s; font-family:var(--f-body);
+}
+.checkbutton.active { border-color:var(--orange); background:var(--cream); color:var(--orange2); }
+.optional-divider {
+  font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted);
+  text-align:center; margin:20px 0 14px; position:relative;
+}
+.optional-divider::before, .optional-divider::after {
+  content:''; position:absolute; top:50%; width:calc(50% - 70px); height:1px; background:var(--border);
+}
+.optional-divider::before { left:0; }
+.optional-divider::after { right:0; }
 .wizard-nav { display:flex; gap:8px; margin-top:4px; }
 .btn-back { flex:0 0 auto; padding:13px 16px; border:2px solid var(--border); border-radius:10px; background:transparent; cursor:pointer; font-size:15px; color:var(--muted); transition:all .2s; font-family:var(--f-body); }
 .btn-back:hover { border-color:var(--muted); color:var(--text); }
@@ -1370,6 +1418,75 @@ function renderAll() {
   }
 }
 
+// Baut das HTML für den umfangreichen "Wohnung-Details"-Schritt.
+// Wird von beiden Wizard-Instanzen (mobil + Desktop) genutzt, damit
+// dieser komplexe Schritt nicht doppelt gepflegt werden muss.
+function renderWohnungDetailsHTML(step, bodyId) {
+  function infoIcon(f) {
+    if (!f.info) return '';
+    return `<span class="info-icon" onclick="toggleInfo('${bodyId}_info_${f.key}')">i</span>`;
+  }
+  function infoText(f) {
+    if (!f.info) return '';
+    return `<div class="info-text" id="${bodyId}_info_${f.key}" style="display:none;">${f.info}</div>`;
+  }
+  function renderField(f) {
+    let h = `<div class="field-group"><div class="field-label-row"><label>${f.label}</label>${infoIcon(f)}</div>${infoText(f)}`;
+    if (f.fieldType === 'dropdown') {
+      h += `<select class="field-dropdown" id="${bodyId}_field_${f.key}" onchange="answers['${f.key}']=this.value">
+        <option value="">Bitte wählen</option>
+        ${f.options.map(o => `<option value="${o.value}" ${answers[f.key]===o.value?'selected':''}>${o.label}</option>`).join('')}
+      </select>`;
+    } else if (f.fieldType === 'stepper') {
+      if (answers[f.key] === undefined) answers[f.key] = f.default;
+      h += `<div class="stepper">
+        <button type="button" onclick="stepperChange('${f.key}',-1,${f.min},${f.max},'${bodyId}')">−</button>
+        <span id="${bodyId}_stepper_${f.key}">${answers[f.key]}</span>
+        <button type="button" onclick="stepperChange('${f.key}',1,${f.min},${f.max},'${bodyId}')">+</button>
+      </div>`;
+    } else if (f.fieldType === 'number') {
+      h += `<input type="number" class="field-dropdown" placeholder="${f.placeholder||''}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value">`;
+    }
+    h += `</div>`;
+    return h;
+  }
+
+  let html = '';
+  step.fields.forEach(f => { html += renderField(f); });
+
+  html += `<div class="optional-divider">Optionale Angaben</div>`;
+  const checkbuttons = step.optionalFields.filter(f => f.fieldType === 'checkbutton');
+  if (checkbuttons.length) {
+    html += `<div class="checkbutton-row">`;
+    checkbuttons.forEach(f => {
+      html += `<button type="button" class="checkbutton ${answers[f.key]?'active':''}" id="${bodyId}_check_${f.key}" onclick="toggleCheckbutton('${f.key}','${bodyId}')">${f.label}</button>`;
+    });
+    html += `</div>`;
+  }
+  step.optionalFields.filter(f => f.fieldType !== 'checkbutton').forEach(f => { html += renderField(f); });
+
+  return html;
+}
+
+function stepperChange(key, delta, min, max, bodyId) {
+  let val = (answers[key] === undefined ? min : answers[key]) + delta;
+  val = Math.max(min, Math.min(max, val));
+  answers[key] = val;
+  const el = document.getElementById(`${bodyId}_stepper_${key}`);
+  if (el) el.textContent = val;
+}
+
+function toggleCheckbutton(key, bodyId) {
+  answers[key] = !answers[key];
+  const el = document.getElementById(`${bodyId}_check_${key}`);
+  if (el) el.classList.toggle('active', !!answers[key]);
+}
+
+function toggleInfo(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
 function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
   const step = visibleSteps()[currentStep - 1];
   const pct = Math.round(((currentStep - 1) / getTotalSteps()) * 100);
@@ -1424,6 +1541,8 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
     html += `</div>`;
     step.fields.slice(2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
     html += `<label class="consent-check" for="${bodyId}_consent"><input type="checkbox" id="${bodyId}_consent" ${answers.zustimmung ? 'checked' : ''} onchange="answers.zustimmung=this.checked"/><span>Ich bin damit einverstanden, dass ein Immobilienberater von ImmoWertChecker mich zu meiner Bewertung kontaktieren darf.</span></label>`;
+  } else if (step.type === 'wohnung-details') {
+    html += renderWohnungDetailsHTML(step, bodyId);
   } else if (step.type === 'address') {
     html += `<div class="field-group">
         <label>Straße und Hausnummer</label>
@@ -1510,6 +1629,14 @@ function validateStepS(suffix) {
       setTimeout(() => { label.style.color = ''; }, 2000);
     }
     return false;
+  }
+  if (step.type === 'wohnung-details') {
+    const missing = step.fields.filter(f => f.fieldType === 'dropdown' && !answers[f.key]);
+    if (missing.length) {
+      const el = document.getElementById(`${bodyId}_field_${missing[0].key}`);
+      if (el) { el.style.borderColor = '#ef4444'; el.focus(); setTimeout(()=>{ el.style.borderColor=''; }, 2000); }
+      return false;
+    }
   }
   if (step.type === 'address' && !answers._adresseBestaetigt) {
     const errorEl = document.getElementById(`${bodyId}_address_error`);
@@ -1675,10 +1802,48 @@ const steps = [
      {value:"mehrfamilienhaus",icon:`<img src="Mehrfamilienhaus.svg" alt="Mehrfamilienhaus" width="24" height="24">`,label:"Mehrfamilienhaus"},
      {value:"gewerbe",icon:`<img src="Gewerbe.svg" alt="Gewerbe" width="24" height="24">`,label:"Gewerbe"}
    ]},
-  {id:2,question:"Wo befindet sich die Immobilie?",hint:"Geben Sie die Postleitzahl und den Ort ein.",type:"fields",
-   fields:[{key:"plz",label:"Postleitzahl",placeholder:"z. B. 80331",type:"text"},{key:"ort",label:"Stadt / Gemeinde",placeholder:"z. B. München",type:"text"}]},
-  {id:3,question:"Wie groß ist die Wohnfläche?",hint:"Geben Sie die Wohnfläche in Quadratmetern an.",type:"slider",key:"wohnflaeche",min:20,max:500,default:100,step:1,unit:"m²",label:"Wohnfläche"},
+  {id:2,question:"Wo befindet sich die Immobilie?",hint:"Wird für eine genauere Preisspannen-Berechnung benötigt.",type:"fields",
+   fields:[{key:"ort",label:"Stadt / Gemeinde",placeholder:"z. B. München",type:"text"},{key:"strasse",label:"Straße und Hausnummer",placeholder:"z. B. Musterstraße 12",type:"text"},{key:"plz",label:"Postleitzahl",placeholder:"z. B. 80331",type:"text"}]},
+  {id:15,question:"Details zu Ihrer Immobilie",hint:"Diese Angaben helfen uns, den Wert präzise zu berechnen.",type:"wohnung-details",
+   condition:(a)=>a.type==="wohnung",
+   fields:[
+     {key:"wohnungstyp",label:"Wohnungstyp",fieldType:"dropdown",options:[
+       {value:"normal",label:"Normale Wohnung"},{value:"penthouse",label:"Penthouse"},
+       {value:"maisonette",label:"Maisonette-Wohnung"},{value:"terrassenwohnung",label:"Terrassenwohnung"}
+     ]},
+     {key:"baujahr_wohnung",label:"Baujahr",fieldType:"dropdown",options:[
+       {value:"vor1950",label:"vor 1950"},{value:"1950-1969",label:"1950 – 1969"},{value:"1970-1989",label:"1970 – 1989"},
+       {value:"1990-2000",label:"1990 – 2000"},{value:"2001-2015",label:"2001 – 2015"},{value:"nach2015",label:"nach 2015"}
+     ]},
+     {key:"wohnflaeche_bereich",label:"Wohnfläche",fieldType:"dropdown",options:[
+       {value:"unter40",label:"unter 40 m²"},{value:"40-60",label:"40 – 60 m²"},{value:"60-80",label:"60 – 80 m²"},
+       {value:"80-100",label:"80 – 100 m²"},{value:"100-120",label:"100 – 120 m²"},{value:"120-150",label:"120 – 150 m²"},{value:"ueber150",label:"über 150 m²"}
+     ]},
+     {key:"etage",label:"Etage",fieldType:"stepper",min:0,max:40,default:1,info:"0 = Erdgeschoss."},
+     {key:"zimmeranzahl",label:"Zimmeranzahl",fieldType:"stepper",min:1,max:12,default:3,info:"Zählen Sie alle Wohn- und Schlafräume, aber keine Küche oder Bäder."},
+     {key:"badezimmeranzahl",label:"Badezimmeranzahl",fieldType:"stepper",min:1,max:5,default:1,info:"Inklusive separater Gäste-WCs."},
+     {key:"stockwerke_gesamt",label:"Stockwerke im Gebäude",fieldType:"stepper",min:1,max:40,default:5,info:"Anzahl der Etagen im gesamten Gebäude, nicht nur Ihre Wohnung."},
+     {key:"energieeffizienz",label:"Energieeffizienzklasse",fieldType:"dropdown",info:"Steht auf Ihrem Energieausweis.",options:[
+       {value:"A+",label:"A+"},{value:"A",label:"A"},{value:"B",label:"B"},{value:"C",label:"C"},{value:"D",label:"D"},{value:"E",label:"E"},{value:"F",label:"F"},{value:"G",label:"G"},{value:"H",label:"H"}
+     ]},
+     {key:"modernisierungsjahr",label:"Letzte Modernisierung",fieldType:"dropdown",info:"z. B. neues Bad, neue Fenster oder neue Heizung.",options:[
+       {value:"keine",label:"Keine Modernisierung"},{value:"vor2000",label:"vor 2000"},{value:"2000-2010",label:"2000 – 2010"},{value:"2011-2020",label:"2011 – 2020"},{value:"nach2020",label:"nach 2020"}
+     ]}
+   ],
+   optionalFields:[
+     {key:"stellplatz",label:"Stellplatz",fieldType:"checkbutton"},
+     {key:"garage",label:"Garage",fieldType:"checkbutton"},
+     {key:"aufzug",label:"Aufzug",fieldType:"checkbutton"},
+     {key:"balkonflaeche",label:"Balkon-/Terrassenfläche (m²)",fieldType:"number",placeholder:"z. B. 8"},
+     {key:"kuechenzustand",label:"Küchenzustand",fieldType:"dropdown",options:[{value:"neu",label:"Neu / hochwertig"},{value:"gepflegt",label:"Gepflegt"},{value:"renovierungsbeduerftig",label:"Renovierungsbedürftig"}]},
+     {key:"badzustand",label:"Badezimmerzustand",fieldType:"dropdown",options:[{value:"neu",label:"Neu / hochwertig"},{value:"gepflegt",label:"Gepflegt"},{value:"renovierungsbeduerftig",label:"Renovierungsbedürftig"}]},
+     {key:"fussbodenzustand",label:"Fußbodenzustand",fieldType:"dropdown",options:[{value:"neu",label:"Neu / hochwertig"},{value:"gepflegt",label:"Gepflegt"},{value:"renovierungsbeduerftig",label:"Renovierungsbedürftig"}]},
+     {key:"fensterzustand",label:"Fensterzustand",fieldType:"dropdown",options:[{value:"neu",label:"Neu / hochwertig"},{value:"gepflegt",label:"Gepflegt"},{value:"renovierungsbeduerftig",label:"Renovierungsbedürftig"}]}
+   ]},
+  {id:3,question:"Wie groß ist die Wohnfläche?",hint:"Geben Sie die Wohnfläche in Quadratmetern an.",type:"slider",key:"wohnflaeche",min:20,max:500,default:100,step:1,unit:"m²",label:"Wohnfläche",
+   condition:(a)=>a.type!=="wohnung"},
   {id:4,question:"In welchem Jahr wurde die Immobilie gebaut?",hint:"Das Baujahr beeinflusst den Wert erheblich.",type:"options",key:"baujahr",
+   condition:(a)=>a.type!=="wohnung",
    options:[
      {value:"vor1950",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V9l8-6 8 6v12M9 21v-6h6v6"/></svg>`,label:"Vor 1950"},
      {value:"1950-1979",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="15" rx="1"/><path d="M2 11h20"/></svg>`,label:"1950 – 1979"},
@@ -1687,6 +1852,7 @@ const steps = [
      {value:"nach2015",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5"/></svg>`,label:"Nach 2015"}
    ]},
   {id:5,question:"Wie ist der Zustand der Immobilie?",hint:"Wählen Sie den aktuellen Zustand.",type:"options",key:"zustand",
+   condition:(a)=>a.type!=="wohnung",
    options:[
      {value:"renovierungsbedarf",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>`,label:"Renovierungsbedarf"},
      {value:"gepflegt",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`,label:"Gepflegt"},
@@ -1694,6 +1860,7 @@ const steps = [
      {value:"vollsaniert",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,label:"Voll saniert"}
    ]},
   {id:6,question:"Wie ist die Ausstattung?",hint:"Wählen Sie die zutreffende Ausstattungsklasse.",type:"options",key:"ausstattung",
+   condition:(a)=>a.type!=="wohnung",
    options:[
      {value:"einfach",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>`,label:"Einfach"},
      {value:"normal",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12L12 4l9 8"/><path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/></svg>`,label:"Normal"},
@@ -1701,6 +1868,7 @@ const steps = [
      {value:"luxus",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9z"/></svg>`,label:"Luxus"}
    ]},
   {id:7,question:"Welche Heizungsart ist vorhanden?",hint:"Beeinflusst den Energieausweis und den Wert.",type:"options",key:"heizung",
+   condition:(a)=>a.type!=="wohnung",
    options:[
      {value:"gas",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c0 6-6 6-6 12a6 6 0 0012 0c0-6-6-6-6-12z"/></svg>`,label:"Gas"},
      {value:"fernwaerme",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2c0 4-4 4-4 8a4 4 0 008 0C12 6 8 6 8 2z"/><path d="M16 2c0 4-4 4-4 8a4 4 0 008 0c0-4-4-4-4-8z"/></svg>`,label:"Fernwärme"},
@@ -1711,6 +1879,7 @@ const steps = [
   {id:8,question:"Wie groß ist das Grundstück?",hint:"Bei Häusern relevant.",type:"slider",key:"grundstueck",min:0,max:2000,default:300,step:10,unit:"m²",label:"Grundstücksfläche",
    condition:(a)=> a.type==="einfamilienhaus" || a.type==="mehrfamilienhaus"},
   {id:9,question:"Gibt es besondere Merkmale?",hint:"Mehrfachauswahl möglich.",type:"multi",key:"merkmale",
+   condition:(a)=>a.type!=="wohnung",
    options:[
      {value:"garage",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="1"/><path d="M2 11h20M12 3v4"/></svg>`,label:"Garage / Carport"},
      {value:"keller",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V9l8-6 8 6v12"/></svg>`,label:"Keller"},
@@ -1800,6 +1969,8 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
     html += `</div>`;
     step.fields.slice(2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
     html += `<label class="consent-check" for="${bodyId}_consent"><input type="checkbox" id="${bodyId}_consent" ${answers.zustimmung ? 'checked' : ''} onchange="answers.zustimmung=this.checked"/><span>Ich bin damit einverstanden, dass ein Immobilienberater von ImmoWertChecker mich zu meiner Bewertung kontaktieren darf.</span></label>`;
+  } else if (step.type === 'wohnung-details') {
+    html += renderWohnungDetailsHTML(step, bodyId);
   } else if (step.type === 'address') {
     html += `<div class="field-group">
         <label>Straße und Hausnummer</label>
@@ -1920,6 +2091,14 @@ function validateStep() {
       setTimeout(() => { label.style.color = ''; }, 2000);
     }
     return false;
+  }
+  if (step.type === 'wohnung-details') {
+    const missing = step.fields.filter(f => f.fieldType === 'dropdown' && !answers[f.key]);
+    if (missing.length) {
+      const el = document.getElementById(`${bodyId}_field_${missing[0].key}`);
+      if (el) { el.style.borderColor = '#ef4444'; el.focus(); setTimeout(()=>{ el.style.borderColor=''; }, 2000); }
+      return false;
+    }
   }
   if (step.type === 'address' && !answers._adresseBestaetigt) {
     const errorEl = document.getElementById(`${bodyId}_address_error`);
