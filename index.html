@@ -1502,46 +1502,10 @@ let answers = {};
 const steps = [
   {id:1,question:"Um welche Immobilie handelt es sich?",hint:"Bitte wählen Sie den Immobilientyp aus.",type:"type-grid",key:"type",
    options:[
-     {value:"wohnung",icon:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-  <rect x="2" y="4" width="20" height="18" rx="1"/>
-  <path d="M2 9h20"/>
-  <path d="M2 14h20"/>
-  <path d="M7 9v5M12 9v5M17 9v5"/>
-  <rect x="9" y="17" width="6" height="5" rx="0.5"/>
-</svg>`,label:"Wohnung"},
-     {value:"einfamilienhaus",icon:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M3 10.5L12 3l9 7.5V21H3V10.5z"/>
-  <rect x="9" y="14" width="6" height="7"/>
-  <rect x="5" y="11" width="3" height="3" rx="0.5"/>
-  <rect x="16" y="11" width="3" height="3" rx="0.5"/>
-  <path d="M12 3v3"/>
-</svg>`,label:"Einfamilienhaus"},
-     {value:"mehrfamilienhaus",icon:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-  <rect x="1" y="2" width="22" height="20" rx="1"/>
-  <path d="M1 7h22M1 12h22M1 17h22"/>
-  <path d="M6 2v20M12 2v20M18 2v20"/>
-  <rect x="3" y="9" width="2" height="2" rx="0.3" fill="currentColor" opacity="0.4"/>
-  <rect x="8" y="9" width="2" height="2" rx="0.3" fill="currentColor" opacity="0.4"/>
-  <rect x="14" y="9" width="2" height="2" rx="0.3" fill="currentColor" opacity="0.4"/>
-  <rect x="19" y="9" width="2" height="2" rx="0.3" fill="currentColor" opacity="0.4"/>
-</svg>`,label:"Mehrfamilienhaus"},
-     {value:"gewerbe",icon:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-  <rect x="2" y="1" width="20" height="22" rx="1"/>
-  <path d="M2 6h20M2 11h20M2 16h20"/>
-  <rect x="5" y="3" width="2" height="2" rx="0.3"/>
-  <rect x="9" y="3" width="2" height="2" rx="0.3"/>
-  <rect x="13" y="3" width="2" height="2" rx="0.3"/>
-  <rect x="17" y="3" width="2" height="2" rx="0.3"/>
-  <rect x="5" y="8" width="2" height="2" rx="0.3"/>
-  <rect x="9" y="8" width="2" height="2" rx="0.3"/>
-  <rect x="13" y="8" width="2" height="2" rx="0.3"/>
-  <rect x="17" y="8" width="2" height="2" rx="0.3"/>
-  <rect x="5" y="13" width="2" height="2" rx="0.3"/>
-  <rect x="9" y="13" width="2" height="2" rx="0.3"/>
-  <rect x="13" y="13" width="2" height="2" rx="0.3"/>
-  <rect x="17" y="13" width="2" height="2" rx="0.3"/>
-  <rect x="9" y="18" width="6" height="5"/>
-</svg>`,label:"Gewerbe"}
+     {value:"wohnung",icon:`<img src="Wohnung.svg" alt="Wohnung" width="24" height="24">`,label:"Wohnung"},
+     {value:"einfamilienhaus",icon:`<img src="Einfamilienhaus.svg" alt="Einfamilienhaus" width="24" height="24">`,label:"Einfamilienhaus"},
+     {value:"mehrfamilienhaus",icon:`<img src="Mehrfamilienhaus.svg" alt="Mehrfamilienhaus" width="24" height="24">`,label:"Mehrfamilienhaus"},
+     {value:"gewerbe",icon:`<img src="Gewerbe.svg" alt="Gewerbe" width="24" height="24">`,label:"Gewerbe"}
    ]},
   {id:2,question:"Wo befindet sich die Immobilie?",hint:"Geben Sie die Postleitzahl und den Ort ein.",type:"fields",
    fields:[{key:"plz",label:"Postleitzahl",placeholder:"z. B. 80331",type:"text"},{key:"ort",label:"Stadt / Gemeinde",placeholder:"z. B. München",type:"text"}]},
