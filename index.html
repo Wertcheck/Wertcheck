@@ -340,44 +340,42 @@ nav.scrolled {
 .wizard-header {
   display: flex;
   align-items: center;
-  gap: 10px;
   margin-bottom: 22px;
 }
 .step-label {
   display: none;
 }
 .progress-pct {
-  flex-shrink: 0;
-  font-size: 13px; font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: var(--orange);
-  min-width: 32px;
-  margin-bottom: 0;
+  display: none;
 }
 .progress-bar {
+  position: relative;
   flex: 1;
-  height: 7px;
-  background: var(--border);
+  height: 38px;
+  background: #ffffff;
+  border: 2px solid var(--orange);
   border-radius: 99px;
   overflow: hidden;
   margin-bottom: 0;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
-  position: relative;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
 }
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--orange), var(--orange2));
+  background: var(--orange);
   border-radius: 99px;
   transition: width .6s cubic-bezier(.4,0,.2,1);
-  box-shadow: 0 0 10px rgba(0,151,178,0.6);
-  position: relative;
-  overflow: hidden;
+  box-shadow: none;
 }
-.progress-fill::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0) 60%);
-  border-radius: 99px;
+.progress-step-text {
+  position: absolute;
+  right: 16px; top: 50%; transform: translateY(-50%);
+  font-size: 14px; font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--orange);
+  letter-spacing: 0.02em;
+  pointer-events: none;
 }
 .wizard-question { font-family:var(--f-head); font-size:22px; font-weight:700; color:var(--text); margin-bottom:6px; line-height:1.3; text-align:center; }
 .wizard-hint { font-size:14px; color:var(--muted); margin-bottom:24px; font-weight:300; text-align:center; }
@@ -1025,8 +1023,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     <div class="wizard-card" id="wizard">
       <div class="wizard-header">
         <div class="step-label" id="step-label">Schritt 1 von 12</div>
-        <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
-        <div class="progress-pct" id="progress-pct">0%</div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div><div class="progress-step-text" id="progress-pct">1 / 12</div></div>
       </div>
       <div id="wizard-body"></div>
     </div>
@@ -1037,8 +1034,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     <div class="wizard-glass" id="wizard-glass-card">
       <div class="wizard-header">
         <div class="step-label" id="step-label-hm">Schritt 1 von 12</div>
-        <div class="progress-bar"><div class="progress-fill" id="progress-fill-hm" style="width:0%"></div></div>
-        <div class="progress-pct" id="progress-pct-hm">0%</div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill-hm" style="width:0%"></div><div class="progress-step-text" id="progress-pct-hm">1 / 12</div></div>
       </div>
       <div id="wizard-body-hm"></div>
     </div>
@@ -1061,8 +1057,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     <div class="wizard-card" id="wizard-mobile">
       <div class="wizard-header">
         <div class="step-label" id="step-label-m">Schritt 1 von 12</div>
-        <div class="progress-bar"><div class="progress-fill" id="progress-fill-m" style="width:0%"></div></div>
-        <div class="progress-pct" id="progress-pct-m">0%</div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill-m" style="width:0%"></div><div class="progress-step-text" id="progress-pct-m">1 / 12</div></div>
       </div>
       <div id="wizard-body-m"></div>
     </div>
@@ -1637,10 +1632,10 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
   const fill = document.getElementById(fillId);
   const pct_el = document.getElementById(pctId);
   const header = fill ? fill.closest('.wizard-header') : null;
-  if (header) header.style.display = currentStep === 1 ? 'none' : 'grid';
+  if (header) header.style.display = currentStep === 1 ? 'none' : 'flex';
   if(lbl) lbl.textContent = `Schritt ${currentStep} von ${getTotalSteps()}`;
   if(fill) fill.style.width = pct + '%';
-  if(pct_el) pct_el.textContent = pct + '%';
+  if(pct_el) pct_el.textContent = `${currentStep} / ${getTotalSteps()}`;
 
   let html = `<h2 class="wizard-question">${step.question}</h2><p class="wizard-hint">${step.hint}</p>`;
 
@@ -1991,7 +1986,7 @@ async function submitFormS(suffix) {
 
   document.getElementById(labelId).textContent = 'Fertig';
   document.getElementById(fillId).style.width = '100%';
-  document.getElementById(pctId).textContent = '100%';
+  document.getElementById(pctId).textContent = `${getTotalSteps()} / ${getTotalSteps()}`;
 
   document.getElementById(bodyId).innerHTML = `
     <div class="success-state">
@@ -2178,10 +2173,10 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
   const pct = Math.round(((currentStep - 1) / getTotalSteps()) * 100);
   const fillEl = document.getElementById(fillId);
   const headerEl = fillEl ? fillEl.closest('.wizard-header') : null;
-  if (headerEl) headerEl.style.display = currentStep === 1 ? 'none' : 'grid';
+  if (headerEl) headerEl.style.display = currentStep === 1 ? 'none' : 'flex';
   document.getElementById(labelId).textContent = `Schritt ${currentStep} von ${getTotalSteps()}`;
   document.getElementById(fillId).style.width = pct + '%';
-  document.getElementById(pctId).textContent = pct + '%';
+  document.getElementById(pctId).textContent = `${currentStep} / ${getTotalSteps()}`;
 
   let html = `<h2 class="wizard-question">${step.question}</h2><p class="wizard-hint">${step.hint}</p>`;
 
@@ -2438,7 +2433,7 @@ function showSuccess(name, email, low, high, avg) {
   const pctId   = isMobile() ? 'progress-pct-m' : 'progress-pct';
   document.getElementById(labelId).textContent = 'Fertig';
   document.getElementById(fillId).style.width = '100%';
-  document.getElementById(pctId).textContent = '100%';
+  document.getElementById(pctId).textContent = `${getTotalSteps()} / ${getTotalSteps()}`;
   document.getElementById(bodyId).innerHTML = `
     <div class="success-state">
       <div class="success-icon-wrap">
