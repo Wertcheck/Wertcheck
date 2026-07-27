@@ -1580,6 +1580,16 @@ function closeAllDropdowns(exceptPanelId) {
   });
 }
 
+function positionFixedPanel(trigger, panel) {
+  if (!trigger || !panel) return;
+  const rect = trigger.getBoundingClientRect();
+  panel.style.position = 'fixed';
+  panel.style.top = `${rect.bottom + 4}px`;
+  panel.style.left = `${rect.left}px`;
+  panel.style.width = `${rect.width}px`;
+  panel.style.zIndex = '1000';
+}
+
 function toggleDropdownPanel(bodyId, key) {
   const panelId = `${bodyId}_dd_panel_${key}`;
   const panel = document.getElementById(panelId);
@@ -1587,6 +1597,7 @@ function toggleDropdownPanel(bodyId, key) {
   if (!panel) return;
   const isOpen = panel.style.display !== 'none';
   closeAllDropdowns(panelId);
+  if (!isOpen) positionFixedPanel(trigger, panel);
   panel.style.display = isOpen ? 'none' : 'block';
   if (trigger) trigger.classList.toggle('open', !isOpen);
 }
@@ -1848,7 +1859,9 @@ function onAddressInput(value, bodyId) {
 async function fetchAddressSuggestions(value, bodyId) {
   const panel = document.getElementById(`${bodyId}_address_panel`);
   const errorEl = document.getElementById(`${bodyId}_address_error`);
+  const trigger = document.getElementById(`${bodyId}_address_input`);
   if (!panel) return;
+  positionFixedPanel(trigger, panel);
 
   if (typeof google === 'undefined' || !google.maps || !google.maps.importLibrary) {
     if (errorEl) { errorEl.textContent = 'Adressvorschläge aktuell nicht verfügbar — Straße kann trotzdem manuell eingegeben werden.'; errorEl.style.display = 'block'; }
