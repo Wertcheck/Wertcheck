@@ -343,7 +343,7 @@ nav.scrolled {
   background:#fff; border-radius:20px; padding:52px 48px; overflow:hidden;
   box-shadow:0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.08);
 }
-.desktop-logo-icon { display: flex; justify-content: center; margin-bottom: 16px; }
+.desktop-logo-icon { display: flex; justify-content: center; margin-bottom: 16px; flex-shrink: 0; }
 .desktop-logo-icon img { height: 72px; width: auto; animation: iconHousePop .5s cubic-bezier(.34,1.56,.64,1) both; }
 .wizard-card.wizard-fixed-size {
   height: 640px;
@@ -355,6 +355,17 @@ nav.scrolled {
   flex: 1;
   overflow-y: auto;
   padding-right: 4px;
+  position: relative;
+}
+.wizard-card.wizard-fixed-size [id^="wizard-body"]::after {
+  content: '';
+  display: block;
+  position: sticky;
+  bottom: 0;
+  height: 36px;
+  margin-top: -36px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.95));
+  pointer-events: none;
 }
 .wizard-card.wizard-fixed-size .wizard-footer {
   flex-shrink: 0;
@@ -364,6 +375,7 @@ nav.scrolled {
   display: flex;
   align-items: center;
   margin-bottom: 22px;
+  flex-shrink: 0;
 }
 .step-label {
   display: none;
@@ -782,10 +794,12 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     width: 100%;
     height: 100dvh;
     margin: 0;
-    overflow-y: auto;
+    overflow: hidden;
     background: #ffffff;
     padding: 28px 5% 20px;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
   }
   .hero-mobile-wizard.wizard-fullscreen .wizard-header {
     margin-bottom: 20px;
@@ -795,6 +809,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     display: flex;
     justify-content: center;
     margin-bottom: 12px;
+    flex-shrink: 0;
   }
   .hero-mobile-wizard.wizard-success-view .fullscreen-logo-icon,
   .hero-mobile-wizard.wizard-success-view .wizard-header {
@@ -806,17 +821,31 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     animation: iconHousePop .5s cubic-bezier(.34,1.56,.64,1) both;
   }
   .hero-mobile-wizard.wizard-fullscreen .wizard-glass {
-    min-height: calc(100dvh - 40px);
+    flex: 1;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     box-shadow: none;
     border: none;
-    overflow: visible;
+    overflow: hidden;
   }
   .hero-mobile-wizard.wizard-fullscreen #wizard-body-hm {
     flex: 1;
+    min-height: 0;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
+    position: relative;
+  }
+  .hero-mobile-wizard.wizard-fullscreen #wizard-body-hm::after {
+    content: '';
+    display: block;
+    position: sticky;
+    bottom: 0;
+    height: 36px;
+    margin-top: -36px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.95));
+    pointer-events: none;
   }
   .hero-mobile-wizard.wizard-fullscreen .wizard-footer {
     flex-shrink: 0;
@@ -1079,8 +1108,8 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
       </div>
     </div>
     <!-- Wizard: nur Desktop -->
-    <div class="desktop-logo-icon"><img src="logo-icon-clean.png" alt="ImmoWertChecker"></div>
     <div class="wizard-card" id="wizard">
+      <div class="desktop-logo-icon"><img src="logo-icon-clean.png" alt="ImmoWertChecker"></div>
       <div class="wizard-header">
         <div class="step-label" id="step-label">Schritt 1 von 12</div>
         <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div><div class="progress-step-text" id="progress-pct">0%</div></div>
@@ -1309,12 +1338,12 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
         Wir machen <span style="color:var(--orange); font-style:italic;">Immobilienwerte</span> transparent
       </h2>
       <p style="font-size:15px; color:rgba(255,255,255,0.65); line-height:1.8; margin-bottom:16px; font-weight:300;">
-        Sie möchten wissen, was Ihre Immobilie heute wert ist? Mit ImmowertChecker erhalten Sie in wenigen Minuten eine fundierte, KI-gestützte Werteinschätzung – kostenlos und unverbindlich.
+        Viele Menschen erben eine Immobilie oder besitzen eine — und wissen nicht was sie wert ist.
+        Genau für diese Situation haben wir ImmowertChecker entwickelt.
       </p>
       <p style="font-size:15px; color:rgba(255,255,255,0.65); line-height:1.8; margin-bottom:28px; font-weight:300;">
-       Ob Eigenheim, Eigentumswohnung oder geerbte Immobilie: Beantworten Sie einfach einige kurze Fragen und erhalten Sie eine realistische Preisspanne auf Basis aktueller Marktdaten. Ganz ohne Termin, ohne Fachjargon und ohne Verpflichtungen.
-
-Schnell. Transparent. Kostenlos.
+        Kein Fachjargon, kein Termin, keine Verpflichtung. Einfach ein paar Fragen beantworten
+        und in Minuten wissen was die eigene Immobilie wert ist.
       </p>
       <div style="display:flex; gap:32px; flex-wrap:wrap; padding-top:24px; border-top:1px solid rgba(255,255,255,0.08);">
         <div>
