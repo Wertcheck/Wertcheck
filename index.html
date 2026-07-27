@@ -191,6 +191,7 @@ nav.scrolled {
    overrides (".hero-mobile-wizard .x"), so source order decides the
    winner. Keeping this block first lets the later mobile rules win. */
 .wizard-glass {
+  position: relative; z-index: 150;
   background: #ffffff;
   border: 1px solid var(--border);
   border-radius: 20px;
@@ -322,6 +323,7 @@ nav.scrolled {
 
 /* ── WIZARD CARD ────────────────────────────────────────────────── */
 .wizard-card {
+  position: relative; z-index: 150;
   background:#fff; border-radius:20px; padding:52px 48px; overflow:hidden;
   box-shadow:0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.08);
 }
