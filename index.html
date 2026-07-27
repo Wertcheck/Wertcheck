@@ -448,6 +448,7 @@ input[type="range"]::-moz-range-thumb { width:20px; height:20px; border-radius:5
   cursor:pointer; text-align:left; transition:border-color .2s;
 }
 .custom-dropdown-trigger:hover, .custom-dropdown-trigger.open { border-color:var(--orange); }
+input.custom-dropdown-trigger { cursor:text; }
 .custom-dropdown-trigger .dd-arrow { color:var(--muted); flex-shrink:0; transition:transform .2s; }
 .custom-dropdown-trigger.open .dd-arrow { transform:rotate(180deg); color:var(--orange); }
 .custom-dropdown-panel {
@@ -1582,13 +1583,13 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
   } else if (step.type === 'wohnung-details') {
     html += renderWohnungDetailsHTML(step, bodyId);
   } else if (step.type === 'address') {
-    html += `<div class="field-group">
+    html += `<div class="field-group custom-dropdown" id="${bodyId}_addr_wrap">
         <label>Straße und Hausnummer</label>
-        <div id="${bodyId}_address_wrap" style="color-scheme:light; --gmp-mat-color-surface:#ffffff; --gmp-mat-color-on-surface:#1A2533; --gmp-mat-color-on-surface-variant:#6B7A8D; --gmp-mat-color-outline-decorative:#C8E8EE; --gmp-mat-color-primary:#0097B2;"></div>
+        <input type="text" class="custom-dropdown-trigger" id="${bodyId}_address_input" placeholder="z. B. Musterstraße 12, München" value="${answers.strasse ? answers.strasse + (answers.ort ? ', ' + answers.ort : '') : ''}" autocomplete="off" oninput="onAddressInput(this.value,'${bodyId}')">
+        <div class="custom-dropdown-panel" id="${bodyId}_address_panel" style="display:none;"></div>
       </div>
       <p id="${bodyId}_address_error" style="display:none; color:#ef4444; font-size:12px; margin:-8px 0 12px;">Bitte wählen Sie eine Adresse aus den Vorschlägen aus.</p>
       <div id="${bodyId}_address_confirmed" style="display:${answers._adresseBestaetigt ? 'block' : 'none'}; background:var(--cream); border-radius:8px; padding:10px 14px; font-size:13px; color:var(--text); margin-bottom:12px;">✓ <span id="${bodyId}_address_text">${answers.strasse || ''}, ${answers.plz || ''} ${answers.ort || ''}</span></div>`;
-    setTimeout(() => initAddressAutocomplete(bodyId, suffix, true), 50);
   } else if (step.type === 'email-verify') {
     html += `<div class="contact-note">Code gesendet an <strong>${answers.email||''}</strong>. Bitte im Postfach (auch Spam-Ordner) nachschauen.</div>
       <div class="field-group">
@@ -1702,50 +1703,98 @@ function validateStepS(suffix) {
 }
 
 // ── ADRESS-AUTOVERVOLLSTÄNDIGUNG (Google Places) ───────────────────
-async function initAddressAutocomplete(bodyId, suffix, isMobileInstance) {
-  const wrap = document.getElementById(`${bodyId}_address_wrap`);
-  if (!wrap || wrap.dataset.initialized) return; // nicht doppelt initialisieren bei Re-Renders
-  wrap.dataset.initialized = '1';
+// ── ADRESS-AUTOVERVOLLSTÄNDIGUNG (eigenes Design, Google liefert nur Daten) ──
+let addressSessionToken = null;
+let addressDebounceTimer = null;
+
+function onAddressInput(value, bodyId) {
+  answers.strasse = value;
+  answers._adresseBestaetigt = false;
+  clearTimeout(addressDebounceTimer);
+  const panel = document.getElementById(`${bodyId}_address_panel`);
+  if (!value || value.trim().length < 3) {
+    if (panel) panel.style.display = 'none';
+    return;
+  }
+  addressDebounceTimer = setTimeout(() => fetchAddressSuggestions(value, bodyId), 300);
+}
+
+async function fetchAddressSuggestions(value, bodyId) {
+  const panel = document.getElementById(`${bodyId}_address_panel`);
+  if (!panel) return;
 
   if (typeof google === 'undefined' || !google.maps || !google.maps.importLibrary) {
     console.warn('Google Maps API nicht geladen — bitte gültigen API-Key in <head> eintragen.');
-    wrap.innerHTML = `<input type="text" id="${bodyId}_address_fallback" placeholder="Straße und Hausnummer" style="width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:10px;font-size:16px;font-family:var(--f-body);" oninput="answers.strasse=this.value; answers._adresseBestaetigt=false;">`;
     return;
   }
 
-  const { PlaceAutocompleteElement } = await google.maps.importLibrary('places');
-  const autocompleteEl = new PlaceAutocompleteElement({
-    includedRegionCodes: ['de']
-  });
-  wrap.appendChild(autocompleteEl);
+  try {
+    const { AutocompleteSuggestion, AutocompleteSessionToken } = await google.maps.importLibrary('places');
+    if (!addressSessionToken) addressSessionToken = new AutocompleteSessionToken();
 
-  autocompleteEl.addEventListener('gmp-select', async (e) => {
-    try {
-      const place = e.placePrediction.toPlace();
-      await place.fetchFields({ fields: ['addressComponents', 'formattedAddress'] });
-      let strasse = '', hausnummer = '', plz = '', ort = '';
-      (place.addressComponents || []).forEach(c => {
-        if (c.types.includes('route')) strasse = c.longText;
-        if (c.types.includes('street_number')) hausnummer = c.longText;
-        if (c.types.includes('postal_code')) plz = c.longText;
-        if (c.types.includes('locality')) ort = c.longText;
-      });
-      answers.strasse = hausnummer ? `${strasse} ${hausnummer}` : strasse;
-      if (plz) answers.plz = plz;
-      if (ort) answers.ort = ort;
-      answers._adresseBestaetigt = true;
+    const { suggestions } = await AutocompleteSuggestion.fetchAutocompleteSuggestions({
+      input: value,
+      includedRegionCodes: ['de'],
+      sessionToken: addressSessionToken
+    });
 
-      const confirmedEl = document.getElementById(`${bodyId}_address_confirmed`);
-      const textEl = document.getElementById(`${bodyId}_address_text`);
-      const errorEl = document.getElementById(`${bodyId}_address_error`);
-      if (textEl) textEl.textContent = `${answers.strasse}, ${answers.plz || ''} ${answers.ort || ''}`;
-      if (confirmedEl) confirmedEl.style.display = 'block';
-      if (errorEl) errorEl.style.display = 'none';
-    } catch (err) {
-      console.error('Adresse konnte nicht verarbeitet werden:', err.message);
+    if (!suggestions || !suggestions.length) {
+      panel.innerHTML = `<div class="custom-dropdown-option" style="color:var(--muted); cursor:default;">Keine Treffer gefunden</div>`;
+      panel.style.display = 'block';
+      return;
     }
-  });
+
+    panel.innerHTML = suggestions.map((s, i) =>
+      `<div class="custom-dropdown-option" onclick="selectAddressSuggestion(${i},'${bodyId}')">${s.placePrediction.text.text}</div>`
+    ).join('');
+    panel.style.display = 'block';
+    window[`__addrSuggestions_${bodyId}`] = suggestions;
+  } catch (err) {
+    console.error('Adressvorschläge konnten nicht geladen werden:', err.message);
+  }
 }
+
+async function selectAddressSuggestion(index, bodyId) {
+  const suggestions = window[`__addrSuggestions_${bodyId}`];
+  if (!suggestions || !suggestions[index]) return;
+  const panel = document.getElementById(`${bodyId}_address_panel`);
+
+  try {
+    const place = suggestions[index].placePrediction.toPlace();
+    await place.fetchFields({ fields: ['addressComponents', 'formattedAddress'] });
+
+    let strasse = '', hausnummer = '', plz = '', ort = '';
+    (place.addressComponents || []).forEach(c => {
+      if (c.types.includes('route')) strasse = c.longText;
+      if (c.types.includes('street_number')) hausnummer = c.longText;
+      if (c.types.includes('postal_code')) plz = c.longText;
+      if (c.types.includes('locality')) ort = c.longText;
+    });
+    answers.strasse = hausnummer ? `${strasse} ${hausnummer}` : strasse;
+    if (plz) answers.plz = plz;
+    if (ort) answers.ort = ort;
+    answers._adresseBestaetigt = true;
+    addressSessionToken = null; // neue Session für die nächste Adresssuche
+
+    const input = document.getElementById(`${bodyId}_address_input`);
+    const confirmedEl = document.getElementById(`${bodyId}_address_confirmed`);
+    const textEl = document.getElementById(`${bodyId}_address_text`);
+    const errorEl = document.getElementById(`${bodyId}_address_error`);
+    if (input) input.value = `${answers.strasse}, ${answers.ort || ''}`;
+    if (textEl) textEl.textContent = `${answers.strasse}, ${answers.plz || ''} ${answers.ort || ''}`;
+    if (confirmedEl) confirmedEl.style.display = 'block';
+    if (errorEl) errorEl.style.display = 'none';
+    if (panel) panel.style.display = 'none';
+  } catch (err) {
+    console.error('Adresse konnte nicht verarbeitet werden:', err.message);
+  }
+}
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('[id$="_addr_wrap"]')) {
+    document.querySelectorAll('[id$="_address_panel"]').forEach(p => p.style.display = 'none');
+  }
+});
 
 // ── E-MAIL-VERIFIZIERUNG (mobil) ───────────────────────────────────
 async function sendVerificationCodeS(suffix, isResend) {
@@ -2024,13 +2073,13 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
   } else if (step.type === 'wohnung-details') {
     html += renderWohnungDetailsHTML(step, bodyId);
   } else if (step.type === 'address') {
-    html += `<div class="field-group">
+    html += `<div class="field-group custom-dropdown" id="${bodyId}_addr_wrap">
         <label>Straße und Hausnummer</label>
-        <div id="${bodyId}_address_wrap" style="color-scheme:light; --gmp-mat-color-surface:#ffffff; --gmp-mat-color-on-surface:#1A2533; --gmp-mat-color-on-surface-variant:#6B7A8D; --gmp-mat-color-outline-decorative:#C8E8EE; --gmp-mat-color-primary:#0097B2;"></div>
+        <input type="text" class="custom-dropdown-trigger" id="${bodyId}_address_input" placeholder="z. B. Musterstraße 12, München" value="${answers.strasse ? answers.strasse + (answers.ort ? ', ' + answers.ort : '') : ''}" autocomplete="off" oninput="onAddressInput(this.value,'${bodyId}')">
+        <div class="custom-dropdown-panel" id="${bodyId}_address_panel" style="display:none;"></div>
       </div>
       <p id="${bodyId}_address_error" style="display:none; color:#ef4444; font-size:12px; margin:-8px 0 12px;">Bitte wählen Sie eine Adresse aus den Vorschlägen aus.</p>
       <div id="${bodyId}_address_confirmed" style="display:${answers._adresseBestaetigt ? 'block' : 'none'}; background:var(--cream); border-radius:8px; padding:10px 14px; font-size:13px; color:var(--text); margin-bottom:12px;">✓ <span id="${bodyId}_address_text">${answers.strasse || ''}, ${answers.plz || ''} ${answers.ort || ''}</span></div>`;
-    setTimeout(() => initAddressAutocomplete(bodyId, '', false), 50);
   } else if (step.type === 'email-verify') {
     html += `<div class="contact-note">Code gesendet an <strong>${answers.email||''}</strong>. Bitte im Postfach (auch Spam-Ordner) nachschauen.</div>
       <div class="field-group">
