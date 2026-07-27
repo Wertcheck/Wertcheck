@@ -338,39 +338,46 @@ nav.scrolled {
 }
 /* Wizard header — Label + % in einer Zeile, Bar darunter (Apple-inspiriert) */
 .wizard-header {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-areas: "pct" "bar";
-  row-gap: 9px;
+  display: flex;
   align-items: center;
+  gap: 10px;
   margin-bottom: 22px;
 }
 .step-label {
   display: none;
 }
 .progress-pct {
-  grid-area: pct;
-  font-size: 12px; font-weight: 700;
+  flex-shrink: 0;
+  font-size: 13px; font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--orange);
-  text-align: right;
+  min-width: 32px;
   margin-bottom: 0;
 }
 .progress-bar {
-  grid-area: bar;
-  height: 4px;
+  flex: 1;
+  height: 7px;
   background: var(--border);
   border-radius: 99px;
   overflow: hidden;
   margin-bottom: 0;
-  box-shadow: none;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
+  position: relative;
 }
 .progress-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--orange), var(--orange2));
   border-radius: 99px;
   transition: width .6s cubic-bezier(.4,0,.2,1);
-  box-shadow: 0 0 8px rgba(0,151,178,0.55);
+  box-shadow: 0 0 10px rgba(0,151,178,0.6);
+  position: relative;
+  overflow: hidden;
+}
+.progress-fill::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0) 60%);
+  border-radius: 99px;
 }
 .wizard-question { font-family:var(--f-head); font-size:22px; font-weight:700; color:var(--text); margin-bottom:6px; line-height:1.3; text-align:center; }
 .wizard-hint { font-size:14px; color:var(--muted); margin-bottom:24px; font-weight:300; text-align:center; }
@@ -739,8 +746,11 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     margin: 0;
     overflow-y: auto;
     background: #ffffff;
-    padding: 20px 5%;
+    padding: 14px 5% 20px;
     box-sizing: border-box;
+  }
+  .hero-mobile-wizard.wizard-fullscreen .wizard-header {
+    margin-bottom: 44px;
   }
   .hero-mobile-wizard.wizard-fullscreen .wizard-glass {
     min-height: calc(100dvh - 40px);
@@ -761,7 +771,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   }
   .hero-mobile-wizard .wizard-brand { margin-bottom: 10px; }
   .hero-mobile-wizard .wizard-brand img { height: 28px; }
-  .hero-mobile-wizard .wizard-header { margin-bottom: 10px; row-gap: 8px; }
+  .hero-mobile-wizard .wizard-header { margin-bottom: 10px; }
   .hero-mobile-wizard .wizard-question { font-size:16px; margin-bottom:4px; }
   .hero-mobile-wizard .wizard-hint { font-size:12px; margin-bottom:8px; }
   .hero-mobile-wizard .type-grid { gap:9px; margin-bottom:8px; }
