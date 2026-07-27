@@ -475,12 +475,15 @@ input[type="range"]::-moz-range-thumb { width:20px; height:20px; border-radius:5
 }
 .checkbutton.active { border-color:var(--orange); background:var(--cream); color:var(--orange2); }
 .optional-toggle {
-  width:100%; display:flex; align-items:center; justify-content:center; gap:8px;
-  background:none; border:none; border-bottom:1px dashed var(--border);
-  padding:12px 0; font-size:13px; font-weight:600; color:var(--orange);
-  cursor:pointer; font-family:var(--f-body); margin:10px 0 4px; transition:opacity .15s;
+  width:100%; display:flex; align-items:center; justify-content:center; gap:12px;
+  background:none; border:none;
+  padding:0; font-size:14px; font-weight:700; color:var(--orange);
+  cursor:pointer; font-family:var(--f-body); margin:18px 0 10px; transition:opacity .15s;
 }
 .optional-toggle:hover { opacity:0.7; }
+.optional-toggle::before, .optional-toggle::after {
+  content:''; flex:1; height:1px; background:var(--border);
+}
 .optional-toggle-arrow { transition:transform .2s; flex-shrink:0; }
 .optional-toggle.open .optional-toggle-arrow { transform:rotate(180deg); }
 .optional-content { margin-top:14px; }
