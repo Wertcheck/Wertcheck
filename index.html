@@ -760,7 +760,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     margin-bottom: 18px;
   }
   .fullscreen-logo-icon img {
-    height: 44px;
+    height: 76px;
     width: auto;
     animation: iconHousePop .5s cubic-bezier(.34,1.56,.64,1) both;
   }
@@ -1529,7 +1529,7 @@ function renderWohnungDetailsHTML(step, bodyId) {
         <button type="button" onclick="stepperChange('${f.key}',1,${f.min},${f.max},'${bodyId}')">+</button>
       </div>`;
     } else if (f.fieldType === 'number') {
-      h += `<input type="number" class="field-dropdown" placeholder="${f.placeholder||''}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value">`;
+      h += `<input type="number" class="field-dropdown" placeholder="${f.placeholder||''}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value; refreshProgressBar();">`;
     }
     h += `</div>`;
     return h;
@@ -1565,12 +1565,14 @@ function stepperChange(key, delta, min, max, bodyId) {
   answers[key] = val;
   const el = document.getElementById(`${bodyId}_stepper_${key}`);
   if (el) el.textContent = val;
+  refreshProgressBar();
 }
 
 function toggleCheckbutton(key, bodyId) {
   answers[key] = !answers[key];
   const el = document.getElementById(`${bodyId}_check_${key}`);
   if (el) el.classList.toggle('active', !!answers[key]);
+  refreshProgressBar();
 }
 
 function toggleInfo(id) {
@@ -1634,6 +1636,7 @@ function selectDropdownOption(bodyId, key, value, el) {
   if (labelEl) labelEl.textContent = el.textContent;
   const trigger = document.querySelector(`#${bodyId}_dd_${key} .custom-dropdown-trigger`);
   if (trigger) { trigger.classList.remove('open'); trigger.style.borderColor = ''; }
+  refreshProgressBar();
 }
 
 document.addEventListener('click', (e) => {
@@ -1642,7 +1645,7 @@ document.addEventListener('click', (e) => {
 
 function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
   const step = visibleSteps()[currentStep - 1];
-  const pct = Math.round(((currentStep - 1) / getTotalSteps()) * 100);
+  const pct = calculateProgress();
   const lbl = document.getElementById(labelId);
   const fill = document.getElementById(fillId);
   const pct_el = document.getElementById(pctId);
@@ -1680,7 +1683,7 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
   } else if (step.type === 'fields') {
     step.fields.forEach(f => {
       const val = answers[f.key] || '';
-      html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${val}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`;
+      html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${val}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value; refreshProgressBar();"/></div>`;
     });
   } else if (step.type === 'slider') {
     const val = answers[step.key] !== undefined ? answers[step.key] : step.default;
@@ -1690,9 +1693,9 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
   } else if (step.type === 'contact') {
     html += ``;
     html += `<div class="input-row">`;
-    step.fields.slice(0,2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
+    step.fields.slice(0,2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value; refreshProgressBar();"/></div>`; });
     html += `</div>`;
-    step.fields.slice(2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
+    step.fields.slice(2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value; refreshProgressBar();"/></div>`; });
     html += `<label class="consent-check" for="${bodyId}_consent"><input type="checkbox" id="${bodyId}_consent" ${answers.zustimmung ? 'checked' : ''} onchange="answers.zustimmung=this.checked"/><span>Ich bin damit einverstanden, dass meine Angaben verarbeitet werden und mich ein Immobilienberater von ImmoWertChecker per E-Mail oder Telefon zu meiner Anfrage kontaktieren darf. Diese Einwilligung kann ich jederzeit formlos widerrufen. <a href="#" onclick="event.preventDefault(); event.stopPropagation(); openPage('datenschutz-page')" style="color:var(--orange); text-decoration:underline;">Datenschutzerklärung</a></span></label>`;
   } else if (step.type === 'wohnung-details') {
     html += renderWohnungDetailsHTML(step, bodyId);
@@ -2183,9 +2186,62 @@ function getTotalSteps() {
   return visibleSteps().length;
 }
 
+// Wie viele "Antwort-Einheiten" hat ein Schritt insgesamt (Pflichtfelder)?
+function getStepUnitCount(step) {
+  if (step.type === 'wohnung-details') return step.fields.length;
+  if (step.type === 'contact') return step.fields.filter(f => f.type !== 'tel').length;
+  if (step.type === 'fields') return step.fields.length;
+  return 1; // type-grid, options, slider, multi, address, email-verify
+}
+
+// Wie viele davon sind im aktuellen Schritt schon beantwortet?
+function getStepAnsweredCount(step) {
+  if (step.type === 'wohnung-details') {
+    return step.fields.filter(f => answers[f.key] !== undefined && answers[f.key] !== '').length;
+  }
+  if (step.type === 'contact' || step.type === 'fields') {
+    return step.fields.filter(f => f.type !== 'tel').filter(f => answers[f.key] && String(answers[f.key]).trim()).length;
+  }
+  return 0;
+}
+
+// Gesamtfortschritt in Prozent — zählt tatsächlich beantwortete Felder,
+// nicht nur abgeschlossene Schritte. Dadurch wächst die Anzeige auch
+// innerhalb eines Mehrfach-Schritts (z.B. "Details zu Ihrer Immobilie")
+// bei jeder einzelnen Auswahl sinnvoll mit.
+function calculateProgress() {
+  const stepsArr = visibleSteps();
+  let totalUnits = 0, doneUnits = 0;
+  stepsArr.forEach((step, idx) => {
+    const stepNum = idx + 1;
+    const units = getStepUnitCount(step);
+    totalUnits += units;
+    if (stepNum < currentStep) {
+      doneUnits += units;
+    } else if (stepNum === currentStep) {
+      doneUnits += getStepAnsweredCount(step);
+    }
+  });
+  return totalUnits > 0 ? Math.round((doneUnits / totalUnits) * 100) : 0;
+}
+
+// Aktualisiert die sichtbare Fortschrittsanzeige, ohne den ganzen
+// Schritt neu zu rendern — wird bei jeder Feldänderung aufgerufen.
+function refreshProgressBar() {
+  const pct = calculateProgress();
+  ['progress-fill', 'progress-fill-hm', 'progress-fill-m'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.offsetParent !== null) el.style.width = pct + '%';
+  });
+  ['progress-pct', 'progress-pct-hm', 'progress-pct-m'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.offsetParent !== null) el.textContent = pct + '%';
+  });
+}
+
 function renderWizard(bodyId, labelId, fillId, pctId) {
   const step = visibleSteps()[currentStep - 1];
-  const pct = Math.round(((currentStep - 1) / getTotalSteps()) * 100);
+  const pct = calculateProgress();
   const fillEl = document.getElementById(fillId);
   const headerEl = fillEl ? fillEl.closest('.wizard-header') : null;
   if (headerEl) headerEl.style.display = currentStep === 1 ? 'none' : 'flex';
@@ -2221,7 +2277,7 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
   } else if (step.type === 'fields') {
     step.fields.forEach(f => {
       const val = answers[f.key] || '';
-      html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${val}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`;
+      html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${val}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value; refreshProgressBar();"/></div>`;
     });
   } else if (step.type === 'slider') {
     const val = answers[step.key] !== undefined ? answers[step.key] : step.default;
@@ -2231,9 +2287,9 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
   } else if (step.type === 'contact') {
     html += ``;
     html += `<div class="input-row">`;
-    step.fields.slice(0,2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
+    step.fields.slice(0,2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value; refreshProgressBar();"/></div>`; });
     html += `</div>`;
-    step.fields.slice(2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
+    step.fields.slice(2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value; refreshProgressBar();"/></div>`; });
     html += `<label class="consent-check" for="${bodyId}_consent"><input type="checkbox" id="${bodyId}_consent" ${answers.zustimmung ? 'checked' : ''} onchange="answers.zustimmung=this.checked"/><span>Ich bin damit einverstanden, dass meine Angaben verarbeitet werden und mich ein Immobilienberater von ImmoWertChecker per E-Mail oder Telefon zu meiner Anfrage kontaktieren darf. Diese Einwilligung kann ich jederzeit formlos widerrufen. <a href="#" onclick="event.preventDefault(); event.stopPropagation(); openPage('datenschutz-page')" style="color:var(--orange); text-decoration:underline;">Datenschutzerklärung</a></span></label>`;
   } else if (step.type === 'wohnung-details') {
     html += renderWohnungDetailsHTML(step, bodyId);
