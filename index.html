@@ -319,6 +319,17 @@ nav.scrolled {
   background:#fff; border-radius:20px; padding:52px 48px; overflow:hidden;
   box-shadow:0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.08);
 }
+.wizard-card.wizard-fixed-size {
+  height: 640px;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+}
+.wizard-card.wizard-fixed-size [id^="wizard-body"] {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
 /* Wizard header — Label + % in einer Zeile, Bar darunter (Apple-inspiriert) */
 .wizard-header {
   display: grid;
@@ -511,6 +522,19 @@ input.custom-dropdown-trigger { cursor:text; }
 .success-icon { width:60px; height:60px; background:var(--orange); border-radius:50%; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; animation:popIn .4s cubic-bezier(.68,-.55,.265,1.55); }
 .success-icon svg { width:26px; height:26px; stroke:#fff; fill:none; stroke-width:2.5; }
 @keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+.success-icon-wrap { position:relative; width:76px; height:76px; margin:0 auto 16px; }
+.success-icon-house, .success-icon-check {
+  position:absolute; inset:0; width:100%; height:100%;
+}
+.success-icon-house {
+  animation: iconHousePop .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+.success-icon-check {
+  opacity:0; transform:scale(0.4);
+  animation: iconCheckPop .45s .5s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes iconHousePop { from{transform:scale(0); opacity:0;} to{transform:scale(1); opacity:1;} }
+@keyframes iconCheckPop { from{transform:scale(0.4); opacity:0;} to{transform:scale(1); opacity:1;} }
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   20% { transform: translateX(-6px); }
@@ -1424,7 +1448,10 @@ function renderAll() {
   }
   const heroWizard = document.getElementById('hero-wizard-mobile');
   if (heroWizard) {
-    heroWizard.classList.toggle('wizard-fullscreen', currentStep > 1);
+    const isFullscreen = currentStep > 1;
+    heroWizard.classList.toggle('wizard-fullscreen', isFullscreen);
+    const nav = document.querySelector('nav');
+    if (nav) nav.classList.toggle('scrolled', isFullscreen || window.scrollY > 50);
   }
 }
 
@@ -1470,21 +1497,23 @@ function renderWohnungDetailsHTML(step, bodyId) {
   let html = '';
   step.fields.forEach(f => { html += renderField(f); });
 
-  html += `<button type="button" class="optional-toggle" id="${bodyId}_optional_toggle" onclick="toggleOptionalSection('${bodyId}')">
-    <span>Optionale Angaben</span>
-    <svg class="optional-toggle-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-  </button>`;
-  html += `<div class="optional-content" id="${bodyId}_optional_content" style="display:none;">`;
-  const checkbuttons = step.optionalFields.filter(f => f.fieldType === 'checkbutton');
-  if (checkbuttons.length) {
-    html += `<div class="checkbutton-row">`;
-    checkbuttons.forEach(f => {
-      html += `<button type="button" class="checkbutton ${answers[f.key]?'active':''}" id="${bodyId}_check_${f.key}" onclick="toggleCheckbutton('${f.key}','${bodyId}')">${f.label}</button>`;
-    });
+  if (step.optionalFields && step.optionalFields.length) {
+    html += `<button type="button" class="optional-toggle" id="${bodyId}_optional_toggle" onclick="toggleOptionalSection('${bodyId}')">
+      <span>Optionale Angaben</span>
+      <svg class="optional-toggle-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>`;
+    html += `<div class="optional-content" id="${bodyId}_optional_content" style="display:none;">`;
+    const checkbuttons = step.optionalFields.filter(f => f.fieldType === 'checkbutton');
+    if (checkbuttons.length) {
+      html += `<div class="checkbutton-row">`;
+      checkbuttons.forEach(f => {
+        html += `<button type="button" class="checkbutton ${answers[f.key]?'active':''}" id="${bodyId}_check_${f.key}" onclick="toggleCheckbutton('${f.key}','${bodyId}')">${f.label}</button>`;
+      });
+      html += `</div>`;
+    }
+    step.optionalFields.filter(f => f.fieldType !== 'checkbutton').forEach(f => { html += renderField(f); });
     html += `</div>`;
   }
-  step.optionalFields.filter(f => f.fieldType !== 'checkbutton').forEach(f => { html += renderField(f); });
-  html += `</div>`;
 
   return html;
 }
@@ -1607,7 +1636,7 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
     html += `<div class="slider-wrap"><div class="slider-label-row"><span class="slider-label">${step.label}</span></div><div class="slider-input-row"><input type="range" id="${rId}" min="${step.min}" max="${step.max}" step="${step.step}" value="${val}" oninput="updateSlider('${step.key}',this.value,'${nId}')"/><div class="slider-number-wrap"><input type="number" class="slider-number" id="${nId}" min="${step.min}" max="${step.max}" step="${step.step}" value="${val}" oninput="updateSliderNumber('${step.key}',this.value,'${rId}')" onchange="clampSliderNumber('${step.key}',${step.min},${step.max},'${nId}','${rId}')"/><span class="slider-unit">${step.unit}</span></div></div><div class="slider-minmax"><span>${step.min} ${step.unit}</span><span>${step.max.toLocaleString('de-DE')} ${step.unit}</span></div></div>`;
     answers[step.key] = val;
   } else if (step.type === 'contact') {
-    html += `<div class="contact-note">Ihre Daten werden vertraulich behandelt.</div>`;
+    html += ``;
     html += `<div class="input-row">`;
     step.fields.slice(0,2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
     html += `</div>`;
@@ -1922,7 +1951,10 @@ async function submitFormS(suffix) {
 
   document.getElementById(bodyId).innerHTML = `
     <div class="success-state">
-      <div class="success-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="success-icon-wrap">
+        <img src="logo-icon-house.svg" class="success-icon-house" alt="">
+        <img src="logo-icon-check.svg" class="success-icon-check" alt="">
+      </div>
       <h3 style="color:var(--text);">Vielen Dank, ${name}!</h3>
       <p style="color:var(--muted);">Ihre Bewertung wird per E-Mail zugesendet.</p>
       <div class="value-range">
@@ -1974,7 +2006,7 @@ const steps = [
      {value:"mehrfamilienhaus",icon:`<img src="Mehrfamilienhaus.svg" alt="Mehrfamilienhaus" width="24" height="24">`,label:"Mehrfamilienhaus"},
      {value:"gewerbe",icon:`<img src="Gewerbe.svg" alt="Gewerbe" width="24" height="24">`,label:"Gewerbe"}
    ]},
-  {id:15,question:"Details zu Ihrer Immobilie",hint:"Diese Angaben helfen uns, den Wert präzise zu berechnen.",type:"wohnung-details",
+  {id:15,question:"Details zu Ihrer Immobilie (1 von 3)",hint:"Diese Angaben helfen uns, den Wert präzise zu berechnen.",type:"wohnung-details",
    condition:(a)=>a.type==="wohnung",
    fields:[
      {key:"wohnungstyp",label:"Wohnungstyp",fieldType:"dropdown",options:[
@@ -1988,11 +2020,21 @@ const steps = [
      {key:"wohnflaeche_bereich",label:"Wohnfläche",fieldType:"dropdown",options:[
        {value:"unter40",label:"unter 40 m²"},{value:"40-60",label:"40 – 60 m²"},{value:"60-80",label:"60 – 80 m²"},
        {value:"80-100",label:"80 – 100 m²"},{value:"100-120",label:"100 – 120 m²"},{value:"120-150",label:"120 – 150 m²"},{value:"ueber150",label:"über 150 m²"}
-     ]},
+     ]}
+   ],
+   optionalFields:[]},
+  {id:16,question:"Details zu Ihrer Immobilie (2 von 3)",hint:"Diese Angaben helfen uns, den Wert präzise zu berechnen.",type:"wohnung-details",
+   condition:(a)=>a.type==="wohnung",
+   fields:[
      {key:"etage",label:"Etage",fieldType:"stepper",min:0,max:40,default:1,info:"0 = Erdgeschoss."},
      {key:"zimmeranzahl",label:"Zimmeranzahl",fieldType:"stepper",min:1,max:12,default:3,info:"Zählen Sie alle Wohn- und Schlafräume, aber keine Küche oder Bäder."},
      {key:"badezimmeranzahl",label:"Badezimmeranzahl",fieldType:"stepper",min:1,max:5,default:1,info:"Inklusive separater Gäste-WCs."},
-     {key:"stockwerke_gesamt",label:"Stockwerke im Gebäude",fieldType:"stepper",min:1,max:40,default:5,info:"Anzahl der Etagen im gesamten Gebäude, nicht nur Ihre Wohnung."},
+     {key:"stockwerke_gesamt",label:"Stockwerke im Gebäude",fieldType:"stepper",min:1,max:40,default:5,info:"Anzahl der Etagen im gesamten Gebäude, nicht nur Ihre Wohnung."}
+   ],
+   optionalFields:[]},
+  {id:17,question:"Details zu Ihrer Immobilie (3 von 3)",hint:"Diese Angaben helfen uns, den Wert präzise zu berechnen.",type:"wohnung-details",
+   condition:(a)=>a.type==="wohnung",
+   fields:[
      {key:"energieeffizienz",label:"Energieeffizienzklasse",fieldType:"dropdown",info:"Steht auf Ihrem Energieausweis.",options:[
        {value:"A+",label:"A+"},{value:"A",label:"A"},{value:"B",label:"B"},{value:"C",label:"C"},{value:"D",label:"D"},{value:"E",label:"E"},{value:"F",label:"F"},{value:"G",label:"G"},{value:"H",label:"H"}
      ]},
@@ -2133,7 +2175,7 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
     html += `<div class="slider-wrap"><div class="slider-label-row"><span class="slider-label">${step.label}</span></div><div class="slider-input-row"><input type="range" id="${rId}" min="${step.min}" max="${step.max}" step="${step.step}" value="${val}" oninput="updateSlider('${step.key}',this.value,'${nId}')"/><div class="slider-number-wrap"><input type="number" class="slider-number" id="${nId}" min="${step.min}" max="${step.max}" step="${step.step}" value="${val}" oninput="updateSliderNumber('${step.key}',this.value,'${rId}')" onchange="clampSliderNumber('${step.key}',${step.min},${step.max},'${nId}','${rId}')"/><span class="slider-unit">${step.unit}</span></div></div><div class="slider-minmax"><span>${step.min.toLocaleString('de-DE')} ${step.unit}</span><span>${step.max.toLocaleString('de-DE')} ${step.unit}</span></div></div>`;
     answers[step.key] = val;
   } else if (step.type === 'contact') {
-    html += `<div class="contact-note">Ihre Daten werden vertraulich behandelt und nicht weitergegeben.</div>`;
+    html += ``;
     html += `<div class="input-row">`;
     step.fields.slice(0,2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
     html += `</div>`;
@@ -2206,8 +2248,10 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
 function render() {
   if (isMobile()) {
     renderWizard('wizard-body-m','step-label-m','progress-fill-m','progress-pct-m');
+    document.getElementById('wizard-mobile')?.classList.toggle('wizard-fixed-size', currentStep > 1);
   } else {
     renderWizard('wizard-body','step-label','progress-fill','progress-pct');
+    document.getElementById('wizard')?.classList.toggle('wizard-fixed-size', currentStep > 1);
   }
 }
 
@@ -2353,7 +2397,10 @@ function showSuccess(name, email, low, high, avg) {
   document.getElementById(pctId).textContent = '100%';
   document.getElementById(bodyId).innerHTML = `
     <div class="success-state">
-      <div class="success-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="success-icon-wrap">
+        <img src="logo-icon-house.svg" class="success-icon-house" alt="">
+        <img src="logo-icon-check.svg" class="success-icon-check" alt="">
+      </div>
       <h3>Vielen Dank, ${name}!</h3>
       <p>Ihre Bewertung wurde erfolgreich übermittelt.</p>
       <div class="value-range">
