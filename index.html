@@ -670,7 +670,7 @@ section { padding:88px 5%; }
 .step-num-circle { width:30px; height:30px; background:var(--night); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; font-family:var(--f-head); }
 .step-icon-circle { width:76px; height:76px; background:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; box-shadow:0 4px 16px rgba(0,0,0,0.06); transition:all .3s; }
 .step-item:hover .step-icon-circle { background:rgba(0,151,178,0.1); transform:scale(1.06); }
-.step-icon-circle svg { width:32px; height:32px; stroke:var(--orange); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+.step-icon-circle img { width:40px; height:40px; object-fit:contain; }
 .step-item h3 { font-family:var(--f-head); font-size:17px; font-weight:700; color:var(--text); margin-bottom:8px; }
 .step-item p { font-size:14px; font-weight:300; color:var(--muted); line-height:1.7; }
 
@@ -863,8 +863,8 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     background: #ffffff;
     border: 1px solid var(--border);
   }
-  .hero-mobile-wizard .wizard-brand { margin-bottom: 10px; }
-  .hero-mobile-wizard .wizard-brand img { height: 28px; }
+  .hero-mobile-wizard .progress-ring-wrap { width: 84px; height: 84px; margin-bottom: 4px; }
+  .hero-mobile-wizard .progress-ring-pct { margin-bottom: 12px; }
   .hero-mobile-wizard .wizard-header { margin-bottom: 10px; }
   .hero-mobile-wizard .wizard-question { font-size:16px; margin-bottom:4px; }
   .hero-mobile-wizard .wizard-hint { font-size:12px; margin-bottom:8px; }
@@ -902,7 +902,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   .steps-grid { gap:20px; margin-top:24px; }
   .steps-grid::before { display:none; }
   .step-icon-circle { width:58px; height:58px; margin-bottom:10px; }
-  .step-icon-circle svg { width:24px; height:24px; }
+  .step-icon-circle img { width:30px; height:30px; }
   .step-num-circle { width:26px; height:26px; font-size:12px; }
   .step-item h3 { font-size:14px; margin-bottom:6px; }
   .step-item p { font-size:13px; }
@@ -1247,17 +1247,17 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     <p class="section-sub fade-in">Keine Vorkenntnisse nötig. Einfach die drei Schritte durchgehen — das war's.</p>
     <div class="steps-grid fade-in">
       <div class="step-item">
-        <div class="step-icon-circle"><svg viewBox="0 0 24 24"><rect x="6" y="2" width="10" height="18" rx="1.5"/><path d="M8.5 6.5l1.2 1.2L12 5.5"/><path d="M8.5 10.5l1.2 1.2L12 9.5"/><path d="M14 15l6 6"/></svg></div>
+        <div class="step-icon-circle"><img src="process-icon-1.svg" alt="Immobilie beschreiben"></div>
         <h3>Immobilie beschreiben</h3>
         <p>Ein paar einfache Fragen zu Ihrer Immobilie — Typ, Lage, Größe. Kein Fachwissen nötig.</p>
       </div>
       <div class="step-item">
-        <div class="step-icon-circle"><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="16" rx="1.5"/><path d="M14 8a3 3 0 100 6"/><path d="M11.5 9.5h3M11.5 11.5h3"/><path d="M4 15c0-1.5 1-2 2-2h1v6c0 1.5-1.5 2-2.5 1l-2-1.5"/></svg></div>
+        <div class="step-icon-circle"><img src="process-icon-2.svg" alt="KI berechnet Ihren Wert"></div>
         <h3>KI berechnet Ihren Wert</h3>
         <p>Unsere KI vergleicht Ihre Immobilie in Echtzeit mit tausenden ähnlichen Objekten in Ihrer Region.</p>
       </div>
       <div class="step-item">
-        <div class="step-icon-circle"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="16" height="12" rx="1.5"/><path d="M2 6.5l8 6 8-6"/><circle cx="18" cy="16" r="5"/><path d="M15.5 16l1.7 1.7L21 14"/></svg></div>
+        <div class="step-icon-circle"><img src="process-icon-3.svg" alt="Ergebnis per E-Mail"></div>
         <h3>Ergebnis per E-Mail</h3>
         <p>Sie erhalten eine übersichtliche Bewertung als PDF — mit Preisspanne, Marktvergleich und Empfehlungen.</p>
       </div>
@@ -2308,15 +2308,17 @@ function updateProgressRing(pct, fillId, pctId, checkId) {
   const ring = document.getElementById(fillId);
   const pctEl = document.getElementById(pctId);
   const check = document.getElementById(checkId);
+  const svg = ring ? ring.closest('svg') : null;
 
   if (currentStep === 1) {
-    // Auf Schritt 1: komplettes Icon (Haus + Haken), keine Prozentzahl, Ring noch leer
-    if (ring) ring.style.strokeDashoffset = RING_CIRCUMFERENCE;
+    // Auf Schritt 1: nur das Icon, kein Ring, keine Prozentzahl
+    if (svg) svg.style.visibility = 'hidden';
     if (pctEl) pctEl.style.display = 'none';
     if (check) { check.classList.remove('show'); check.classList.add('static'); }
     return;
   }
 
+  if (svg) svg.style.visibility = 'visible';
   if (pctEl) pctEl.style.display = '';
   if (check) check.classList.remove('static');
 
