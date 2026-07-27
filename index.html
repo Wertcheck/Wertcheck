@@ -1501,7 +1501,7 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
     step.fields.slice(0,2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
     html += `</div>`;
     step.fields.slice(2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
-    html += `<label class="consent-check" for="${bodyId}_consent"><input type="checkbox" id="${bodyId}_consent" ${answers.zustimmung ? 'checked' : ''} onchange="answers.zustimmung=this.checked"/><span>Ich bin damit einverstanden, dass ein Immobilienberater von ImmoWertChecker mich zu meiner Bewertung kontaktieren darf.</span></label>`;
+    html += `<label class="consent-check" for="${bodyId}_consent"><input type="checkbox" id="${bodyId}_consent" ${answers.zustimmung ? 'checked' : ''} onchange="answers.zustimmung=this.checked"/><span>Ich bin damit einverstanden, dass meine Angaben verarbeitet werden und mich ein Immobilienberater von ImmoWertChecker per E-Mail oder Telefon zu meiner Anfrage kontaktieren darf. Diese Einwilligung kann ich jederzeit formlos widerrufen. <a href="#" onclick="event.preventDefault(); event.stopPropagation(); openPage('datenschutz-page')" style="color:var(--orange); text-decoration:underline;">Datenschutzerklärung</a></span></label>`;
   } else if (step.type === 'wohnung-details') {
     html += renderWohnungDetailsHTML(step, bodyId);
   } else if (step.type === 'address') {
@@ -1775,8 +1775,6 @@ const steps = [
      {value:"mehrfamilienhaus",icon:`<img src="Mehrfamilienhaus.svg" alt="Mehrfamilienhaus" width="24" height="24">`,label:"Mehrfamilienhaus"},
      {value:"gewerbe",icon:`<img src="Gewerbe.svg" alt="Gewerbe" width="24" height="24">`,label:"Gewerbe"}
    ]},
-  {id:2,question:"Wo befindet sich die Immobilie?",hint:"Wird für eine genauere Preisspannen-Berechnung benötigt.",type:"fields",
-   fields:[{key:"ort",label:"Stadt / Gemeinde",placeholder:"z. B. München",type:"text"},{key:"strasse",label:"Straße und Hausnummer",placeholder:"z. B. Musterstraße 12",type:"text"},{key:"plz",label:"Postleitzahl",placeholder:"z. B. 80331",type:"text"}]},
   {id:15,question:"Details zu Ihrer Immobilie",hint:"Diese Angaben helfen uns, den Wert präzise zu berechnen.",type:"wohnung-details",
    condition:(a)=>a.type==="wohnung",
    fields:[
@@ -1878,7 +1876,7 @@ const steps = [
    ]},
   {id:12,question:"Wohin sollen wir Ihre Bewertung senden?",hint:"Ihre Daten werden vertraulich behandelt.",type:"contact",
    fields:[{key:"vorname",label:"Vorname",placeholder:"Max",type:"text"},{key:"nachname",label:"Nachname",placeholder:"Mustermann",type:"text"},{key:"email",label:"E-Mail-Adresse",placeholder:"max@beispiel.de",type:"email"},{key:"telefon",label:"Telefon (optional)",placeholder:"+49 123 456789",type:"tel"}]},
-  {id:13,question:"Wie lautet die genaue Adresse?",hint:"Damit wir Ihre Immobilie realistisch einschätzen können, benötigen wir die vollständige Adresse statt nur Postleitzahl und Ort.",type:"address",key:"adresse"},
+  {id:13,question:"Wo befindet sich die Immobilie?",hint:"Die genaue Adresse wird für eine präzise Bewertung Ihrer Immobilie benötigt.",type:"address",key:"adresse"},
   {id:14,question:"Bestätigen Sie Ihre E-Mail-Adresse",hint:"Wir haben Ihnen einen 6-stelligen Code geschickt.",type:"email-verify",key:"code"}
 ];
 
@@ -1941,7 +1939,7 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
     step.fields.slice(0,2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
     html += `</div>`;
     step.fields.slice(2).forEach(f => { html += `<div class="field-group"><label>${f.label}</label><input type="${f.type}" placeholder="${f.placeholder}" value="${answers[f.key]||''}" id="${bodyId}_field_${f.key}" oninput="answers['${f.key}']=this.value"/></div>`; });
-    html += `<label class="consent-check" for="${bodyId}_consent"><input type="checkbox" id="${bodyId}_consent" ${answers.zustimmung ? 'checked' : ''} onchange="answers.zustimmung=this.checked"/><span>Ich bin damit einverstanden, dass ein Immobilienberater von ImmoWertChecker mich zu meiner Bewertung kontaktieren darf.</span></label>`;
+    html += `<label class="consent-check" for="${bodyId}_consent"><input type="checkbox" id="${bodyId}_consent" ${answers.zustimmung ? 'checked' : ''} onchange="answers.zustimmung=this.checked"/><span>Ich bin damit einverstanden, dass meine Angaben verarbeitet werden und mich ein Immobilienberater von ImmoWertChecker per E-Mail oder Telefon zu meiner Anfrage kontaktieren darf. Diese Einwilligung kann ich jederzeit formlos widerrufen. <a href="#" onclick="event.preventDefault(); event.stopPropagation(); openPage('datenschutz-page')" style="color:var(--orange); text-decoration:underline;">Datenschutzerklärung</a></span></label>`;
   } else if (step.type === 'wohnung-details') {
     html += renderWohnungDetailsHTML(step, bodyId);
   } else if (step.type === 'address') {
