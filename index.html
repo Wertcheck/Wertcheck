@@ -1583,13 +1583,28 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
   } else if (step.type === 'wohnung-details') {
     html += renderWohnungDetailsHTML(step, bodyId);
   } else if (step.type === 'address') {
-    html += `<div class="field-group custom-dropdown" id="${bodyId}_addr_wrap">
-        <label>Straße und Hausnummer</label>
-        <input type="text" class="custom-dropdown-trigger" id="${bodyId}_address_input" placeholder="z. B. Musterstraße 12, München" value="${answers.strasse ? answers.strasse + (answers.ort ? ', ' + answers.ort : '') : ''}" autocomplete="off" oninput="onAddressInput(this.value,'${bodyId}')">
-        <div class="custom-dropdown-panel" id="${bodyId}_address_panel" style="display:none;"></div>
+    html += `<div class="input-row">
+        <div class="field-group">
+          <label>Stadt / Gemeinde</label>
+          <input type="text" class="field-dropdown" id="${bodyId}_field_ort" placeholder="z. B. München" value="${answers.ort||''}" oninput="onOrtPlzInput('${bodyId}')">
+        </div>
+        <div class="field-group">
+          <label>Postleitzahl</label>
+          <input type="text" class="field-dropdown" id="${bodyId}_field_plz" placeholder="z. B. 80331" value="${answers.plz||''}" oninput="onOrtPlzInput('${bodyId}')">
+        </div>
       </div>
-      <p id="${bodyId}_address_error" style="display:none; color:#ef4444; font-size:12px; margin:-8px 0 12px;">Bitte wählen Sie eine Adresse aus den Vorschlägen aus.</p>
-      <div id="${bodyId}_address_confirmed" style="display:${answers._adresseBestaetigt ? 'block' : 'none'}; background:var(--cream); border-radius:8px; padding:10px 14px; font-size:13px; color:var(--text); margin-bottom:12px;">✓ <span id="${bodyId}_address_text">${answers.strasse || ''}, ${answers.plz || ''} ${answers.ort || ''}</span></div>`;
+      <div id="${bodyId}_strasse_wrap" style="display:${(answers.ort && answers.plz) ? 'block' : 'none'};">
+        <div class="field-group custom-dropdown" id="${bodyId}_addr_wrap">
+          <label>Straße</label>
+          <input type="text" class="custom-dropdown-trigger" id="${bodyId}_address_input" placeholder="z. B. Musterstraße" value="${answers.strasse||''}" autocomplete="off" oninput="onAddressInput(this.value,'${bodyId}')">
+          <div class="custom-dropdown-panel" id="${bodyId}_address_panel" style="display:none;"></div>
+        </div>
+        <p id="${bodyId}_address_error" style="display:none; color:#ef4444; font-size:12px; margin:-8px 0 12px;"></p>
+        <div class="field-group">
+          <label>Hausnummer</label>
+          <input type="text" class="field-dropdown" id="${bodyId}_field_hausnummer" placeholder="z. B. 12" value="${answers.hausnummer||''}" oninput="answers.hausnummer=this.value">
+        </div>
+      </div>`;
   } else if (step.type === 'email-verify') {
     html += `<div class="contact-note">Code gesendet an <strong>${answers.email||''}</strong>. Bitte im Postfach (auch Spam-Ordner) nachschauen.</div>
       <div class="field-group">
@@ -1694,10 +1709,18 @@ function validateStepS(suffix) {
       return false;
     }
   }
-  if (step.type === 'address' && !answers._adresseBestaetigt) {
-    const errorEl = document.getElementById(`${bodyId}_address_error`);
-    if (errorEl) errorEl.style.display = 'block';
-    return false;
+  if (step.type === 'address') {
+    if (!answers.ort || !answers.plz) {
+      const el = document.getElementById(`${bodyId}_field_${!answers.ort ? 'ort' : 'plz'}`);
+      if (el) { el.focus(); el.style.borderColor = '#ef4444'; setTimeout(()=>{ el.style.borderColor=''; }, 2000); }
+      return false;
+    }
+    if (!answers.strasse || !answers.hausnummer) {
+      const key = !answers.strasse ? 'address_input' : 'field_hausnummer';
+      const el = document.getElementById(`${bodyId}_${key}`);
+      if (el) { el.focus(); el.style.borderColor = '#ef4444'; setTimeout(()=>{ el.style.borderColor=''; }, 2000); }
+      return false;
+    }
   }
   return true;
 }
@@ -1707,11 +1730,21 @@ function validateStepS(suffix) {
 let addressSessionToken = null;
 let addressDebounceTimer = null;
 
+function onOrtPlzInput(bodyId) {
+  const ortEl = document.getElementById(`${bodyId}_field_ort`);
+  const plzEl = document.getElementById(`${bodyId}_field_plz`);
+  answers.ort = ortEl ? ortEl.value : '';
+  answers.plz = plzEl ? plzEl.value : '';
+  const wrap = document.getElementById(`${bodyId}_strasse_wrap`);
+  if (wrap) wrap.style.display = (answers.ort && answers.plz) ? 'block' : 'none';
+}
+
 function onAddressInput(value, bodyId) {
   answers.strasse = value;
-  answers._adresseBestaetigt = false;
   clearTimeout(addressDebounceTimer);
   const panel = document.getElementById(`${bodyId}_address_panel`);
+  const errorEl = document.getElementById(`${bodyId}_address_error`);
+  if (errorEl) errorEl.style.display = 'none';
   if (!value || value.trim().length < 3) {
     if (panel) panel.style.display = 'none';
     return;
@@ -1721,10 +1754,11 @@ function onAddressInput(value, bodyId) {
 
 async function fetchAddressSuggestions(value, bodyId) {
   const panel = document.getElementById(`${bodyId}_address_panel`);
+  const errorEl = document.getElementById(`${bodyId}_address_error`);
   if (!panel) return;
 
   if (typeof google === 'undefined' || !google.maps || !google.maps.importLibrary) {
-    console.warn('Google Maps API nicht geladen — bitte gültigen API-Key in <head> eintragen.');
+    if (errorEl) { errorEl.textContent = 'Adressvorschläge aktuell nicht verfügbar — Straße kann trotzdem manuell eingegeben werden.'; errorEl.style.display = 'block'; }
     return;
   }
 
@@ -1732,14 +1766,15 @@ async function fetchAddressSuggestions(value, bodyId) {
     const { AutocompleteSuggestion, AutocompleteSessionToken } = await google.maps.importLibrary('places');
     if (!addressSessionToken) addressSessionToken = new AutocompleteSessionToken();
 
+    const searchInput = answers.ort ? `${value}, ${answers.ort}` : value;
     const { suggestions } = await AutocompleteSuggestion.fetchAutocompleteSuggestions({
-      input: value,
+      input: searchInput,
       includedRegionCodes: ['de'],
       sessionToken: addressSessionToken
     });
 
     if (!suggestions || !suggestions.length) {
-      panel.innerHTML = `<div class="custom-dropdown-option" style="color:var(--muted); cursor:default;">Keine Treffer gefunden</div>`;
+      panel.innerHTML = `<div class="custom-dropdown-option" style="color:var(--muted); cursor:default;">Keine Treffer — Straße kann manuell eingegeben werden</div>`;
       panel.style.display = 'block';
       return;
     }
@@ -1751,6 +1786,8 @@ async function fetchAddressSuggestions(value, bodyId) {
     window[`__addrSuggestions_${bodyId}`] = suggestions;
   } catch (err) {
     console.error('Adressvorschläge konnten nicht geladen werden:', err.message);
+    if (errorEl) { errorEl.textContent = 'Adressvorschläge gerade nicht abrufbar (' + err.message + '). Straße kann manuell eingegeben werden.'; errorEl.style.display = 'block'; }
+    if (panel) panel.style.display = 'none';
   }
 }
 
@@ -1761,29 +1798,17 @@ async function selectAddressSuggestion(index, bodyId) {
 
   try {
     const place = suggestions[index].placePrediction.toPlace();
-    await place.fetchFields({ fields: ['addressComponents', 'formattedAddress'] });
+    await place.fetchFields({ fields: ['addressComponents'] });
 
-    let strasse = '', hausnummer = '', plz = '', ort = '';
+    let strasse = '';
     (place.addressComponents || []).forEach(c => {
       if (c.types.includes('route')) strasse = c.longText;
-      if (c.types.includes('street_number')) hausnummer = c.longText;
-      if (c.types.includes('postal_code')) plz = c.longText;
-      if (c.types.includes('locality')) ort = c.longText;
     });
-    answers.strasse = hausnummer ? `${strasse} ${hausnummer}` : strasse;
-    if (plz) answers.plz = plz;
-    if (ort) answers.ort = ort;
-    answers._adresseBestaetigt = true;
+    answers.strasse = strasse || answers.strasse;
     addressSessionToken = null; // neue Session für die nächste Adresssuche
 
     const input = document.getElementById(`${bodyId}_address_input`);
-    const confirmedEl = document.getElementById(`${bodyId}_address_confirmed`);
-    const textEl = document.getElementById(`${bodyId}_address_text`);
-    const errorEl = document.getElementById(`${bodyId}_address_error`);
-    if (input) input.value = `${answers.strasse}, ${answers.ort || ''}`;
-    if (textEl) textEl.textContent = `${answers.strasse}, ${answers.plz || ''} ${answers.ort || ''}`;
-    if (confirmedEl) confirmedEl.style.display = 'block';
-    if (errorEl) errorEl.style.display = 'none';
+    if (input) input.value = answers.strasse;
     if (panel) panel.style.display = 'none';
   } catch (err) {
     console.error('Adresse konnte nicht verarbeitet werden:', err.message);
@@ -2073,13 +2098,28 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
   } else if (step.type === 'wohnung-details') {
     html += renderWohnungDetailsHTML(step, bodyId);
   } else if (step.type === 'address') {
-    html += `<div class="field-group custom-dropdown" id="${bodyId}_addr_wrap">
-        <label>Straße und Hausnummer</label>
-        <input type="text" class="custom-dropdown-trigger" id="${bodyId}_address_input" placeholder="z. B. Musterstraße 12, München" value="${answers.strasse ? answers.strasse + (answers.ort ? ', ' + answers.ort : '') : ''}" autocomplete="off" oninput="onAddressInput(this.value,'${bodyId}')">
-        <div class="custom-dropdown-panel" id="${bodyId}_address_panel" style="display:none;"></div>
+    html += `<div class="input-row">
+        <div class="field-group">
+          <label>Stadt / Gemeinde</label>
+          <input type="text" class="field-dropdown" id="${bodyId}_field_ort" placeholder="z. B. München" value="${answers.ort||''}" oninput="onOrtPlzInput('${bodyId}')">
+        </div>
+        <div class="field-group">
+          <label>Postleitzahl</label>
+          <input type="text" class="field-dropdown" id="${bodyId}_field_plz" placeholder="z. B. 80331" value="${answers.plz||''}" oninput="onOrtPlzInput('${bodyId}')">
+        </div>
       </div>
-      <p id="${bodyId}_address_error" style="display:none; color:#ef4444; font-size:12px; margin:-8px 0 12px;">Bitte wählen Sie eine Adresse aus den Vorschlägen aus.</p>
-      <div id="${bodyId}_address_confirmed" style="display:${answers._adresseBestaetigt ? 'block' : 'none'}; background:var(--cream); border-radius:8px; padding:10px 14px; font-size:13px; color:var(--text); margin-bottom:12px;">✓ <span id="${bodyId}_address_text">${answers.strasse || ''}, ${answers.plz || ''} ${answers.ort || ''}</span></div>`;
+      <div id="${bodyId}_strasse_wrap" style="display:${(answers.ort && answers.plz) ? 'block' : 'none'};">
+        <div class="field-group custom-dropdown" id="${bodyId}_addr_wrap">
+          <label>Straße</label>
+          <input type="text" class="custom-dropdown-trigger" id="${bodyId}_address_input" placeholder="z. B. Musterstraße" value="${answers.strasse||''}" autocomplete="off" oninput="onAddressInput(this.value,'${bodyId}')">
+          <div class="custom-dropdown-panel" id="${bodyId}_address_panel" style="display:none;"></div>
+        </div>
+        <p id="${bodyId}_address_error" style="display:none; color:#ef4444; font-size:12px; margin:-8px 0 12px;"></p>
+        <div class="field-group">
+          <label>Hausnummer</label>
+          <input type="text" class="field-dropdown" id="${bodyId}_field_hausnummer" placeholder="z. B. 12" value="${answers.hausnummer||''}" oninput="answers.hausnummer=this.value">
+        </div>
+      </div>`;
   } else if (step.type === 'email-verify') {
     html += `<div class="contact-note">Code gesendet an <strong>${answers.email||''}</strong>. Bitte im Postfach (auch Spam-Ordner) nachschauen.</div>
       <div class="field-group">
@@ -2201,10 +2241,18 @@ function validateStep() {
       return false;
     }
   }
-  if (step.type === 'address' && !answers._adresseBestaetigt) {
-    const errorEl = document.getElementById(`${bodyId}_address_error`);
-    if (errorEl) errorEl.style.display = 'block';
-    return false;
+  if (step.type === 'address') {
+    if (!answers.ort || !answers.plz) {
+      const el = document.getElementById(`${bodyId}_field_${!answers.ort ? 'ort' : 'plz'}`);
+      if (el) { el.focus(); el.style.borderColor = '#ef4444'; setTimeout(()=>{ el.style.borderColor=''; }, 2000); }
+      return false;
+    }
+    if (!answers.strasse || !answers.hausnummer) {
+      const key = !answers.strasse ? 'address_input' : 'field_hausnummer';
+      const el = document.getElementById(`${bodyId}_${key}`);
+      if (el) { el.focus(); el.style.borderColor = '#ef4444'; setTimeout(()=>{ el.style.borderColor=''; }, 2000); }
+      return false;
+    }
   }
   return true;
 }
