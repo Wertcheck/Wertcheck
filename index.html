@@ -272,7 +272,7 @@ nav.scrolled {
   color: var(--text);
   border-radius: 10px;
 }
-.wizard-glass .field-group input::placeholder { color: rgba(107,122,141,0.5); }
+.wizard-glass .field-group input::placeholder, .wizard-card .field-group input::placeholder { color: rgba(107,122,141,0.45); }
 .wizard-glass .field-group input:focus {
   border-color: #0097B2;
   background: #fff;
@@ -391,8 +391,7 @@ nav.scrolled {
   right: 16px; top: 50%; transform: translateY(-50%);
   font-size: 14px; font-weight: 800;
   font-variant-numeric: tabular-nums;
-  color: #ffffff;
-  mix-blend-mode: difference;
+  color: var(--text);
   letter-spacing: 0.02em;
   pointer-events: none;
 }
@@ -1683,7 +1682,7 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
   const header = fill ? fill.closest('.wizard-header') : null;
   if (header) header.style.display = currentStep === 1 ? 'none' : 'flex';
   if(lbl) lbl.textContent = `Schritt ${currentStep} von ${getTotalSteps()}`;
-  if(fill) fill.style.width = pct + '%';
+  if(fill) fill.style.width = visualFillWidth(pct) + '%';
   if(pct_el) pct_el.textContent = pct + '%';
 
   let html = `<h2 class="wizard-question">${step.question}</h2><p class="wizard-hint">${step.hint}</p>`;
@@ -1767,7 +1766,7 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
     html += `<div class="contact-note">Code gesendet an <strong>${answers.email||''}</strong>. Bitte im Postfach (auch Spam-Ordner) nachschauen.</div>
       <div class="field-group">
         <label>Bestätigungscode</label>
-        <input type="text" inputmode="numeric" maxlength="6" placeholder="123456" id="${bodyId}_field_code" style="letter-spacing:0.3em; text-align:center; font-size:20px; font-weight:700;" oninput="answers.code=this.value"/>
+        <input type="text" inputmode="numeric" maxlength="6" placeholder="– – – – – –" id="${bodyId}_field_code" style="letter-spacing:0.3em; text-align:center; font-size:20px; font-weight:700;" oninput="answers.code=this.value"/>
       </div>
       <p id="${bodyId}_code_error" style="display:none; color:#ef4444; font-size:12px; margin:-8px 0 12px;">Der Code ist leider nicht korrekt. Bitte prüfen und erneut versuchen.</p>
       <p style="text-align:center; font-size:12px; margin-bottom:4px;"><a href="#" onclick="event.preventDefault(); sendVerificationCodeS('${suffix}', true)" style="color:var(--orange); text-decoration:none;" id="${bodyId}_resend">Code erneut senden</a></p>`;
@@ -2036,7 +2035,7 @@ async function submitFormS(suffix) {
   const pctId = suffix ? `progress-pct-${suffix}` : 'progress-pct';
 
   document.getElementById(labelId).textContent = 'Fertig';
-  document.getElementById(fillId).style.width = '100%';
+  document.getElementById(fillId).style.width = visualFillWidth(100) + '%';
   document.getElementById(pctId).textContent = '100%';
   document.getElementById('hero-wizard-mobile')?.classList.add('wizard-success-view');
 
@@ -2220,6 +2219,12 @@ function getTotalSteps() {
   return visibleSteps().length;
 }
 
+// Begrenzt die sichtbare Balkenfüllung (nicht die angezeigte Zahl!),
+// damit rechts immer ein heller Rest für die schwarze Prozentzahl bleibt.
+function visualFillWidth(pct) {
+  return Math.min(pct, 88);
+}
+
 // Wie viele "Antwort-Einheiten" hat ein Schritt insgesamt (Pflichtfelder)?
 function getStepUnitCount(step) {
   if (step.type === 'wohnung-details') return step.fields.length;
@@ -2265,7 +2270,7 @@ function refreshProgressBar() {
   const pct = calculateProgress();
   ['progress-fill', 'progress-fill-hm', 'progress-fill-m'].forEach(id => {
     const el = document.getElementById(id);
-    if (el && el.offsetParent !== null) el.style.width = pct + '%';
+    if (el && el.offsetParent !== null) el.style.width = visualFillWidth(pct) + '%';
   });
   ['progress-pct', 'progress-pct-hm', 'progress-pct-m'].forEach(id => {
     const el = document.getElementById(id);
@@ -2280,7 +2285,7 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
   const headerEl = fillEl ? fillEl.closest('.wizard-header') : null;
   if (headerEl) headerEl.style.display = currentStep === 1 ? 'none' : 'flex';
   document.getElementById(labelId).textContent = `Schritt ${currentStep} von ${getTotalSteps()}`;
-  document.getElementById(fillId).style.width = pct + '%';
+  document.getElementById(fillId).style.width = visualFillWidth(pct) + '%';
   document.getElementById(pctId).textContent = pct + '%';
 
   let html = `<h2 class="wizard-question">${step.question}</h2><p class="wizard-hint">${step.hint}</p>`;
@@ -2364,7 +2369,7 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
     html += `<div class="contact-note">Code gesendet an <strong>${answers.email||''}</strong>. Bitte im Postfach (auch Spam-Ordner) nachschauen.</div>
       <div class="field-group">
         <label>Bestätigungscode</label>
-        <input type="text" inputmode="numeric" maxlength="6" placeholder="123456" id="${bodyId}_field_code" style="letter-spacing:0.3em; text-align:center; font-size:20px; font-weight:700;" oninput="answers.code=this.value"/>
+        <input type="text" inputmode="numeric" maxlength="6" placeholder="– – – – – –" id="${bodyId}_field_code" style="letter-spacing:0.3em; text-align:center; font-size:20px; font-weight:700;" oninput="answers.code=this.value"/>
       </div>
       <p id="${bodyId}_code_error" style="display:none; color:#ef4444; font-size:12px; margin:-8px 0 12px;">Der Code ist leider nicht korrekt. Bitte prüfen und erneut versuchen.</p>
       <p style="text-align:center; font-size:12px; margin-bottom:4px;"><a href="#" onclick="event.preventDefault(); sendVerificationCode(true)" style="color:var(--orange); text-decoration:none;" id="${bodyId}_resend">Code erneut senden</a></p>`;
@@ -2539,7 +2544,7 @@ function showSuccess(name, email, low, high, avg) {
   const fillId  = isMobile() ? 'progress-fill-m' : 'progress-fill';
   const pctId   = isMobile() ? 'progress-pct-m' : 'progress-pct';
   document.getElementById(labelId).textContent = 'Fertig';
-  document.getElementById(fillId).style.width = '100%';
+  document.getElementById(fillId).style.width = visualFillWidth(100) + '%';
   document.getElementById(pctId).textContent = '100%';
   document.getElementById(bodyId).innerHTML = `
     <div class="success-state">
