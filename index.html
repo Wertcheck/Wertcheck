@@ -11,6 +11,12 @@
 <style>
 /* ── TOKENS ─────────────────────────────────────────────────────── */
 :root {
+  color-scheme: light;
+  --gmp-mat-color-surface: #ffffff;
+  --gmp-mat-color-on-surface: #1A2533;
+  --gmp-mat-color-on-surface-variant: #6B7A8D;
+  --gmp-mat-color-outline-decorative: #C8E8EE;
+  --gmp-mat-color-primary: #0097B2;
   --night:   #0D1B2A;
   --navy:    #152238;
   --orange:  #0097B2;
@@ -894,7 +900,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 <!-- WICHTIG: DEIN_GOOGLE_API_KEY muss durch einen echten Google Maps API-Key ersetzt werden
      (Google Cloud Console → "Places API (New)" aktivieren → API-Key erstellen → auf eure Domain
      einschränken). Ohne gültigen Key funktioniert die Adress-Autovervollständigung nicht. -->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEVDLrCuIKKA99WRC6NodBLHtVeyfP2xo&libraries=places&loading=async&language=de&region=DE" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=DEIN_GOOGLE_API_KEY&libraries=places&loading=async&language=de&region=DE" async defer></script>
 </head>
 <body>
 
@@ -1580,7 +1586,7 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
   } else if (step.type === 'address') {
     html += `<div class="field-group">
         <label>Straße und Hausnummer</label>
-        <div id="${bodyId}_address_wrap"></div>
+        <div id="${bodyId}_address_wrap" style="color-scheme:light; --gmp-mat-color-surface:#ffffff; --gmp-mat-color-on-surface:#1A2533; --gmp-mat-color-on-surface-variant:#6B7A8D; --gmp-mat-color-outline-decorative:#C8E8EE; --gmp-mat-color-primary:#0097B2;"></div>
       </div>
       <p id="${bodyId}_address_error" style="display:none; color:#ef4444; font-size:12px; margin:-8px 0 12px;">Bitte wählen Sie eine Adresse aus den Vorschlägen aus.</p>
       <div id="${bodyId}_address_confirmed" style="display:${answers._adresseBestaetigt ? 'block' : 'none'}; background:var(--cream); border-radius:8px; padding:10px 14px; font-size:13px; color:var(--text); margin-bottom:12px;">✓ <span id="${bodyId}_address_text">${answers.strasse || ''}, ${answers.plz || ''} ${answers.ort || ''}</span></div>`;
@@ -2022,7 +2028,7 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
   } else if (step.type === 'address') {
     html += `<div class="field-group">
         <label>Straße und Hausnummer</label>
-        <div id="${bodyId}_address_wrap"></div>
+        <div id="${bodyId}_address_wrap" style="color-scheme:light; --gmp-mat-color-surface:#ffffff; --gmp-mat-color-on-surface:#1A2533; --gmp-mat-color-on-surface-variant:#6B7A8D; --gmp-mat-color-outline-decorative:#C8E8EE; --gmp-mat-color-primary:#0097B2;"></div>
       </div>
       <p id="${bodyId}_address_error" style="display:none; color:#ef4444; font-size:12px; margin:-8px 0 12px;">Bitte wählen Sie eine Adresse aus den Vorschlägen aus.</p>
       <div id="${bodyId}_address_confirmed" style="display:${answers._adresseBestaetigt ? 'block' : 'none'}; background:var(--cream); border-radius:8px; padding:10px 14px; font-size:13px; color:var(--text); margin-bottom:12px;">✓ <span id="${bodyId}_address_text">${answers.strasse || ''}, ${answers.plz || ''} ${answers.ort || ''}</span></div>`;
