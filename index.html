@@ -343,6 +343,8 @@ nav.scrolled {
   background:#fff; border-radius:20px; padding:52px 48px; overflow:hidden;
   box-shadow:0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.08);
 }
+.desktop-logo-icon { display: flex; justify-content: center; margin-bottom: 16px; }
+.desktop-logo-icon img { height: 72px; width: auto; animation: iconHousePop .5s cubic-bezier(.34,1.56,.64,1) both; }
 .wizard-card.wizard-fixed-size {
   height: 640px;
   display: flex;
@@ -353,6 +355,9 @@ nav.scrolled {
   flex: 1;
   overflow-y: auto;
   padding-right: 4px;
+}
+.wizard-card.wizard-fixed-size .wizard-footer {
+  flex-shrink: 0;
 }
 /* Wizard header — Label + % in einer Zeile, Bar darunter (Apple-inspiriert) */
 .wizard-header {
@@ -547,6 +552,13 @@ input.custom-dropdown-trigger { cursor:text; }
 .btn-arrow { display:inline-block; transition:transform .2s; }
 .btn-next:hover .btn-arrow { transform:translateX(4px); }
 .security-note { font-size:11px; color:var(--muted); margin-top:10px; text-align:center; font-weight:300; }
+.email-sent-note {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-size: 12px; color: var(--muted); font-weight: 300;
+  margin-top: 14px; text-align: center; line-height: 1.5;
+}
+.email-sent-note svg { flex-shrink: 0; color: var(--orange); }
+.email-sent-note strong { color: var(--text); font-weight: 600; }
 .success-state { text-align:center; padding:12px 0; }
 .success-icon { width:60px; height:60px; background:var(--orange); border-radius:50%; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; animation:popIn .4s cubic-bezier(.68,-.55,.265,1.55); }
 .success-icon svg { width:26px; height:26px; stroke:#fff; fill:none; stroke-width:2.5; }
@@ -806,6 +818,9 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     display: flex;
     flex-direction: column;
   }
+  .hero-mobile-wizard.wizard-fullscreen .wizard-footer {
+    flex-shrink: 0;
+  }
   .hero-mobile-wizard .wizard-glass {
     padding: 18px 18px;
     background: #ffffff;
@@ -1064,12 +1079,14 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
       </div>
     </div>
     <!-- Wizard: nur Desktop -->
+    <div class="desktop-logo-icon"><img src="logo-icon-clean.png" alt="ImmoWertChecker"></div>
     <div class="wizard-card" id="wizard">
       <div class="wizard-header">
         <div class="step-label" id="step-label">Schritt 1 von 12</div>
         <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div><div class="progress-step-text" id="progress-pct">0%</div></div>
       </div>
       <div id="wizard-body"></div>
+      <div id="wizard-footer" class="wizard-footer"></div>
     </div>
   </div>
 
@@ -1082,6 +1099,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
         <div class="progress-bar"><div class="progress-fill" id="progress-fill-hm" style="width:0%"></div><div class="progress-step-text" id="progress-pct-hm">0%</div></div>
       </div>
       <div id="wizard-body-hm"></div>
+      <div id="wizard-footer-hm" class="wizard-footer"></div>
     </div>
   </div>
   <!-- Rating Badge — Mobile-Duplikat, erscheint unter dem Wizard -->
@@ -1105,6 +1123,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
         <div class="progress-bar"><div class="progress-fill" id="progress-fill-m" style="width:0%"></div><div class="progress-step-text" id="progress-pct-m">0%</div></div>
       </div>
       <div id="wizard-body-m"></div>
+      <div id="wizard-footer-m" class="wizard-footer"></div>
     </div>
   </div>
 </section>
@@ -1290,12 +1309,12 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
         Wir machen <span style="color:var(--orange); font-style:italic;">Immobilienwerte</span> transparent
       </h2>
       <p style="font-size:15px; color:rgba(255,255,255,0.65); line-height:1.8; margin-bottom:16px; font-weight:300;">
-        Viele Menschen erben eine Immobilie oder besitzen eine — und wissen nicht was sie wert ist.
-        Genau für diese Situation haben wir ImmowertChecker entwickelt.
+        Sie möchten wissen, was Ihre Immobilie heute wert ist? Mit ImmowertChecker erhalten Sie in wenigen Minuten eine fundierte, KI-gestützte Werteinschätzung – kostenlos und unverbindlich.
       </p>
       <p style="font-size:15px; color:rgba(255,255,255,0.65); line-height:1.8; margin-bottom:28px; font-weight:300;">
-        Kein Fachjargon, kein Termin, keine Verpflichtung. Einfach ein paar Fragen beantworten
-        und in Minuten wissen was die eigene Immobilie wert ist.
+       Ob Eigenheim, Eigentumswohnung oder geerbte Immobilie: Beantworten Sie einfach einige kurze Fragen und erhalten Sie eine realistische Preisspanne auf Basis aktueller Marktdaten. Ganz ohne Termin, ohne Fachjargon und ohne Verpflichtungen.
+
+Schnell. Transparent. Kostenlos.
       </p>
       <div style="display:flex; gap:32px; flex-wrap:wrap; padding-top:24px; border-top:1px solid rgba(255,255,255,0.08);">
         <div>
@@ -1763,8 +1782,7 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
         </div>
       </div>`;
   } else if (step.type === 'email-verify') {
-    html += `<div class="contact-note">Code gesendet an <strong>${answers.email||''}</strong>. Bitte im Postfach (auch Spam-Ordner) nachschauen.</div>
-      <div class="field-group">
+    html += `<div class="field-group">
         <label>Bestätigungscode</label>
         <input type="text" inputmode="numeric" maxlength="6" placeholder="– – – – – –" id="${bodyId}_field_code" style="letter-spacing:0.3em; text-align:center; font-size:20px; font-weight:700;" oninput="answers.code=this.value"/>
       </div>
@@ -1777,19 +1795,22 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
   }
 
   const isLast = currentStep === getTotalSteps();
-  html += `<div class="wizard-nav">`;
-  if (currentStep > 1) html += `<button class="btn-back" onclick="goBackS('${suffix}')">←</button>`;
+  let footerHtml = `<div class="wizard-nav">`;
+  if (currentStep > 1) footerHtml += `<button class="btn-back" onclick="goBackS('${suffix}')">←</button>`;
   if (step.type === 'email-verify') {
-    html += `<button class="btn-next" onclick="confirmCodeS('${suffix}')">Bestätigen</button></div>`;
+    footerHtml += `<button class="btn-next" onclick="confirmCodeS('${suffix}')">Bestätigen</button></div>`;
+    footerHtml += `<p class="email-sent-note"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 6.5l10 7 10-7"/></svg>Code gesendet an <strong>${answers.email||''}</strong> — bitte auch den Spam-Ordner prüfen.</p>`;
   } else {
-    html += `<button class="btn-next" onclick="${isLast ? `submitFormS('${suffix}')` : `goNextS('${suffix}')`}">${isLast ? 'Bewertung anfordern' : (currentStep === 1 ? 'Jetzt kostenlos bewerten <span class="btn-arrow">→</span>' : 'Weiter <span class="btn-arrow">→</span>')}</button></div>`;
+    footerHtml += `<button class="btn-next" onclick="${isLast ? `submitFormS('${suffix}')` : `goNextS('${suffix}')`}">${isLast ? 'Bewertung anfordern' : (currentStep === 1 ? 'Jetzt kostenlos bewerten <span class="btn-arrow">→</span>' : 'Weiter <span class="btn-arrow">→</span>')}</button></div>`;
   }
   if (currentStep === 1) {
-    html += `<div class="security-note"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 4l3 3M19 7l2 2"/></svg>Verschlüsselt ·<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;margin-left:8px;"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z"/><rect x="9" y="11" width="6" height="5" rx="1"/><path d="M10.5 11V9a1.5 1.5 0 013 0v2"/></svg>DSGVO-konform</div>`;
+    footerHtml += `<div class="security-note"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 4l3 3M19 7l2 2"/></svg>Verschlüsselt ·<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;margin-left:8px;"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z"/><rect x="9" y="11" width="6" height="5" rx="1"/><path d="M10.5 11V9a1.5 1.5 0 013 0v2"/></svg>DSGVO-konform</div>`;
   }
 
   const body = document.getElementById(bodyId);
   if(body) body.innerHTML = html;
+  const footer = document.getElementById(bodyId.replace('wizard-body', 'wizard-footer'));
+  if (footer) footer.innerHTML = footerHtml;
 }
 
 function selectOptS(key, value, el, cls, suffix) {
@@ -1814,6 +1835,8 @@ function goNextS(suffix) {
   if (!validateStepS(suffix)) return;
   const leavingWohnungDetails = visibleSteps()[currentStep - 1].type === 'wohnung-details';
   if (currentStep < getTotalSteps()) { currentStep++; renderAll(); }
+  const heroWizard = document.getElementById('hero-wizard-mobile');
+  if (heroWizard) heroWizard.scrollTop = 0;
   if (leavingWohnungDetails) {
     window.scrollTo({ top: 0, behavior: 'auto' });
   } else {
@@ -1823,6 +1846,8 @@ function goNextS(suffix) {
 
 function goBackS(suffix) {
   if (currentStep > 1) { currentStep--; renderAll(); }
+  const heroWizard = document.getElementById('hero-wizard-mobile');
+  if (heroWizard) heroWizard.scrollTop = 0;
   scrollWizardIntoView(suffix ? `wizard-body-${suffix}` : 'wizard-body');
 }
 
@@ -2366,8 +2391,7 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
         </div>
       </div>`;
   } else if (step.type === 'email-verify') {
-    html += `<div class="contact-note">Code gesendet an <strong>${answers.email||''}</strong>. Bitte im Postfach (auch Spam-Ordner) nachschauen.</div>
-      <div class="field-group">
+    html += `<div class="field-group">
         <label>Bestätigungscode</label>
         <input type="text" inputmode="numeric" maxlength="6" placeholder="– – – – – –" id="${bodyId}_field_code" style="letter-spacing:0.3em; text-align:center; font-size:20px; font-weight:700;" oninput="answers.code=this.value"/>
       </div>
@@ -2380,29 +2404,32 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
   }
 
   const isLast = currentStep === getTotalSteps();
-  html += `<div class="wizard-nav">`;
-  if (currentStep > 1) html += `<button class="btn-back" onclick="goBack()">←</button>`;
+  let footerHtml = `<div class="wizard-nav">`;
+  if (currentStep > 1) footerHtml += `<button class="btn-back" onclick="goBack()">←</button>`;
   if (step.type === 'email-verify') {
-    html += `<button class="btn-next" onclick="confirmCode()">Bestätigen</button></div>`;
+    footerHtml += `<button class="btn-next" onclick="confirmCode()">Bestätigen</button></div>`;
+    footerHtml += `<p class="email-sent-note"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 6.5l10 7 10-7"/></svg>Code gesendet an <strong>${answers.email||''}</strong> — bitte auch den Spam-Ordner prüfen.</p>`;
   } else {
-    html += `<button class="btn-next" onclick="${isLast ? 'submitForm()' : 'goNext()'}">
+    footerHtml += `<button class="btn-next" onclick="${isLast ? 'submitForm()' : 'goNext()'}">
     ${isLast ? 'Bewertung anfordern' : (currentStep === 1 ? 'Jetzt kostenlos bewerten <span class="btn-arrow">→</span>' : 'Weiter <span class="btn-arrow">→</span>')}
   </button></div>`;
   }
   if (currentStep === 1) {
-    html += `<div class="security-note"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 4l3 3M19 7l2 2"/></svg>Verschlüsselt ·<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;margin-left:8px;"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z"/><rect x="9" y="11" width="6" height="5" rx="1"/><path d="M10.5 11V9a1.5 1.5 0 013 0v2"/></svg>DSGVO-konform</div>`;
+    footerHtml += `<div class="security-note"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 4l3 3M19 7l2 2"/></svg>Verschlüsselt ·<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;margin-left:8px;"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z"/><rect x="9" y="11" width="6" height="5" rx="1"/><path d="M10.5 11V9a1.5 1.5 0 013 0v2"/></svg>DSGVO-konform</div>`;
   }
 
   document.getElementById(bodyId).innerHTML = html;
+  const footer = document.getElementById(bodyId.replace('wizard-body', 'wizard-footer'));
+  if (footer) footer.innerHTML = footerHtml;
 }
 
 function render() {
   if (isMobile()) {
     renderWizard('wizard-body-m','step-label-m','progress-fill-m','progress-pct-m');
-    document.getElementById('wizard-mobile')?.classList.toggle('wizard-fixed-size', currentStep > 1);
+    document.getElementById('wizard-mobile')?.classList.add('wizard-fixed-size');
   } else {
     renderWizard('wizard-body','step-label','progress-fill','progress-pct');
-    document.getElementById('wizard')?.classList.toggle('wizard-fixed-size', currentStep > 1);
+    document.getElementById('wizard')?.classList.add('wizard-fixed-size');
   }
 }
 
