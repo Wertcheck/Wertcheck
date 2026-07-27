@@ -371,46 +371,65 @@ nav.scrolled {
   flex-shrink: 0;
 }
 /* Wizard header — Label + % in einer Zeile, Bar darunter (Apple-inspiriert) */
-.wizard-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 22px;
-  flex-shrink: 0;
-}
 .step-label {
   display: none;
 }
-.progress-pct {
-  display: none;
-}
-.progress-bar {
+.progress-ring-wrap {
   position: relative;
-  flex: 1;
-  height: 38px;
-  background: #ffffff;
-  border: 2px solid var(--orange);
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 0;
-  box-shadow: none;
-  display: flex;
-  align-items: center;
+  width: 108px; height: 108px;
+  margin: 0 auto 8px;
+  flex-shrink: 0;
 }
-.progress-fill {
-  height: 100%;
-  background: var(--orange);
-  border-radius: 8px;
-  transition: width .6s cubic-bezier(.4,0,.2,1);
-  box-shadow: none;
+.progress-ring-svg {
+  width: 100%; height: 100%;
+  transform: rotate(-90deg);
 }
-.progress-step-text {
+.progress-ring-track {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 7;
+}
+.progress-ring-fill {
+  fill: none;
+  stroke: var(--orange);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-dasharray: 326.7;
+  stroke-dashoffset: 326.7;
+  transition: stroke-dashoffset .6s cubic-bezier(.4,0,.2,1);
+}
+.progress-ring-icon-wrap {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.progress-ring-house, .progress-ring-check {
   position: absolute;
-  right: 16px; top: 50%; transform: translateY(-50%);
-  font-size: 14px; font-weight: 800;
+  width: 46%; height: 46%;
+  object-fit: contain;
+}
+.progress-ring-check {
+  opacity: 0;
+}
+.progress-ring-check.show {
+  animation: ringCheckBlink 1s ease both;
+}
+@keyframes ringCheckBlink {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  30% { opacity: 0.15; }
+  45% { opacity: 1; }
+  60% { opacity: 0.15; }
+  75% { opacity: 1; }
+  100% { opacity: 1; }
+}
+.progress-ring-pct {
+  text-align: center;
+  font-weight: 800;
+  color: var(--orange);
   font-variant-numeric: tabular-nums;
-  color: var(--text);
-  letter-spacing: 0.02em;
-  pointer-events: none;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+  transition: font-size .3s ease;
 }
 .wizard-question { font-family:var(--f-head); font-size:22px; font-weight:700; color:var(--text); margin-bottom:6px; line-height:1.3; text-align:center; }
 .wizard-hint { font-size:14px; color:var(--muted); margin-bottom:24px; font-weight:300; text-align:center; }
@@ -801,24 +820,9 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     display: flex;
     flex-direction: column;
   }
-  .hero-mobile-wizard.wizard-fullscreen .wizard-header {
-    margin-bottom: 20px;
-  }
-  .fullscreen-logo-icon { display: none; }
-  .hero-mobile-wizard.wizard-fullscreen .fullscreen-logo-icon {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 12px;
-    flex-shrink: 0;
-  }
-  .hero-mobile-wizard.wizard-success-view .fullscreen-logo-icon,
-  .hero-mobile-wizard.wizard-success-view .wizard-header {
+  .hero-mobile-wizard.wizard-success-view .progress-ring-wrap,
+  .hero-mobile-wizard.wizard-success-view .progress-ring-pct {
     display: none !important;
-  }
-  .fullscreen-logo-icon img {
-    height: 100px;
-    width: auto;
-    animation: iconHousePop .5s cubic-bezier(.34,1.56,.64,1) both;
   }
   .hero-mobile-wizard.wizard-fullscreen .wizard-glass {
     flex: 1;
@@ -1109,11 +1113,18 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     </div>
     <!-- Wizard: nur Desktop -->
     <div class="wizard-card" id="wizard">
-      <div class="desktop-logo-icon"><img src="logo-icon-clean.png" alt="ImmoWertChecker"></div>
-      <div class="wizard-header">
-        <div class="step-label" id="step-label">Schritt 1 von 12</div>
-        <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div><div class="progress-step-text" id="progress-pct">0%</div></div>
+      <div class="progress-ring-wrap">
+        <svg class="progress-ring-svg" viewBox="0 0 120 120">
+          <circle class="progress-ring-track" cx="60" cy="60" r="52"/>
+          <circle class="progress-ring-fill" id="progress-fill" cx="60" cy="60" r="52"/>
+        </svg>
+        <div class="progress-ring-icon-wrap">
+          <img src="logo-icon-house.svg" class="progress-ring-house" alt="">
+          <img src="logo-icon-check.svg" class="progress-ring-check" id="progress-check" alt="">
+        </div>
       </div>
+      <div class="progress-ring-pct" id="progress-pct">0%</div>
+      <div class="step-label" id="step-label" style="display:none;">Schritt 1 von 12</div>
       <div id="wizard-body"></div>
       <div id="wizard-footer" class="wizard-footer"></div>
     </div>
@@ -1121,12 +1132,19 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 
   <!-- Mobile: Glass Wizard direkt sichtbar, außerhalb des Grids -->
   <div class="hero-mobile-wizard" id="hero-wizard-mobile">
-    <div class="fullscreen-logo-icon"><img src="logo-icon-clean.png" alt="ImmoWertChecker"></div>
     <div class="wizard-glass" id="wizard-glass-card">
-      <div class="wizard-header">
-        <div class="step-label" id="step-label-hm">Schritt 1 von 12</div>
-        <div class="progress-bar"><div class="progress-fill" id="progress-fill-hm" style="width:0%"></div><div class="progress-step-text" id="progress-pct-hm">0%</div></div>
+      <div class="progress-ring-wrap">
+        <svg class="progress-ring-svg" viewBox="0 0 120 120">
+          <circle class="progress-ring-track" cx="60" cy="60" r="52"/>
+          <circle class="progress-ring-fill" id="progress-fill-hm" cx="60" cy="60" r="52"/>
+        </svg>
+        <div class="progress-ring-icon-wrap">
+          <img src="logo-icon-house.svg" class="progress-ring-house" alt="">
+          <img src="logo-icon-check.svg" class="progress-ring-check" id="progress-check-hm" alt="">
+        </div>
       </div>
+      <div class="progress-ring-pct" id="progress-pct-hm">0%</div>
+      <div class="step-label" id="step-label-hm" style="display:none;">Schritt 1 von 12</div>
       <div id="wizard-body-hm"></div>
       <div id="wizard-footer-hm" class="wizard-footer"></div>
     </div>
@@ -1147,10 +1165,18 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 <section id="wizard-mobile-section" style="padding:32px 5%; display:none;">
   <div style="max-width:480px; margin:0 auto;">
     <div class="wizard-card" id="wizard-mobile">
-      <div class="wizard-header">
-        <div class="step-label" id="step-label-m">Schritt 1 von 12</div>
-        <div class="progress-bar"><div class="progress-fill" id="progress-fill-m" style="width:0%"></div><div class="progress-step-text" id="progress-pct-m">0%</div></div>
+      <div class="progress-ring-wrap">
+        <svg class="progress-ring-svg" viewBox="0 0 120 120">
+          <circle class="progress-ring-track" cx="60" cy="60" r="52"/>
+          <circle class="progress-ring-fill" id="progress-fill-m" cx="60" cy="60" r="52"/>
+        </svg>
+        <div class="progress-ring-icon-wrap">
+          <img src="logo-icon-house.svg" class="progress-ring-house" alt="">
+          <img src="logo-icon-check.svg" class="progress-ring-check" id="progress-check-m" alt="">
+        </div>
       </div>
+      <div class="progress-ring-pct" id="progress-pct-m">0%</div>
+      <div class="step-label" id="step-label-m" style="display:none;">Schritt 1 von 12</div>
       <div id="wizard-body-m"></div>
       <div id="wizard-footer-m" class="wizard-footer"></div>
     </div>
@@ -1725,13 +1751,8 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
   const step = visibleSteps()[currentStep - 1];
   const pct = calculateProgress();
   const lbl = document.getElementById(labelId);
-  const fill = document.getElementById(fillId);
-  const pct_el = document.getElementById(pctId);
-  const header = fill ? fill.closest('.wizard-header') : null;
-  if (header) header.style.display = currentStep === 1 ? 'none' : 'flex';
   if(lbl) lbl.textContent = `Schritt ${currentStep} von ${getTotalSteps()}`;
-  if(fill) fill.style.width = visualFillWidth(pct) + '%';
-  if(pct_el) pct_el.textContent = pct + '%';
+  updateProgressRing(pct, fillId, pctId, fillId.replace('progress-fill', 'progress-check'));
 
   let html = `<h2 class="wizard-question">${step.question}</h2><p class="wizard-hint">${step.hint}</p>`;
 
@@ -2089,8 +2110,7 @@ async function submitFormS(suffix) {
   const pctId = suffix ? `progress-pct-${suffix}` : 'progress-pct';
 
   document.getElementById(labelId).textContent = 'Fertig';
-  document.getElementById(fillId).style.width = visualFillWidth(100) + '%';
-  document.getElementById(pctId).textContent = '100%';
+  updateProgressRing(100, fillId, pctId, fillId.replace('progress-fill', 'progress-check'));
   document.getElementById('hero-wizard-mobile')?.classList.add('wizard-success-view');
 
   document.getElementById(bodyId).innerHTML = `
@@ -2275,8 +2295,27 @@ function getTotalSteps() {
 
 // Begrenzt die sichtbare Balkenfüllung (nicht die angezeigte Zahl!),
 // damit rechts immer ein heller Rest für die schwarze Prozentzahl bleibt.
-function visualFillWidth(pct) {
-  return Math.min(pct, 88);
+const RING_CIRCUMFERENCE = 326.7; // 2 * PI * r(52)
+
+// Aktualisiert einen einzelnen Fortschritts-Ring: schließt den Kreis,
+// lässt die Prozentzahl mitwachsen, und blendet bei 100% den Haken
+// (mit kurzem Blinken) über dem Haus-Symbol ein.
+function updateProgressRing(pct, fillId, pctId, checkId) {
+  const ring = document.getElementById(fillId);
+  if (ring) ring.style.strokeDashoffset = RING_CIRCUMFERENCE - (Math.min(pct,100)/100) * RING_CIRCUMFERENCE;
+
+  const pctEl = document.getElementById(pctId);
+  if (pctEl) {
+    pctEl.textContent = pct + '%';
+    const fontSize = 15 + (Math.min(pct,100)/100) * 21; // wächst von 15px auf 36px
+    pctEl.style.fontSize = fontSize + 'px';
+  }
+
+  const check = document.getElementById(checkId);
+  if (check) {
+    if (pct >= 100) check.classList.add('show');
+    else check.classList.remove('show');
+  }
 }
 
 // Wie viele "Antwort-Einheiten" hat ein Schritt insgesamt (Pflichtfelder)?
@@ -2322,25 +2361,17 @@ function calculateProgress() {
 // Schritt neu zu rendern — wird bei jeder Feldänderung aufgerufen.
 function refreshProgressBar() {
   const pct = calculateProgress();
-  ['progress-fill', 'progress-fill-hm', 'progress-fill-m'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el && el.offsetParent !== null) el.style.width = visualFillWidth(pct) + '%';
-  });
-  ['progress-pct', 'progress-pct-hm', 'progress-pct-m'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el && el.offsetParent !== null) el.textContent = pct + '%';
+  [['progress-fill','progress-pct','progress-check'], ['progress-fill-hm','progress-pct-hm','progress-check-hm'], ['progress-fill-m','progress-pct-m','progress-check-m']].forEach(([fillId, pctId, checkId]) => {
+    const el = document.getElementById(fillId);
+    if (el && el.offsetParent !== null) updateProgressRing(pct, fillId, pctId, checkId);
   });
 }
 
 function renderWizard(bodyId, labelId, fillId, pctId) {
   const step = visibleSteps()[currentStep - 1];
   const pct = calculateProgress();
-  const fillEl = document.getElementById(fillId);
-  const headerEl = fillEl ? fillEl.closest('.wizard-header') : null;
-  if (headerEl) headerEl.style.display = currentStep === 1 ? 'none' : 'flex';
   document.getElementById(labelId).textContent = `Schritt ${currentStep} von ${getTotalSteps()}`;
-  document.getElementById(fillId).style.width = visualFillWidth(pct) + '%';
-  document.getElementById(pctId).textContent = pct + '%';
+  updateProgressRing(pct, fillId, pctId, fillId.replace('progress-fill', 'progress-check'));
 
   let html = `<h2 class="wizard-question">${step.question}</h2><p class="wizard-hint">${step.hint}</p>`;
 
@@ -2600,8 +2631,7 @@ function showSuccess(name, email, low, high, avg) {
   const fillId  = isMobile() ? 'progress-fill-m' : 'progress-fill';
   const pctId   = isMobile() ? 'progress-pct-m' : 'progress-pct';
   document.getElementById(labelId).textContent = 'Fertig';
-  document.getElementById(fillId).style.width = visualFillWidth(100) + '%';
-  document.getElementById(pctId).textContent = '100%';
+  updateProgressRing(100, fillId, pctId, fillId.replace('progress-fill', 'progress-check'));
   document.getElementById(bodyId).innerHTML = `
     <div class="success-state">
       <div class="success-icon-wrap">
