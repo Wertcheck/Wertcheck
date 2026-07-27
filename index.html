@@ -2299,18 +2299,17 @@ function updateProgressRing(pct, fillId, pctId, checkId) {
   const pctEl = document.getElementById(pctId);
   const check = document.getElementById(checkId);
   const svg = ring ? ring.closest('svg') : null;
+  const wrap = svg ? svg.closest('.progress-ring-wrap') : null;
 
   if (currentStep === 1) {
-    // Auf Schritt 1: nur das Icon, kein Ring, keine Prozentzahl
-    if (svg) svg.style.visibility = 'hidden';
+    // Auf Schritt 1: gar kein Icon
+    if (wrap) wrap.style.display = 'none';
     if (pctEl) pctEl.style.display = 'none';
-    if (check) { check.classList.remove('show'); check.classList.add('static'); }
     return;
   }
 
-  if (svg) svg.style.visibility = 'visible';
+  if (wrap) wrap.style.display = '';
   if (pctEl) pctEl.style.display = '';
-  if (check) check.classList.remove('static');
 
   if (ring) ring.style.strokeDashoffset = RING_CIRCUMFERENCE - (Math.min(pct,100)/100) * RING_CIRCUMFERENCE;
 
@@ -2320,10 +2319,8 @@ function updateProgressRing(pct, fillId, pctId, checkId) {
     pctEl.style.fontSize = fontSize + 'px';
   }
 
-  if (check) {
-    if (pct >= 100) check.classList.add('show');
-    else check.classList.remove('show');
-  }
+  // Haken ist ab Schritt 2 immer sichtbar (kein Warten mehr auf 100%)
+  if (check) { check.classList.remove('show'); check.classList.remove('static'); check.style.opacity = '1'; }
 }
 
 // Wie viele "Antwort-Einheiten" hat ein Schritt insgesamt (Pflichtfelder)?
