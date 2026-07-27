@@ -41,6 +41,12 @@ body {
   font-family:var(--f-body); color:var(--text); overflow-x:hidden; line-height:1.6;
   background-color: #08101C;
 }
+body.wizard-scroll-lock {
+  overflow: hidden;
+  height: 100%;
+  position: fixed;
+  width: 100%;
+}
 body::before {
   content: '';
   position: fixed;
@@ -1440,6 +1446,20 @@ function isHeroMobile() {
 
 // Override render function um auch Hero-Mobile Wizard zu rendern
 const _originalRender = render;
+let __savedScrollY = 0;
+function setWizardScrollLock(lock) {
+  const isLocked = document.body.classList.contains('wizard-scroll-lock');
+  if (lock && !isLocked) {
+    __savedScrollY = window.scrollY;
+    document.body.style.top = `-${__savedScrollY}px`;
+    document.body.classList.add('wizard-scroll-lock');
+  } else if (!lock && isLocked) {
+    document.body.classList.remove('wizard-scroll-lock');
+    document.body.style.top = '';
+    window.scrollTo(0, __savedScrollY);
+  }
+}
+
 function renderAll() {
   if (isHeroMobile()) {
     renderWizardIn('wizard-body-hm', 'step-label-hm', 'progress-fill-hm', 'progress-pct-hm', 'hm');
@@ -1452,6 +1472,7 @@ function renderAll() {
     heroWizard.classList.toggle('wizard-fullscreen', isFullscreen);
     const nav = document.querySelector('nav');
     if (nav) nav.classList.toggle('scrolled', isFullscreen || window.scrollY > 50);
+    setWizardScrollLock(isFullscreen);
   }
 }
 
