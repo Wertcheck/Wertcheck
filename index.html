@@ -215,7 +215,6 @@ nav.scrolled {
   overflow: hidden;
 }
 .wizard-glass .step-label { color: var(--muted); }
-.wizard-glass .progress-bar { background: var(--border); box-shadow: none; }
 .wizard-glass .wizard-question { color: var(--text); font-size:18px; }
 .wizard-glass .wizard-hint { color: var(--muted); }
 .wizard-glass .progress-pct { color: var(--orange); }
@@ -343,7 +342,6 @@ nav.scrolled {
   background:#fff; border-radius:20px; padding:52px 48px; overflow:hidden;
   box-shadow:0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.08);
 }
-.desktop-logo-icon { display: flex; justify-content: center; margin-bottom: 16px; flex-shrink: 0; }
 .desktop-ring-corner {
   position: absolute;
   top: 20px; right: 24px;
@@ -352,7 +350,6 @@ nav.scrolled {
 }
 .desktop-ring-corner .progress-ring-wrap { width: 44px; height: 44px; margin: 0; }
 .desktop-ring-corner .progress-ring-pct { font-size: 13px !important; margin: 0; }
-.desktop-logo-icon img { height: 72px; width: auto; animation: iconHousePop .5s cubic-bezier(.34,1.56,.64,1) both; }
 .wizard-card.wizard-fixed-size {
   height: 640px;
   display: flex;
@@ -434,6 +431,7 @@ nav.scrolled {
 }
 .wizard-question { font-family:var(--f-head); font-size:22px; font-weight:700; color:var(--text); margin-bottom:6px; line-height:1.3; text-align:center; }
 .wizard-hint { font-size:14px; color:var(--muted); margin-bottom:24px; font-weight:300; text-align:center; }
+.wizard-card .wizard-question, .wizard-card .wizard-hint { padding-right: 70px; }
 .type-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px; }
 .type-btn {
   border:1px solid rgba(0,0,0,0.12); border-radius:10px; padding:16px 10px;
@@ -487,11 +485,14 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:20px;
 input[type="range"]::-moz-range-thumb { width:20px; height:20px; border-radius:50%; background:var(--orange); cursor:pointer; border:3px solid #fff; box-shadow:0 2px 8px rgba(0,151,178,0.4); }
 .slider-minmax { display:flex; justify-content:space-between; font-size:11px; color:var(--muted); }
 .contact-note { background:rgba(0,151,178,0.08); border-left:2px solid var(--orange); padding:10px 14px; font-size:12px; color:var(--text); margin-bottom:16px; font-weight:300; }
-.address-reasons { margin-top:8px; padding-top:16px; border-top:1px solid var(--border); }
-.address-reason { display:flex; align-items:flex-start; gap:12px; margin-bottom:14px; }
+.address-reasons { margin-top:8px; padding-top:14px; border-top:1px solid var(--border); }
+.address-reason { display:flex; align-items:flex-start; gap:12px; margin-bottom:10px; }
 .address-reason:last-child { margin-bottom:0; }
 .address-reason svg { color:var(--orange); flex-shrink:0; margin-top:1px; }
 .address-reason span { font-size:14px; color:var(--text); line-height:1.5; }
+.address-trust-badges { display:flex; gap:18px; margin-top:12px; flex-wrap:wrap; }
+.address-trust-badges span { display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); }
+.address-trust-badges svg { color:var(--orange); flex-shrink:0; }
 .consent-check {
   display: flex; align-items: flex-start; gap: 8px;
   margin: 2px 0 10px; cursor: pointer;
@@ -842,6 +843,17 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     display: flex;
     flex-direction: column;
     position: relative;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .hero-mobile-wizard.wizard-fullscreen #wizard-body-hm::-webkit-scrollbar {
+    display: none;
+  }
+  .hero-mobile-wizard.wizard-fullscreen .progress-ring-wrap {
+    width: 84px; height: 84px; margin-bottom: 4px;
+  }
+  .hero-mobile-wizard.wizard-fullscreen .progress-ring-pct {
+    margin-bottom: 10px;
   }
   .hero-mobile-wizard.wizard-fullscreen .wizard-footer {
     flex-shrink: 0;
@@ -853,7 +865,6 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   }
   .hero-mobile-wizard .progress-ring-wrap { width: 84px; height: 84px; margin-bottom: 4px; }
   .hero-mobile-wizard .progress-ring-pct { margin-bottom: 12px; }
-  .hero-mobile-wizard .wizard-header { margin-bottom: 10px; }
   .hero-mobile-wizard .wizard-question { font-size:16px; margin-bottom:2px; }
   .hero-mobile-wizard .wizard-hint { font-size:12px; margin-bottom:6px; }
   .hero-mobile-wizard .type-grid { gap:8px; margin-bottom:6px; }
@@ -1820,9 +1831,9 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l2.5 2.5L16 9"/></svg>
           <span>Wir benötigen Ihre vollständige Adresse, um eine möglichst genaue Preisspanne zu berechnen.</span>
         </div>
-        <div class="address-reason">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l2.5 2.5L16 9"/></svg>
-          <span>Sie hilft uns zudem, einen passenden Immobilienberater in Ihrer Nähe zu vermitteln.</span>
+        <div class="address-trust-badges">
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 4l3 3M19 7l2 2"/></svg>Verschlüsselt</span>
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z"/><rect x="9" y="11" width="6" height="5" rx="1"/><path d="M10.5 11V9a1.5 1.5 0 013 0v2"/></svg>DSGVO-konform</span>
         </div>
       </div>`;
   } else if (step.type === 'email-verify') {
@@ -2315,7 +2326,7 @@ function updateProgressRing(pct, fillId, pctId, checkId) {
 
   if (pctEl) {
     pctEl.textContent = pct + '%';
-    const fontSize = 15 + (Math.min(pct,100)/100) * 21; // wächst von 15px auf 36px
+    const fontSize = 14 + (Math.min(pct,100)/100) * 16; // wächst von 14px auf 30px
     pctEl.style.fontSize = fontSize + 'px';
   }
 
@@ -2450,9 +2461,9 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l2.5 2.5L16 9"/></svg>
           <span>Wir benötigen Ihre vollständige Adresse, um eine möglichst genaue Preisspanne zu berechnen.</span>
         </div>
-        <div class="address-reason">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l2.5 2.5L16 9"/></svg>
-          <span>Sie hilft uns zudem, einen passenden Immobilienberater in Ihrer Nähe zu vermitteln.</span>
+        <div class="address-trust-badges">
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 4l3 3M19 7l2 2"/></svg>Verschlüsselt</span>
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z"/><rect x="9" y="11" width="6" height="5" rx="1"/><path d="M10.5 11V9a1.5 1.5 0 013 0v2"/></svg>DSGVO-konform</span>
         </div>
       </div>`;
   } else if (step.type === 'email-verify') {
