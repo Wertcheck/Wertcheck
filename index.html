@@ -894,7 +894,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 <!-- WICHTIG: DEIN_GOOGLE_API_KEY muss durch einen echten Google Maps API-Key ersetzt werden
      (Google Cloud Console → "Places API (New)" aktivieren → API-Key erstellen → auf eure Domain
      einschränken). Ohne gültigen Key funktioniert die Adress-Autovervollständigung nicht. -->
-<script src="https://maps.googleapis.com/maps/api/js?key=DEIN_GOOGLE_API_KEY&libraries=places&loading=async&language=de&region=DE" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEVDLrCuIKKA99WRC6NodBLHtVeyfP2xo" async defer></script>
 </head>
 <body>
 
@@ -1633,8 +1633,13 @@ function scrollWizardIntoView(bodyId) {
 
 function goNextS(suffix) {
   if (!validateStepS(suffix)) return;
+  const leavingWohnungDetails = visibleSteps()[currentStep - 1].type === 'wohnung-details';
   if (currentStep < getTotalSteps()) { currentStep++; renderAll(); }
-  scrollWizardIntoView(suffix ? `wizard-body-${suffix}` : 'wizard-body');
+  if (leavingWohnungDetails) {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  } else {
+    scrollWizardIntoView(suffix ? `wizard-body-${suffix}` : 'wizard-body');
+  }
 }
 
 function goBackS(suffix) {
@@ -1706,14 +1711,13 @@ async function initAddressAutocomplete(bodyId, suffix, isMobileInstance) {
 
   const { PlaceAutocompleteElement } = await google.maps.importLibrary('places');
   const autocompleteEl = new PlaceAutocompleteElement({
-    componentRestrictions: { country: 'de' },
-    types: ['address']
+    includedRegionCodes: ['de']
   });
   wrap.appendChild(autocompleteEl);
 
-  autocompleteEl.addEventListener('gmp-placeselect', async (e) => {
+  autocompleteEl.addEventListener('gmp-select', async (e) => {
     try {
-      const place = e.detail.place;
+      const place = e.placePrediction.toPlace();
       await place.fetchFields({ fields: ['addressComponents', 'formattedAddress'] });
       let strasse = '', hausnummer = '', plz = '', ort = '';
       (place.addressComponents || []).forEach(c => {
@@ -1947,9 +1951,9 @@ const steps = [
      {value:"1jahr",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,label:"In ca. 1 Jahr"},
      {value:"unbekannt",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>`,label:"Noch unklar"}
    ]},
+  {id:13,question:"Wo befindet sich die Immobilie?",hint:"Die genaue Adresse wird für eine präzise Bewertung Ihrer Immobilie benötigt.",type:"address",key:"adresse"},
   {id:12,question:"Wohin sollen wir Ihre Bewertung senden?",hint:"Ihre Daten werden vertraulich behandelt.",type:"contact",
    fields:[{key:"vorname",label:"Vorname",placeholder:"Max",type:"text"},{key:"nachname",label:"Nachname",placeholder:"Mustermann",type:"text"},{key:"email",label:"E-Mail-Adresse",placeholder:"max@beispiel.de",type:"email"},{key:"telefon",label:"Telefon (optional)",placeholder:"+49 123 456789",type:"tel"}]},
-  {id:13,question:"Wo befindet sich die Immobilie?",hint:"Die genaue Adresse wird für eine präzise Bewertung Ihrer Immobilie benötigt.",type:"address",key:"adresse"},
   {id:14,question:"Bestätigen Sie Ihre E-Mail-Adresse",hint:"Wir haben Ihnen einen 6-stelligen Code geschickt.",type:"email-verify",key:"code"}
 ];
 
@@ -2154,8 +2158,13 @@ function validateStep() {
 
 function goNext() {
   if (!validateStep()) return;
+  const leavingWohnungDetails = visibleSteps()[currentStep - 1].type === 'wohnung-details';
   if (currentStep < getTotalSteps()) { currentStep++; render(); }
-  scrollWizardIntoView(isMobile() ? 'wizard-body-m' : 'wizard-body');
+  if (leavingWohnungDetails) {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  } else {
+    scrollWizardIntoView(isMobile() ? 'wizard-body-m' : 'wizard-body');
+  }
 }
 
 function goBack() {
