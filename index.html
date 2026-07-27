@@ -747,11 +747,22 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     margin: 0;
     overflow-y: auto;
     background: #ffffff;
-    padding: 90px 5% 20px;
+    padding: 28px 5% 20px;
     box-sizing: border-box;
   }
   .hero-mobile-wizard.wizard-fullscreen .wizard-header {
     margin-bottom: 44px;
+  }
+  .fullscreen-logo-icon { display: none; }
+  .hero-mobile-wizard.wizard-fullscreen .fullscreen-logo-icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+  .fullscreen-logo-icon img {
+    height: 44px;
+    width: auto;
+    animation: iconHousePop .5s cubic-bezier(.34,1.56,.64,1) both;
   }
   .hero-mobile-wizard.wizard-fullscreen .wizard-glass {
     min-height: calc(100dvh - 40px);
@@ -1034,6 +1045,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 
   <!-- Mobile: Glass Wizard direkt sichtbar, außerhalb des Grids -->
   <div class="hero-mobile-wizard" id="hero-wizard-mobile">
+    <div class="fullscreen-logo-icon"><img src="logo-icon-clean.png" alt="ImmoWertChecker"></div>
     <div class="wizard-glass" id="wizard-glass-card">
       <div class="wizard-header">
         <div class="step-label" id="step-label-hm">Schritt 1 von 12</div>
@@ -1479,7 +1491,7 @@ function renderAll() {
     const isFullscreen = currentStep > 1;
     heroWizard.classList.toggle('wizard-fullscreen', isFullscreen);
     const nav = document.querySelector('nav');
-    if (nav) nav.classList.toggle('scrolled', isFullscreen || window.scrollY > 50);
+    if (nav) nav.style.display = isFullscreen ? 'none' : '';
     setWizardScrollLock(isFullscreen);
   }
 }
