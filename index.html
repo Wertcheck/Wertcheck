@@ -429,6 +429,17 @@ nav.scrolled {
   flex-shrink: 0;
   transition: font-size .3s ease;
 }
+.ptr-hinweis {
+  position: fixed;
+  top: 10px; left: 50%;
+  transform: translateX(-50%) translateY(0);
+  background: var(--night); color: #fff;
+  font-size: 12px; font-weight: 600;
+  padding: 8px 14px; border-radius: 99px;
+  opacity: 0; pointer-events: none;
+  z-index: 600;
+  transition: opacity .15s;
+}
 .wizard-question { font-family:var(--f-head); font-size:22px; font-weight:700; color:var(--text); margin-bottom:6px; line-height:1.3; text-align:center; }
 .wizard-hint { font-size:14px; color:var(--muted); margin-bottom:24px; font-weight:300; text-align:center; }
 .wizard-card .wizard-question, .wizard-card .wizard-hint { padding-right: 70px; }
@@ -1105,8 +1116,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   <div class="hero-inner">
     <div class="hero-left">
       <div class="hero-eyebrow">Kostenlos · Unverbindlich · In 3 Minuten</div>
-      <h1>
-	  Berechne jetzt deinen <br class="hero-brk hero-brk-1"><span class="hero-accent">Immobilienwert</span><br class="hero-brk hero-brk-2"></h1>
+      <h1>Was ist Ihre <br class="hero-brk hero-brk-1"><span class="hero-accent">Immobilie</span><br class="hero-brk hero-brk-2">wirklich Wert?</h1>
       <p class="hero-desc" style="font-size:15px; color:rgba(255,255,255,0.7); margin-bottom:20px; font-weight:300; line-height:1.7;">
         Erfahren Sie in nur 3 Minuten den Wert Ihrer Immobilie — kostenlos &amp; unverbindlich.
       </p>
@@ -1611,6 +1621,7 @@ function renderAll() {
     const nav = document.querySelector('nav');
     if (nav) nav.style.display = isFullscreen ? 'none' : '';
     setWizardScrollLock(isFullscreen);
+    if (isFullscreen) setupPullToRefresh();
   }
 }
 
@@ -2143,6 +2154,8 @@ async function submitFormS(suffix) {
   document.getElementById(labelId).textContent = 'Fertig';
   updateProgressRing(100, fillId, pctId, fillId.replace('progress-fill', 'progress-check'));
   document.getElementById('hero-wizard-mobile')?.classList.add('wizard-success-view');
+  const footerElS = document.getElementById(bodyId.replace('wizard-body', 'wizard-footer'));
+  if (footerElS) footerElS.innerHTML = '';
 
   document.getElementById(bodyId).innerHTML = `
     <div class="success-state">
@@ -2157,11 +2170,11 @@ async function submitFormS(suffix) {
         <div class="vr-amount">${low.toLocaleString('de-DE')} € – ${high.toLocaleString('de-DE')} €</div>
         <div class="vr-avg">Durchschnitt: <span>${avg.toLocaleString('de-DE')} €</span></div>
       </div>
-      <button class="btn-next" style="width:100%;color:#fff;" onclick="resetWizard()">Neue Bewertung ↺</button>
+      <button class="btn-next" style="width:100%;color:#fff;" onclick="resetWizard()">Neue Bewertung starten ↺</button>
     </div>`;
 
   try {
-    const payload = {...answers, wohnflaeche: answers.wohnflaeche||100, merkmale: Array.isArray(answers.merkmale)?answers.merkmale:[]};
+    const payload = {...answers, wohnflaeche: answers.wohnflaeche || answers.wohnflaeche_qm || 100, merkmale: Array.isArray(answers.merkmale)?answers.merkmale:[]};
     await fetch('https://wertcheck.onrender.com/bewertung', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
   } catch(e) { console.log('Backend:', e.message); }
 }
@@ -2657,12 +2670,35 @@ function goBack() {
   if (isMobile()) scrollWizardIntoView('wizard-body-m');
 }
 
+// Dieselbe Richtpreis-Tabelle wie im Backend (agents/regionalpreise.js) —
+// MUSS synchron gehalten werden, sonst weicht die im Wizard angezeigte
+// Preisspanne von der im PDF ab!
+const REGIONAL_PREISE_FRONTEND = {
+  'münchen':{wohnung:8168,haus:9083},'muenchen':{wohnung:8168,haus:9083},
+  'hamburg':{wohnung:5921,haus:4200},'frankfurt am main':{wohnung:5519,haus:4300},'frankfurt':{wohnung:5519,haus:4300},
+  'berlin':{wohnung:4970,haus:3906},'köln':{wohnung:4940,haus:3232},'koeln':{wohnung:4940,haus:3232},
+  'düsseldorf':{wohnung:4522,haus:3600},'duesseldorf':{wohnung:4522,haus:3600},'stuttgart':{wohnung:4458,haus:3900},
+  'nürnberg':{wohnung:4200,haus:3400},'nuernberg':{wohnung:4200,haus:3400},'hannover':{wohnung:3300,haus:2800},
+  'bremen':{wohnung:3100,haus:2600},'dresden':{wohnung:3087,haus:2700},'leipzig':{wohnung:2900,haus:2500},
+  'dortmund':{wohnung:2730,haus:2200},'essen':{wohnung:2200,haus:2000},'duisburg':{wohnung:1900,haus:1800},'bochum':{wohnung:2100,haus:1900}
+};
+const NATIONAL_DURCHSCHNITT_FRONTEND = { wohnung: 3277, haus: 2871 };
+
+function getBasispreisFrontend(ort, typ) {
+  const fallback = typ === 'wohnung' ? NATIONAL_DURCHSCHNITT_FRONTEND.wohnung : NATIONAL_DURCHSCHNITT_FRONTEND.haus;
+  if (!ort) return fallback;
+  const eintrag = REGIONAL_PREISE_FRONTEND[ort.trim().toLowerCase()];
+  if (!eintrag) return fallback;
+  return typ === 'wohnung' ? eintrag.wohnung : eintrag.haus;
+}
+
 function calcWert() {
-  const wfl = answers.wohnflaeche || 100;
-  let base = 3000;
-  if (answers.ausstattung==='gehoben') base=4200;
-  if (answers.ausstattung==='luxus') base=6000;
-  if (answers.ausstattung==='einfach') base=2200;
+  const wfl = answers.wohnflaeche || answers.wohnflaeche_qm || 100;
+  const typKurz = (answers.type || '').toLowerCase().includes('wohnung') ? 'wohnung' : 'haus';
+  let base = getBasispreisFrontend(answers.ort, typKurz);
+  if (answers.ausstattung==='gehoben') base*=1.25;
+  if (answers.ausstattung==='luxus') base*=1.7;
+  if (answers.ausstattung==='einfach') base*=0.75;
   if (answers.zustand==='vollsaniert') base*=1.15;
   if (answers.zustand==='renovierungsbedarf') base*=0.80;
   if (answers.baujahr==='nach2015') base*=1.12;
@@ -2680,6 +2716,8 @@ function showSuccess(name, email, low, high, avg) {
   const pctId   = isMobile() ? 'progress-pct-m' : 'progress-pct';
   document.getElementById(labelId).textContent = 'Fertig';
   updateProgressRing(100, fillId, pctId, fillId.replace('progress-fill', 'progress-check'));
+  const footerElD = document.getElementById(bodyId.replace('wizard-body', 'wizard-footer'));
+  if (footerElD) footerElD.innerHTML = '';
   document.getElementById(bodyId).innerHTML = `
     <div class="success-state">
       <div class="success-icon-wrap">
@@ -2700,6 +2738,8 @@ function showSuccess(name, email, low, high, avg) {
 
 function showError(name, low, high, avg) {
   const bodyId = isMobile() ? 'wizard-body-m' : 'wizard-body';
+  const footerElErr = document.getElementById(bodyId.replace('wizard-body', 'wizard-footer'));
+  if (footerElErr) footerElErr.innerHTML = '';
   document.getElementById(bodyId).innerHTML = `
     <div class="success-state">
       <div class="success-icon" style="background:#ef4444"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18" stroke="#fff" stroke-width="2.5"/><line x1="6" y1="6" x2="18" y2="18" stroke="#fff" stroke-width="2.5"/></svg></div>
@@ -2765,6 +2805,8 @@ async function submitForm() {
 
   // Ladescreen anzeigen
   const bodyId = isMobile() ? 'wizard-body-m' : 'wizard-body';
+  const footerElLoad = document.getElementById(bodyId.replace('wizard-body', 'wizard-footer'));
+  if (footerElLoad) footerElLoad.innerHTML = '';
   document.getElementById(bodyId).innerHTML = `
     <div class="success-state">
       <div style="width:48px;height:48px;border:4px solid var(--orange);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px"></div>
@@ -2783,7 +2825,7 @@ async function submitForm() {
     typ:        answers.type       || '–',
     plz:        answers.plz        || '–',
     ort:        answers.ort        || '–',
-    wohnflaeche: (answers.wohnflaeche || '–') + ' m²',
+    wohnflaeche: ((answers.wohnflaeche || answers.wohnflaeche_qm || '–')) + ' m²',
     grundstueck: (answers.grundstueck || '–') + ' m²',
     baujahr:    answers.baujahr    || '–',
     zustand:    answers.zustand    || '–',
@@ -2820,6 +2862,52 @@ async function submitForm() {
 
 
 function resetWizard() { currentStep=1; answers={}; window.__codeSentFor=null; document.getElementById('hero-wizard-mobile')?.classList.remove('wizard-success-view'); if(isHeroMobile()){ renderAll(); } else { render(); } }
+
+// ── PULL-TO-REFRESH: Am oberen Rand runterziehen startet den Wizard neu ──
+function setupPullToRefresh() {
+  const body = document.getElementById('wizard-body-hm');
+  if (!body || body.dataset.ptrInit) return;
+  body.dataset.ptrInit = '1';
+
+  let startY = 0, pulling = false, pullDistance = 0;
+  const SCHWELLE = 70;
+
+  let hinweis = document.getElementById('ptr-hinweis');
+  if (!hinweis) {
+    hinweis = document.createElement('div');
+    hinweis.id = 'ptr-hinweis';
+    hinweis.className = 'ptr-hinweis';
+    hinweis.textContent = '↓ Loslassen zum Neustarten';
+    document.body.appendChild(hinweis);
+  }
+
+  body.addEventListener('touchstart', (e) => {
+    pulling = body.scrollTop <= 0;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+
+  body.addEventListener('touchmove', (e) => {
+    if (!pulling) return;
+    pullDistance = e.touches[0].clientY - startY;
+    if (pullDistance > 0 && body.scrollTop <= 0) {
+      hinweis.style.opacity = Math.min(pullDistance / SCHWELLE, 1);
+      hinweis.style.transform = `translateX(-50%) translateY(${Math.min(pullDistance, SCHWELLE)}px)`;
+    } else {
+      pulling = false;
+      hinweis.style.opacity = '0';
+    }
+  }, { passive: true });
+
+  body.addEventListener('touchend', () => {
+    if (pulling && pullDistance > SCHWELLE) {
+      resetWizard();
+    }
+    hinweis.style.opacity = '0';
+    pulling = false;
+    pullDistance = 0;
+  });
+}
+
 
 
 function toggleFak(btn) {
