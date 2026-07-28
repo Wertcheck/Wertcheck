@@ -1665,7 +1665,7 @@ function renderWohnungDetailsHTML(step, bodyId) {
     if (checkbuttons.length) {
       html += `<div class="checkbutton-row">`;
       checkbuttons.forEach(f => {
-        html += `<button type="button" class="checkbutton ${answers[f.key]?'active':''}" id="${bodyId}_check_${f.key}" onclick="toggleCheckbutton('${f.key}','${bodyId}')">${f.label}</button>`;
+        html += `<button type="button" class="checkbutton ${answers[f.key]?'active':''}" id="${bodyId}_check_${f.key}" onclick="toggleCheckbutton('${f.key}','${bodyId}')" ${f.info ? `title="${f.info}"` : ''}>${f.label}</button>`;
       });
       html += `</div>`;
     }
@@ -2237,11 +2237,18 @@ const steps = [
      {key:"stellplatz",label:"Stellplatz",fieldType:"checkbutton"},
      {key:"garage",label:"Garage",fieldType:"checkbutton"},
      {key:"aufzug",label:"Aufzug",fieldType:"checkbutton"},
+     {key:"umfassend_modernisiert",label:"Umfassend modernisiert",fieldType:"checkbutton",info:"Modernisierungskosten von mindestens einem Drittel der Neubaukosten — relevant dafür, ob die Mietpreisbremse (§ 556f BGB) greift."},
      {key:"balkonflaeche",label:"Balkon-/Terrassenfläche (m²)",fieldType:"number",placeholder:"z. B. 8"},
      {key:"kuechenzustand",label:"Küchenzustand",fieldType:"dropdown",options:[{value:"neu",label:"Neu / hochwertig"},{value:"gepflegt",label:"Gepflegt"},{value:"renovierungsbeduerftig",label:"Renovierungsbedürftig"}]},
      {key:"badzustand",label:"Badezimmerzustand",fieldType:"dropdown",options:[{value:"neu",label:"Neu / hochwertig"},{value:"gepflegt",label:"Gepflegt"},{value:"renovierungsbeduerftig",label:"Renovierungsbedürftig"}]},
      {key:"fussbodenzustand",label:"Fußbodenzustand",fieldType:"dropdown",options:[{value:"neu",label:"Neu / hochwertig"},{value:"gepflegt",label:"Gepflegt"},{value:"renovierungsbeduerftig",label:"Renovierungsbedürftig"}]},
      {key:"fensterzustand",label:"Fensterzustand",fieldType:"dropdown",options:[{value:"neu",label:"Neu / hochwertig"},{value:"gepflegt",label:"Gepflegt"},{value:"renovierungsbeduerftig",label:"Renovierungsbedürftig"}]}
+   ]},
+  {id:18,question:"Wird die Wohnung selbst genutzt oder vermietet?",hint:"Hilft uns, die Bewertung noch passender zu machen.",type:"options",key:"nutzung",
+   condition:(a)=>a.type==="wohnung",
+   options:[
+     {value:"selbstnutzung",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12L12 4l9 8"/><path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/></svg>`,label:"Selbstnutzung"},
+     {value:"vermietet",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z"/><path d="M9 12l2 2 4-4"/></svg>`,label:"Vermietet"}
    ]},
   {id:3,question:"Wie groß ist die Wohnfläche?",hint:"Geben Sie die Wohnfläche in Quadratmetern an.",type:"slider",key:"wohnflaeche",min:20,max:500,default:100,step:1,unit:"m²",label:"Wohnfläche",
    condition:(a)=>a.type!=="wohnung"},
