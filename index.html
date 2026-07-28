@@ -450,8 +450,8 @@ nav.scrolled {
   display:flex; flex-direction:column; align-items:center; gap:2px;
   transition:border-color .2s, background .2s, transform .2s, box-shadow .2s;
 }
-.type-btn:hover { border-color:var(--orange); background:rgba(0,151,178,0.06); transform:scale(1.02); box-shadow:0 6px 16px rgba(0,151,178,0.15); }
-.type-btn.selected { border-color:var(--orange); border-width:1.5px; background:rgba(0,151,178,0.08); transform:scale(1.02); box-shadow:0 6px 18px rgba(0,151,178,0.25), inset 0 0 0 1px var(--orange); }
+.type-btn:hover { border-color:var(--orange); background:rgba(0,151,178,0.06); transform:scale(1.01); box-shadow:0 6px 16px rgba(0,151,178,0.15); }
+.type-btn.selected { border-color:var(--orange); border-width:1.5px; background:rgba(0,151,178,0.08); transform:scale(1.01); box-shadow:0 6px 18px rgba(0,151,178,0.25), inset 0 0 0 1px var(--orange); }
 .type-icon { width:96px; height:96px; color:var(--orange); display:flex; align-items:center; justify-content:center; }
 .type-icon svg { width:96px; height:96px; }
 .type-icon img { width:100%; height:100%; object-fit:contain; }
@@ -464,8 +464,8 @@ nav.scrolled {
   font-weight:400; color:var(--text); font-family:var(--f-body);
   display:flex; align-items:center; gap:12px; transition:all .18s;
 }
-.option-btn:hover { border-color:var(--orange); background:var(--cream); transform:scale(1.02); box-shadow:0 6px 16px rgba(0,151,178,0.15); }
-.option-btn.selected { border-color:var(--orange); border-width:2.5px; background:var(--cream); transform:scale(1.02); box-shadow:0 6px 18px rgba(0,151,178,0.25), inset 0 0 0 1px var(--orange); }
+.option-btn:hover { border-color:var(--orange); background:var(--cream); transform:scale(1.01); box-shadow:0 6px 16px rgba(0,151,178,0.15); }
+.option-btn.selected { border-color:var(--orange); border-width:2.5px; background:var(--cream); transform:scale(1.01); box-shadow:0 6px 18px rgba(0,151,178,0.25), inset 0 0 0 1px var(--orange); }
 .opt-icon { width:20px; height:20px; color:var(--orange); flex-shrink:0; display:flex; align-items:center; }
 .opt-icon svg { width:20px; height:20px; }
 .field-group { margin-bottom:10px; }
@@ -605,11 +605,9 @@ input.custom-dropdown-trigger { cursor:text; }
 .btn-next:hover .btn-arrow { transform:translateX(4px); }
 .security-note { font-size:11px; color:var(--muted); margin-top:10px; text-align:center; font-weight:300; }
 .email-sent-note {
-  display: flex; align-items: center; justify-content: center; gap: 6px;
   font-size: 12px; color: var(--muted); font-weight: 300;
-  margin-top: 14px; text-align: center; line-height: 1.5;
+  margin: 0 0 12px; text-align: center; line-height: 1.5;
 }
-.email-sent-note svg { flex-shrink: 0; color: var(--orange); }
 .email-sent-note strong { color: var(--text); font-weight: 600; }
 .success-state { text-align:center; padding:12px 0; }
 .success-icon { width:60px; height:60px; background:var(--orange); border-radius:50%; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; animation:popIn .4s cubic-bezier(.68,-.55,.265,1.55); }
@@ -785,7 +783,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   /* MOBILE HERO — kompakt oben, Wizard darunter */
   .hero {
     min-height: 100svh;
-    padding: 76px 5% 24px;
+    padding: 60px 5% 16px;
     background: transparent;
     display: flex;
     flex-direction: column;
@@ -797,8 +795,8 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 
   /* Kompakte Headline — 2 statt 3 Zeilen, zentriert und größer */
   .hero-left { text-align: center; }
-  .hero-eyebrow { font-size:9px; letter-spacing:0.16em; margin-bottom:10px; padding-left:0; border-left:none; display:inline-block; }
-  .hero-left h1 { font-size:30px; line-height:1.16; margin-bottom:10px; }
+  .hero-eyebrow { font-size:9px; letter-spacing:0.16em; margin-bottom:6px; padding-left:0; border-left:none; display:inline-block; }
+  .hero-left h1 { font-size:28px; line-height:1.14; margin-bottom:6px; }
   .hero-brk-1 { display:none; }
   .hero-desc { display:none; }
   .hero-checks { display:none; }
@@ -862,6 +860,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     display: flex;
     flex-direction: column;
     position: relative;
+    padding-bottom: 14px;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
@@ -878,7 +877,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     flex-shrink: 0;
   }
   .hero-mobile-wizard .wizard-glass {
-    padding: 18px 18px;
+    padding: 18px 22px;
     background: #ffffff;
     border: 1px solid var(--border);
   }
@@ -1796,7 +1795,7 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
   if(lbl) lbl.textContent = `Schritt ${currentStep} von ${getTotalSteps()}`;
   updateProgressRing(pct, fillId, pctId, fillId.replace('progress-fill', 'progress-check'));
 
-  let html = `<h2 class="wizard-question">${step.question}</h2><p class="wizard-hint">${step.hint}</p>`;
+  let html = `<h2 class="wizard-question">${step.question}</h2>` + (step.hint ? `<p class="wizard-hint">${step.hint}</p>` : '');
 
   if (step.type === 'type-grid') {
     html += `<div class="type-grid">`;
@@ -1866,7 +1865,7 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
       <div class="address-reasons">
         <div class="address-reason">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l2.5 2.5L16 9"/></svg>
-          <span>Wir benötigen Ihre vollständige Adresse, um eine möglichst genaue Preisspanne zu berechnen.</span>
+          <span>Wir benötigen Ihre vollständige Adresse, damit die Preisspanne des Immobilienwertes genauer berechnet werden kann.</span>
         </div>
         <div class="address-trust-badges">
           <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 4l3 3M19 7l2 2"/></svg>Verschlüsselt</span>
@@ -1890,8 +1889,8 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
   let footerHtml = `<div class="wizard-nav">`;
   if (currentStep > 1) footerHtml += `<button class="btn-back" onclick="goBackS('${suffix}')">←</button>`;
   if (step.type === 'email-verify') {
+    footerHtml = `<p class="email-sent-note">Code gesendet an <strong>${answers.email||''}</strong> — bitte auch den Spam-Ordner prüfen.</p>` + footerHtml;
     footerHtml += `<button class="btn-next" onclick="confirmCodeS('${suffix}')">Bestätigen</button></div>`;
-    footerHtml += `<p class="email-sent-note"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 6.5l10 7 10-7"/></svg>Code gesendet an <strong>${answers.email||''}</strong> — bitte auch den Spam-Ordner prüfen.</p>`;
   } else {
     footerHtml += `<button class="btn-next" onclick="${isLast ? `submitFormS('${suffix}')` : `goNextS('${suffix}')`}">${isLast ? 'Bewertung anfordern' : (currentStep === 1 ? 'Jetzt kostenlos bewerten <span class="btn-arrow">→</span>' : 'Weiter <span class="btn-arrow">→</span>')}</button></div>`;
   }
@@ -2327,7 +2326,7 @@ const steps = [
      {value:"1jahr",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,label:"In ca. 1 Jahr"},
      {value:"unbekannt",icon:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>`,label:"Noch unklar"}
    ]},
-  {id:13,question:"Wo befindet sich die Immobilie?",hint:"Die genaue Adresse wird für eine präzise Bewertung Ihrer Immobilie benötigt.",type:"address",key:"adresse"},
+  {id:13,question:"Wo befindet sich die Immobilie?",hint:"",type:"address",key:"adresse"},
   {id:12,question:"Wohin sollen wir Ihre Bewertung senden?",hint:"Ihre Daten werden vertraulich behandelt.",type:"contact",
    fields:[{key:"vorname",label:"Vorname",placeholder:"Max",type:"text"},{key:"nachname",label:"Nachname",placeholder:"Mustermann",type:"text"},{key:"email",label:"E-Mail-Adresse",placeholder:"max@beispiel.de",type:"email"},{key:"telefon",label:"Telefon (optional)",placeholder:"+49 123 456789",type:"tel"}]},
   {id:14,question:"Bestätigen Sie Ihre E-Mail-Adresse",hint:"Wir haben Ihnen einen 6-stelligen Code geschickt.",type:"email-verify",key:"code"}
@@ -2432,7 +2431,7 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
   document.getElementById(labelId).textContent = `Schritt ${currentStep} von ${getTotalSteps()}`;
   updateProgressRing(pct, fillId, pctId, fillId.replace('progress-fill', 'progress-check'));
 
-  let html = `<h2 class="wizard-question">${step.question}</h2><p class="wizard-hint">${step.hint}</p>`;
+  let html = `<h2 class="wizard-question">${step.question}</h2>` + (step.hint ? `<p class="wizard-hint">${step.hint}</p>` : '');
 
   if (step.type === 'type-grid') {
     html += `<div class="type-grid">`;
@@ -2502,7 +2501,7 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
       <div class="address-reasons">
         <div class="address-reason">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l2.5 2.5L16 9"/></svg>
-          <span>Wir benötigen Ihre vollständige Adresse, um eine möglichst genaue Preisspanne zu berechnen.</span>
+          <span>Wir benötigen Ihre vollständige Adresse, damit die Preisspanne des Immobilienwertes genauer berechnet werden kann.</span>
         </div>
         <div class="address-trust-badges">
           <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 4l3 3M19 7l2 2"/></svg>Verschlüsselt</span>
@@ -2526,8 +2525,8 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
   let footerHtml = `<div class="wizard-nav">`;
   if (currentStep > 1) footerHtml += `<button class="btn-back" onclick="goBack()">←</button>`;
   if (step.type === 'email-verify') {
+    footerHtml = `<p class="email-sent-note">Code gesendet an <strong>${answers.email||''}</strong> — bitte auch den Spam-Ordner prüfen.</p>` + footerHtml;
     footerHtml += `<button class="btn-next" onclick="confirmCode()">Bestätigen</button></div>`;
-    footerHtml += `<p class="email-sent-note"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 6.5l10 7 10-7"/></svg>Code gesendet an <strong>${answers.email||''}</strong> — bitte auch den Spam-Ordner prüfen.</p>`;
   } else {
     footerHtml += `<button class="btn-next" onclick="${isLast ? 'submitForm()' : 'goNext()'}">
     ${isLast ? 'Bewertung anfordern' : (currentStep === 1 ? 'Jetzt kostenlos bewerten <span class="btn-arrow">→</span>' : 'Weiter <span class="btn-arrow">→</span>')}
