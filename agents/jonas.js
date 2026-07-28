@@ -15,6 +15,32 @@ const elena = require('./elena');
 // (z.B. "type" vs. "typ", merkmale als Array oder als String).
 // Jonas vereinheitlicht das hier an einer Stelle, damit sich Clara,
 // Tim und Elena nicht selbst darum kümmern müssen.
+// Die Wohnung-Detailseiten im Wizard erheben feinere Felder
+// (baujahr_wohnung statt baujahr, vier einzelne Raum-Zustände statt
+// einem "zustand", keine direkte "ausstattung") — die werden hier auf
+// die generischen Felder abgebildet, die die Preisformel in Clara
+// erwartet. Ohne das würden Zustand/Ausstattung/Baujahr bei jeder
+// Wohnungs-Bewertung stillschweigend ignoriert.
+function leiteZustandAb(rohdaten) {
+  if (rohdaten.zustand) return rohdaten.zustand; // Haus/Gewerbe haben das Feld direkt
+  if (rohdaten.umfassend_modernisiert) return 'vollsaniert';
+  const raeume = [rohdaten.kuechenzustand, rohdaten.badzustand, rohdaten.fussbodenzustand, rohdaten.fensterzustand].filter(Boolean);
+  if (!raeume.length) return 'gepflegt';
+  const anzahlNeu = raeume.filter(r => r === 'neu').length;
+  const anzahlReno = raeume.filter(r => r === 'renovierungsbeduerftig').length;
+  if (anzahlReno > raeume.length / 2) return 'renovierungsbedarf';
+  if (anzahlNeu > raeume.length / 2) return 'vollsaniert';
+  return 'gepflegt';
+}
+
+function leiteAusstattungAb(rohdaten) {
+  if (rohdaten.ausstattung) return rohdaten.ausstattung; // Haus/Gewerbe haben das Feld direkt
+  const eff = rohdaten.energieeffizienz;
+  if (eff === 'A+' || eff === 'A') return 'gehoben';
+  if (eff === 'F' || eff === 'G' || eff === 'H') return 'einfach';
+  return 'normal';
+}
+
 function normalisiere(rohdaten) {
   const merkmale = Array.isArray(rohdaten.merkmale)
     ? rohdaten.merkmale
@@ -30,12 +56,14 @@ function normalisiere(rohdaten) {
     typ: rohdaten.typ || rohdaten.type || 'Immobilie',
     plz: rohdaten.plz || '',
     ort: rohdaten.ort || '',
-    wohnflaeche: parseInt(rohdaten.wohnflaeche) || 100,
+    wohnflaeche: parseInt(rohdaten.wohnflaeche) || parseInt(rohdaten.wohnflaeche_qm) || 100,
     grundstueck: parseInt(rohdaten.grundstueck) || null,
-    baujahr: rohdaten.baujahr || 'unbekannt',
-    zustand: rohdaten.zustand || 'gepflegt',
-    ausstattung: rohdaten.ausstattung || 'normal',
+    baujahr: rohdaten.baujahr || rohdaten.baujahr_wohnung || 'unbekannt',
+    zustand: leiteZustandAb(rohdaten),
+    ausstattung: leiteAusstattungAb(rohdaten),
     heizung: rohdaten.heizung || 'unbekannt',
+    nutzung: rohdaten.nutzung || null,
+    umfassend_modernisiert: !!rohdaten.umfassend_modernisiert,
     merkmale,
     ziel: rohdaten.ziel || 'neugier',
     zeitplan: rohdaten.zeitplan || 'unbekannt',
