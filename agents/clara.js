@@ -7,6 +7,7 @@
  */
 
 const Anthropic = require('@anthropic-ai/sdk');
+const { getBasispreis, getMietpreis, pruefeMietpreisbremse, getPreisverlauf, getMietverlauf } = require('./regionalpreise');
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -17,10 +18,15 @@ const fmt = (n) => n.toLocaleString('de-DE') + ' €';
 // wir verlassen uns nicht auf ggf. bereits vom Client mitgeschickte Werte.
 function berechneWert(daten) {
   const wfl = daten.wohnflaeche;
-  let base = 3000;
-  if (daten.ausstattung === 'gehoben') base = 4200;
-  if (daten.ausstattung === 'luxus') base = 6000;
-  if (daten.ausstattung === 'einfach') base = 2200;
+
+  // Regionaler Richtpreis als Ausgangsbasis (statt fixem Pauschalwert)
+  const typKurz = (daten.typ || '').toLowerCase().includes('wohnung') ? 'wohnung' : 'haus';
+  let base = getBasispreis(daten.ort, typKurz);
+
+  // Ausstattung als relativer Auf-/Abschlag auf den Richtpreis
+  if (daten.ausstattung === 'gehoben') base *= 1.25;
+  if (daten.ausstattung === 'luxus') base *= 1.7;
+  if (daten.ausstattung === 'einfach') base *= 0.75;
   if (daten.zustand === 'vollsaniert') base *= 1.15;
   if (daten.zustand === 'renovierungsbedarf') base *= 0.80;
   if (daten.baujahr === 'nach2015') base *= 1.12;
@@ -48,16 +54,28 @@ function fallbackText(daten, wert) {
 
 async function analysiere(daten) {
   const wert = berechneWert(daten);
+  const mietpreis = getMietpreis(daten.ort);
+  const mietpreisbremse = pruefeMietpreisbremse(daten);
+  const typKurzVerlauf = (daten.typ || '').toLowerCase().includes('wohnung') ? 'wohnung' : 'haus';
+  const preisverlauf = getPreisverlauf(daten.ort, typKurzVerlauf);
+  const istVermietet = daten.nutzung === 'vermietet';
+  const mietverlauf = istVermietet ? getMietverlauf(daten.ort) : null;
 
   const systemPrompt =
     'Du bist Clara, Immobilienanalystin bei ImmoWertChecker. Sachlich, präzise, aber nahbar. ' +
     'Du schreibst ausschließlich auf Deutsch, in kurzen, klaren Sätzen ohne Floskeln oder Fachchinesisch.';
+
+  const typKurz = (daten.typ || '').toLowerCase().includes('wohnung') ? 'wohnung' : 'haus';
+  const richtpreis = getBasispreis(daten.ort, typKurz);
 
   const userPrompt = `
 Erstelle eine kurze, verständliche Einschätzung für folgende Immobilie:
 
 - Typ: ${daten.typ}
 - Lage: ${daten.plz} ${daten.ort}
+- Regionaler Richtpreis (Ø €/m² für diesen Immobilientyp in dieser Stadt bzw. bundesweit als Näherung): ${richtpreis} €/m²
+- Regionale Ø-Kaltmiete: ${mietpreis} €/m²
+- Mietpreisbremse: ${mietpreisbremse.greiftNicht ? `Greift nach den Angaben voraussichtlich NICHT (${mietpreisbremse.begruendung}). Erwähne das kurz als positiven Punkt für die Ertragsperspektive, aber ohne es als abschließende Rechtsauskunft darzustellen (z.B. "nach aktuellem Stand", "voraussichtlich").` : 'Keine Angaben, die für eine Ausnahme sprechen — nicht erwähnen.'}
 - Wohnfläche: ${daten.wohnflaeche} m²
 ${daten.grundstueck ? `- Grundstück: ${daten.grundstueck} m²\n` : ''}- Baujahr: ${daten.baujahr}
 - Zustand: ${daten.zustand}
@@ -85,10 +103,10 @@ Antworte NUR mit JSON in exakt diesem Format, kein weiterer Text:
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     const text_parsed = JSON.parse(jsonMatch ? jsonMatch[0] : text);
 
-    return { wert, text: text_parsed };
+    return { wert, text: text_parsed, mietpreis, mietpreisbremse, preisverlauf, mietverlauf, istVermietet };
   } catch (err) {
     console.error('[Clara] Claude-Anfrage fehlgeschlagen, nutze Fallback-Text:', err.message);
-    return { wert, text: fallbackText(daten, wert) };
+    return { wert, text: fallbackText(daten, wert), mietpreis, mietpreisbremse, preisverlauf, mietverlauf, istVermietet };
   }
 }
 
