@@ -1659,9 +1659,10 @@ function renderWohnungDetailsHTML(step, bodyId) {
       </div>`;
     } else if (f.fieldType === 'stepper') {
       if (answers[f.key] === undefined) answers[f.key] = f.default;
+      const beruehrt = !!answers[f.key + '_touched'];
       h += `<div class="stepper">
         <button type="button" onclick="stepperChange('${f.key}',-1,${f.min},${f.max},'${bodyId}')">−</button>
-        <input type="number" class="stepper-input" id="${bodyId}_stepper_${f.key}" value="${answers[f.key]}" min="${f.min}" max="${f.max}" oninput="stepperInput('${f.key}',this.value,${f.min},${f.max},'${bodyId}')" onblur="clampStepperInput('${f.key}',${f.min},${f.max},'${bodyId}')">
+        <input type="number" class="stepper-input" id="${bodyId}_stepper_${f.key}" value="${beruehrt ? answers[f.key] : ''}" placeholder="–" min="${f.min}" max="${f.max}" oninput="stepperInput('${f.key}',this.value,${f.min},${f.max},'${bodyId}')" onblur="clampStepperInput('${f.key}',${f.min},${f.max},'${bodyId}')">
         <button type="button" onclick="stepperChange('${f.key}',1,${f.min},${f.max},'${bodyId}')">+</button>
       </div>`;
     } else if (f.fieldType === 'number') {
@@ -1699,6 +1700,7 @@ function stepperChange(key, delta, min, max, bodyId) {
   let val = (answers[key] === undefined ? min : answers[key]) + delta;
   val = Math.max(min, Math.min(max, val));
   answers[key] = val;
+  answers[key + '_touched'] = true;
   const el = document.getElementById(`${bodyId}_stepper_${key}`);
   if (el) el.value = val;
   refreshProgressBar();
@@ -1706,6 +1708,7 @@ function stepperChange(key, delta, min, max, bodyId) {
 
 function stepperInput(key, value, min, max, bodyId) {
   let val = parseInt(value, 10);
+  answers[key + '_touched'] = true;
   if (isNaN(val)) return;
   answers[key] = val;
   refreshProgressBar();
