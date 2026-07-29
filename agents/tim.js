@@ -145,7 +145,9 @@ function erstellePDF(daten, analyse) {
         );
 
       // ── OBJEKTDATEN-KACHELN (links) + FOTO (rechts) ────────────
-      const kachelY = 160;
+      // kachelY hängt bewusst von der tatsächlichen Höhe des Intro-Texts ab
+      // (nicht fest verdrahtet), sonst überlappt es je nach Namenslänge/Text.
+      const kachelY = Math.max(doc.y + 24, 155);
       const kachelW = 190;
       kachel(doc, M, kachelY, kachelW, 'Objekttyp', daten.typ || '–');
       kachel(doc, M + kachelW, kachelY, kachelW, 'Wohnfläche', `${daten.wohnflaeche} m²`);
@@ -155,8 +157,10 @@ function erstellePDF(daten, analyse) {
       kachel(doc, M + kachelW, kachelY + 88, kachelW, 'Zustand', daten.zustand || '–');
 
       try {
-        doc.image(HAUS_FOTO, PW - M - 210, kachelY - 8, { width: 210, height: 150, fit: [210, 150] });
-      } catch (e) { /* Foto optional */ }
+        doc.image(HAUS_FOTO, PW - M - 210, kachelY - 8, { fit: [210, 150] });
+      } catch (e) {
+        console.error('[Tim] Konnte Haus-Foto nicht laden:', e.message);
+      }
 
       y = kachelY + 150;
 

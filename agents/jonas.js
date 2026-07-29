@@ -62,6 +62,7 @@ function normalisiere(rohdaten) {
     zustand: leiteZustandAb(rohdaten),
     ausstattung: leiteAusstattungAb(rohdaten),
     heizung: rohdaten.heizung || 'unbekannt',
+    energieeffizienz: rohdaten.energieeffizienz || null,
     nutzung: rohdaten.nutzung || null,
     umfassend_modernisiert: !!rohdaten.umfassend_modernisiert,
     merkmale,

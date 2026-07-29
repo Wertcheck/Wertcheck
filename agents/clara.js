@@ -38,6 +38,62 @@ function berechneWert(daten) {
   return { low, high, avg };
 }
 
+const BEWERTUNGSSTUFEN = {
+  sehrpositiv: { label: 'Sehr positiv', pct: 95 },
+  positiv:     { label: 'Positiv',       pct: 75 },
+  neutral:     { label: 'Neutral',       pct: 50 },
+  negativ:     { label: 'Eher negativ',  pct: 25 }
+};
+
+// Leitet die im PDF gezeigten "Wertbeeinflussenden Faktoren" aus den
+// echten Bewertungsdaten ab (keine Platzhalter-Werte).
+function leiteFaktorenAb(daten, preisverlauf) {
+  const faktoren = [];
+  const { REGIONAL_PREISE } = require('./regionalpreise');
+  const TOP_STAEDTE = ['münchen', 'muenchen', 'hamburg', 'frankfurt', 'frankfurt am main', 'berlin', 'stuttgart'];
+  const ortKey = (daten.ort || '').trim().toLowerCase();
+
+  // Lage
+  if (TOP_STAEDTE.includes(ortKey)) faktoren.push({ name: 'Lage', ...BEWERTUNGSSTUFEN.sehrpositiv });
+  else if (REGIONAL_PREISE[ortKey]) faktoren.push({ name: 'Lage', ...BEWERTUNGSSTUFEN.positiv });
+  else faktoren.push({ name: 'Lage', ...BEWERTUNGSSTUFEN.neutral });
+
+  // Wohnfläche
+  faktoren.push({ name: 'Wohnfläche', ...(daten.wohnflaeche >= 60 ? BEWERTUNGSSTUFEN.positiv : BEWERTUNGSSTUFEN.neutral) });
+
+  // Baujahr / Zustand
+  if (daten.zustand === 'vollsaniert' || daten.baujahr === 'nach2015') faktoren.push({ name: 'Baujahr / Zustand', ...BEWERTUNGSSTUFEN.sehrpositiv });
+  else if (daten.zustand === 'renovierungsbedarf') faktoren.push({ name: 'Baujahr / Zustand', ...BEWERTUNGSSTUFEN.negativ });
+  else faktoren.push({ name: 'Baujahr / Zustand', ...BEWERTUNGSSTUFEN.positiv });
+
+  // Ausstattung
+  if (daten.ausstattung === 'luxus') faktoren.push({ name: 'Ausstattung', ...BEWERTUNGSSTUFEN.sehrpositiv });
+  else if (daten.ausstattung === 'gehoben') faktoren.push({ name: 'Ausstattung', ...BEWERTUNGSSTUFEN.positiv });
+  else if (daten.ausstattung === 'einfach') faktoren.push({ name: 'Ausstattung', ...BEWERTUNGSSTUFEN.negativ });
+  else faktoren.push({ name: 'Ausstattung', ...BEWERTUNGSSTUFEN.neutral });
+
+  // Grundstücksgröße (nur bei Häusern mit Angabe)
+  if (daten.grundstueck) {
+    faktoren.push({ name: 'Grundstücksgröße', ...(daten.grundstueck >= 500 ? BEWERTUNGSSTUFEN.positiv : BEWERTUNGSSTUFEN.neutral) });
+  }
+
+  // Energieeffizienz (falls angegeben, sonst neutral)
+  const eff = daten.energieeffizienz;
+  if (eff === 'A+' || eff === 'A') faktoren.push({ name: 'Energieeffizienz', ...BEWERTUNGSSTUFEN.sehrpositiv });
+  else if (eff === 'B' || eff === 'C') faktoren.push({ name: 'Energieeffizienz', ...BEWERTUNGSSTUFEN.positiv });
+  else if (eff === 'F' || eff === 'G' || eff === 'H') faktoren.push({ name: 'Energieeffizienz', ...BEWERTUNGSSTUFEN.negativ });
+  else faktoren.push({ name: 'Energieeffizienz', ...BEWERTUNGSSTUFEN.neutral });
+
+  // Marktsituation (anhand des modellierten Preisverlaufs der letzten 2 Jahre)
+  if (preisverlauf && preisverlauf.length >= 2) {
+    const letztes = preisverlauf[preisverlauf.length - 1].preis;
+    const vorletztes = preisverlauf[preisverlauf.length - 2].preis;
+    faktoren.push({ name: 'Marktsituation', ...(letztes >= vorletztes ? BEWERTUNGSSTUFEN.positiv : BEWERTUNGSSTUFEN.neutral) });
+  }
+
+  return faktoren;
+}
+
 function fallbackText(daten, wert) {
   return {
     einschaetzung: `Ihre ${daten.typ} in ${daten.ort || 'Ihrer Region'} liegt mit einer geschätzten ` +
@@ -60,6 +116,20 @@ async function analysiere(daten) {
   const preisverlauf = getPreisverlauf(daten.ort, typKurzVerlauf);
   const istVermietet = daten.nutzung === 'vermietet';
   const mietverlauf = istVermietet ? getMietverlauf(daten.ort) : null;
+  let faktoren;
+  try {
+    faktoren = leiteFaktorenAb(daten, preisverlauf);
+    if (!Array.isArray(faktoren) || faktoren.length === 0) throw new Error('leer');
+  } catch (err) {
+    console.error('[Clara] Faktoren-Ableitung fehlgeschlagen, nutze Fallback:', err.message);
+    faktoren = [
+      { name: 'Lage', ...BEWERTUNGSSTUFEN.neutral },
+      { name: 'Wohnfläche', ...BEWERTUNGSSTUFEN.neutral },
+      { name: 'Baujahr / Zustand', ...BEWERTUNGSSTUFEN.neutral },
+      { name: 'Ausstattung', ...BEWERTUNGSSTUFEN.neutral },
+      { name: 'Marktsituation', ...BEWERTUNGSSTUFEN.neutral }
+    ];
+  }
 
   const systemPrompt =
     'Du bist Clara, Immobilienanalystin bei ImmoWertChecker. Sachlich, präzise, aber nahbar. ' +
@@ -103,10 +173,10 @@ Antworte NUR mit JSON in exakt diesem Format, kein weiterer Text:
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     const text_parsed = JSON.parse(jsonMatch ? jsonMatch[0] : text);
 
-    return { wert, text: text_parsed, mietpreis, mietpreisbremse, preisverlauf, mietverlauf, istVermietet };
+    return { wert, text: text_parsed, mietpreis, mietpreisbremse, preisverlauf, mietverlauf, istVermietet, faktoren };
   } catch (err) {
     console.error('[Clara] Claude-Anfrage fehlgeschlagen, nutze Fallback-Text:', err.message);
-    return { wert, text: fallbackText(daten, wert), mietpreis, mietpreisbremse, preisverlauf, mietverlauf, istVermietet };
+    return { wert, text: fallbackText(daten, wert), mietpreis, mietpreisbremse, preisverlauf, mietverlauf, istVermietet, faktoren };
   }
 }
 
