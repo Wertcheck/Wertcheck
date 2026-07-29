@@ -54,7 +54,7 @@
 html { scroll-behavior:smooth; }
 body {
   font-family:var(--f-body); color:var(--text); overflow-x:hidden; line-height:1.6;
-  background-color: #08101C;
+  background-color: #000000;
 }
 body.wizard-scroll-lock {
   overflow: hidden;
@@ -66,9 +66,7 @@ body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background:
-    linear-gradient(rgba(8,16,28,0.82), rgba(8,16,28,0.82)),
-    url('header_png.png') center center / cover no-repeat;
+  background: #000000;
   z-index: 0;
   pointer-events: none;
 }
@@ -77,7 +75,7 @@ nav, section, footer, .mobile-menu {
   z-index: 1;
 }
 /* Sections vollständig undurchsichtig — kein Hintergrundbild */
-.ergebnis-section { background: rgba(8,16,28,0.78); }
+.ergebnis-section { background: #0A121C; }
 #faktoren { background: #ffffff !important; }
 
 #faq { background: #ffffff !important; }
@@ -459,7 +457,7 @@ nav.scrolled {
 .type-label { font-size:13px; font-weight:600; color:var(--text); }
 .option-list { display:flex; flex-direction:column; gap:8px; margin-bottom:18px; }
 .option-btn {
-  border:2px solid var(--border); border-radius:10px; padding:13px 16px;
+  height:48px; border:2px solid var(--border); border-radius:10px; padding:0 16px;
   background:#fff; cursor:pointer; text-align:left; font-size:14px;
   font-weight:400; color:var(--text); font-family:var(--f-body);
   display:flex; align-items:center; gap:12px; transition:all .18s;
@@ -1123,9 +1121,9 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   <div class="hero-inner">
     <div class="hero-left">
       <div class="hero-eyebrow">Kostenlos · Unverbindlich · In 3 Minuten</div>
-      <h1>Berechne jetzt deinen <br class="hero-brk hero-brk-1"><span class="hero-accent">Immobilienwert</span><br class="hero-brk hero-brk-2"></h1>
+      <h1>Jetzt deinen <br class="hero-brk hero-brk-1"><span class="hero-accent">Immobilienwert</span><br class="hero-brk hero-brk-2">berechnen</h1>
       <p class="hero-desc" style="font-size:15px; color:rgba(255,255,255,0.7); margin-bottom:20px; font-weight:300; line-height:1.7;">
-        Erfahre in nur 3 Minuten den Wert deiner Immobilie — kostenlos &amp; unverbindlich.
+        Erfahren Sie in nur 3 Minuten den Wert Ihrer Immobilie — kostenlos &amp; unverbindlich.
       </p>
       <ul class="hero-checks">
         <li>Kein Fachwissen nötig — einfach ein paar Fragen beantworten</li>
@@ -1854,23 +1852,23 @@ function renderWizardIn(bodyId, labelId, fillId, pctId, suffix) {
     html += `<div class="input-row">
         <div class="field-group">
           <label>Stadt / Gemeinde</label>
-          <input type="text" class="field-dropdown" id="${bodyId}_field_ort" placeholder="z. B. München" value="${answers.ort||''}" oninput="onOrtPlzInput('${bodyId}')">
+          <input type="text" class="field-dropdown field-compact" id="${bodyId}_field_ort" placeholder="z. B. München" value="${answers.ort||''}" oninput="onOrtPlzInput('${bodyId}')">
         </div>
         <div class="field-group">
           <label>Postleitzahl</label>
-          <input type="text" class="field-dropdown" id="${bodyId}_field_plz" placeholder="z. B. 80331" value="${answers.plz||''}" oninput="onOrtPlzInput('${bodyId}')">
+          <input type="text" class="field-dropdown field-compact" id="${bodyId}_field_plz" placeholder="z. B. 80331" value="${answers.plz||''}" oninput="onOrtPlzInput('${bodyId}')">
         </div>
       </div>
       <div id="${bodyId}_strasse_wrap" class="${(answers.ort && answers.plz) ? '' : 'strasse-locked'}">
         <div class="field-group custom-dropdown" id="${bodyId}_addr_wrap">
           <label>Straße</label>
-          <input type="text" class="custom-dropdown-trigger" id="${bodyId}_address_input" placeholder="Erst Stadt und PLZ eingeben" value="${answers.strasse||''}" autocomplete="off" oninput="onAddressInput(this.value,'${bodyId}')" ${(answers.ort && answers.plz) ? '' : 'disabled'}>
+          <input type="text" class="custom-dropdown-trigger field-compact" id="${bodyId}_address_input" placeholder="Erst Stadt und PLZ eingeben" value="${answers.strasse||''}" autocomplete="off" oninput="onAddressInput(this.value,'${bodyId}')" ${(answers.ort && answers.plz) ? '' : 'disabled'}>
           <div class="custom-dropdown-panel" id="${bodyId}_address_panel" style="display:none;"></div>
         </div>
         <p id="${bodyId}_address_error" style="display:none; color:#ef4444; font-size:12px; margin:-8px 0 12px;"></p>
         <div class="field-group">
           <label>Hausnummer</label>
-          <input type="text" class="field-dropdown" id="${bodyId}_field_hausnummer" placeholder="z. B. 12" value="${answers.hausnummer||''}" oninput="answers.hausnummer=this.value" ${(answers.ort && answers.plz) ? '' : 'disabled'}>
+          <input type="text" class="field-dropdown field-compact" id="${bodyId}_field_hausnummer" placeholder="z. B. 12" value="${answers.hausnummer||''}" oninput="answers.hausnummer=this.value" ${(answers.ort && answers.plz) ? '' : 'disabled'}>
         </div>
       </div>
       <div class="address-reasons">
@@ -2498,23 +2496,23 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
     html += `<div class="input-row">
         <div class="field-group">
           <label>Stadt / Gemeinde</label>
-          <input type="text" class="field-dropdown" id="${bodyId}_field_ort" placeholder="z. B. München" value="${answers.ort||''}" oninput="onOrtPlzInput('${bodyId}')">
+          <input type="text" class="field-dropdown field-compact" id="${bodyId}_field_ort" placeholder="z. B. München" value="${answers.ort||''}" oninput="onOrtPlzInput('${bodyId}')">
         </div>
         <div class="field-group">
           <label>Postleitzahl</label>
-          <input type="text" class="field-dropdown" id="${bodyId}_field_plz" placeholder="z. B. 80331" value="${answers.plz||''}" oninput="onOrtPlzInput('${bodyId}')">
+          <input type="text" class="field-dropdown field-compact" id="${bodyId}_field_plz" placeholder="z. B. 80331" value="${answers.plz||''}" oninput="onOrtPlzInput('${bodyId}')">
         </div>
       </div>
       <div id="${bodyId}_strasse_wrap" class="${(answers.ort && answers.plz) ? '' : 'strasse-locked'}">
         <div class="field-group custom-dropdown" id="${bodyId}_addr_wrap">
           <label>Straße</label>
-          <input type="text" class="custom-dropdown-trigger" id="${bodyId}_address_input" placeholder="Erst Stadt und PLZ eingeben" value="${answers.strasse||''}" autocomplete="off" oninput="onAddressInput(this.value,'${bodyId}')" ${(answers.ort && answers.plz) ? '' : 'disabled'}>
+          <input type="text" class="custom-dropdown-trigger field-compact" id="${bodyId}_address_input" placeholder="Erst Stadt und PLZ eingeben" value="${answers.strasse||''}" autocomplete="off" oninput="onAddressInput(this.value,'${bodyId}')" ${(answers.ort && answers.plz) ? '' : 'disabled'}>
           <div class="custom-dropdown-panel" id="${bodyId}_address_panel" style="display:none;"></div>
         </div>
         <p id="${bodyId}_address_error" style="display:none; color:#ef4444; font-size:12px; margin:-8px 0 12px;"></p>
         <div class="field-group">
           <label>Hausnummer</label>
-          <input type="text" class="field-dropdown" id="${bodyId}_field_hausnummer" placeholder="z. B. 12" value="${answers.hausnummer||''}" oninput="answers.hausnummer=this.value" ${(answers.ort && answers.plz) ? '' : 'disabled'}>
+          <input type="text" class="field-dropdown field-compact" id="${bodyId}_field_hausnummer" placeholder="z. B. 12" value="${answers.hausnummer||''}" oninput="answers.hausnummer=this.value" ${(answers.ort && answers.plz) ? '' : 'disabled'}>
         </div>
       </div>
       <div class="address-reasons">
