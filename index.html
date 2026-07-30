@@ -694,7 +694,7 @@ section { padding:88px 5%; }
 
 /* ── ERGEBNIS ────────────────────────────────────────────────────── */
 .ergebnis-section { padding:88px 5%; }
-.ergebnis-inner { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 300px; gap:80px; align-items:center; }
+.ergebnis-inner { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 480px; gap:60px; align-items:center; }
 .mock-report { background:#fff; border-radius:12px; padding:28px; box-shadow:0 32px 80px rgba(0,0,0,0.5); }
 .report-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid var(--border); }
 .report-header h4 { font-family:var(--f-head); font-size:15px; font-weight:700; margin-bottom:3px; }
@@ -983,7 +983,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 .phone-mockup {
   position: relative;
   width: 100%;
-  max-width: 300px;
+  max-width: 560px;
   margin: 0 auto;
   flex-shrink: 0;
 }
@@ -1256,7 +1256,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
       <a href="#wizard" class="btn-primary" onclick="scrollToWizard(event)">Jetzt kostenlos bewerten <span class="btn-arrow">→</span></a>
     </div>
     <div class="phone-mockup fade-in">
-      <img src="bewertungsbericht_handy.png" alt="Beispiel Bewertungsbericht auf dem Handy" style="width:130%; height:auto; display:block;">
+      <img src="bewertungsbericht_handy.png" alt="Beispiel Bewertungsbericht auf dem Tablet" style="width:100%; height:auto; display:block; margin:0 auto;">
     </div>
   </div>
 </section>
@@ -2446,7 +2446,7 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
   document.getElementById(labelId).textContent = `Schritt ${currentStep} von ${getTotalSteps()}`;
   updateProgressRing(pct, fillId, pctId, fillId.replace('progress-fill', 'progress-check'));
 
-  let html = (currentStep === 1 ? `<div class="wizard-eyebrow">Immobilienwertrechner</div>` : '') + `<h1 class="wizard-question">${step.question}</h1>` + (step.hint ? `<p class="wizard-hint">${step.hint}</p>` : '');
+  let html = (currentStep === 1 ? `<div class="wizard-eyebrow">Immobilienwertrechner</div>` : '') + `<h2 class="wizard-question">${step.question}</h2>` + (step.hint ? `<p class="wizard-hint">${step.hint}</p>` : '');
 
   if (step.type === 'type-grid') {
     html += `<div class="type-grid">`;
