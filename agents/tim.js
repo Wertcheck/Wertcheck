@@ -10,6 +10,7 @@ const PDFDocument = require('pdfkit');
 const path = require('path');
 const { fmt } = require('./clara');
 const { NATIONAL_DURCHSCHNITT } = require('./regionalpreise');
+const { holeKartenausschnitt } = require('./kartenausschnitt');
 
 const PETROL = '#0097B2';
 const NIGHT  = '#0D1B2A';
@@ -111,7 +112,7 @@ function zeichneFooterleiste(doc, seite, seitenGesamt) {
 }
 
 function erstellePDF(daten, analyse) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const doc = new PDFDocument({ size: 'A4', margin: 0 });
       const chunks = [];
@@ -157,9 +158,16 @@ function erstellePDF(daten, analyse) {
       kachel(doc, M + kachelW, kachelY + 88, kachelW, 'Zustand', daten.zustand || '–');
 
       try {
-        doc.image(HAUS_FOTO, PW - M - 210, kachelY - 8, { fit: [210, 150] });
+        const adresse = [daten.strasse, daten.hausnummer, daten.plz, daten.ort].filter(Boolean).join(' ');
+        const kartenBuffer = await holeKartenausschnitt(adresse, 420, 300);
+        doc.image(kartenBuffer, PW - M - 210, kachelY - 8, { fit: [210, 150] });
       } catch (e) {
-        console.error('[Tim] Konnte Haus-Foto nicht laden:', e.message);
+        console.error('[Tim] Kartenausschnitt nicht verfügbar, nutze Foto-Fallback:', e.message);
+        try {
+          doc.image(HAUS_FOTO, PW - M - 210, kachelY - 8, { fit: [210, 150] });
+        } catch (e2) {
+          console.error('[Tim] Auch Foto-Fallback fehlgeschlagen:', e2.message);
+        }
       }
 
       y = kachelY + 150;
