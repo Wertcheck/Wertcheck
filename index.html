@@ -2446,7 +2446,7 @@ function renderWizard(bodyId, labelId, fillId, pctId) {
   document.getElementById(labelId).textContent = `Schritt ${currentStep} von ${getTotalSteps()}`;
   updateProgressRing(pct, fillId, pctId, fillId.replace('progress-fill', 'progress-check'));
 
-  let html = (currentStep === 1 ? `<div class="wizard-eyebrow">Immobilienwertrechner</div>` : '') + `<h2 class="wizard-question">${step.question}</h2>` + (step.hint ? `<p class="wizard-hint">${step.hint}</p>` : '');
+  let html = (currentStep === 1 ? `<div class="wizard-eyebrow">Immobilienwertrechner</div>` : '') + `<h1 class="wizard-question">${step.question}</h1>` + (step.hint ? `<p class="wizard-hint">${step.hint}</p>` : '');
 
   if (step.type === 'type-grid') {
     html += `<div class="type-grid">`;
