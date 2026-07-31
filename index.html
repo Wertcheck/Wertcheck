@@ -769,6 +769,34 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 .fade-in { opacity:0; transform:translateY(18px); transition:opacity .65s ease, transform .65s ease; }
 .fade-in.visible { opacity:1; transform:none; }
 
+/* Mehr Bewegung beim Scrollen: zusätzliche Richtungs-Varianten */
+.fade-in-left { opacity:0; transform:translateX(-28px); transition:opacity .6s ease, transform .6s ease; }
+.fade-in-left.visible { opacity:1; transform:none; }
+.fade-in-right { opacity:0; transform:translateX(28px); transition:opacity .6s ease, transform .6s ease; }
+.fade-in-right.visible { opacity:1; transform:none; }
+.fade-in-scale { opacity:0; transform:scale(.9); transition:opacity .55s ease, transform .55s ease; }
+.fade-in-scale.visible { opacity:1; transform:none; }
+
+/* Gestaffeltes Einlaufen für Grid-Karten (Vorteile, Schritte, Testimonials) —
+   jede Karte startet minimal später als die vorherige, statt dass der
+   ganze Block auf einmal erscheint. Rein CSS-basiert (nth-child), damit
+   am Markup nichts geändert werden musste. */
+.vorteile-grid.fade-in.visible > *,
+.steps-grid.fade-in.visible > *,
+#testimonials .fade-in.visible > * {
+  animation: staggerPop .5s ease backwards;
+}
+.vorteile-grid.fade-in.visible > *:nth-child(1), .steps-grid.fade-in.visible > *:nth-child(1), #testimonials .fade-in.visible > *:nth-child(1) { animation-delay: .05s; }
+.vorteile-grid.fade-in.visible > *:nth-child(2), .steps-grid.fade-in.visible > *:nth-child(2), #testimonials .fade-in.visible > *:nth-child(2) { animation-delay: .15s; }
+.vorteile-grid.fade-in.visible > *:nth-child(3), .steps-grid.fade-in.visible > *:nth-child(3), #testimonials .fade-in.visible > *:nth-child(3) { animation-delay: .25s; }
+.vorteile-grid.fade-in.visible > *:nth-child(4) { animation-delay: .35s; }
+.vorteile-grid.fade-in.visible > *:nth-child(5) { animation-delay: .45s; }
+.vorteile-grid.fade-in.visible > *:nth-child(6) { animation-delay: .55s; }
+@keyframes staggerPop {
+  from { opacity:0; transform:translateY(14px); }
+  to { opacity:1; transform:none; }
+}
+
 /* ── SCROLL HINT ─────────────────────────────────────────────────── */
 .scroll-hint { position:absolute; bottom:24px; left:50%; transform:translateX(-50%); animation:bounce 2s infinite; z-index:2; }
 @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
@@ -793,6 +821,10 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 /* ══════════════════════════════════════════════════════════════════
    MOBILE — designed, not shrunk. ($10K Checklist #07)
 ══════════════════════════════════════════════════════════════════ */
+/* Sticky CTA-Leiste ist ein reines Mobile-Element */
+.sticky-cta-bar { display: none; }
+.mid-page-cta { display: none; }
+
 @media (max-width:600px) {
 
   /* NAV */
@@ -925,6 +957,34 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 
   /* Wizard Section unter Hero ausblenden auf Mobile */
   #wizard-mobile-section { display:none !important; }
+
+  .mid-page-cta { display: block; }
+
+  /* Sticky CTA-Leiste: erscheint erst wenn der Hero-Wizard aus dem
+     Blickfeld gescrollt wurde, damit es jederzeit einen direkten,
+     einhändig erreichbaren Einstieg zur Bewertung gibt. */
+  .sticky-cta-bar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 400;
+    padding: 10px 5% calc(10px + env(safe-area-inset-bottom));
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border);
+    transform: translateY(110%);
+    transition: transform .35s ease;
+    box-shadow: 0 -6px 20px rgba(0,0,0,0.06);
+  }
+  .sticky-cta-bar.visible { transform: translateY(0); }
+  .sticky-cta-bar a {
+    display: flex; align-items:center; justify-content:center; gap:8px;
+    width: 100%; padding: 13px; border-radius: 12px;
+    background: var(--orange); color: #fff; font-weight:700; font-size:14px;
+    text-decoration:none;
+  }
+  /* Während der Wizard im Vollbild läuft, blendet die Leiste sich weg */
+  body.wizard-scroll-lock .sticky-cta-bar { display:none; }
 
   /* Sections */
   section { padding:44px 5%; }
@@ -1264,7 +1324,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 <!-- ERGEBNIS -->
 <section class="ergebnis-section" id="ueber">
   <div class="ergebnis-inner">
-    <div class="ergebnis-right fade-in">
+    <div class="ergebnis-right fade-in-left">
       <span class="section-eyebrow">Ihr Ergebnis</span>
       <h2>Das steht in Ihrem<br><em>Bewertungsbericht</em></h2>
       <ul class="result-checks">
@@ -1276,7 +1336,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
       </ul>
       <a href="#wizard" class="btn-primary" onclick="scrollToWizard(event)">Jetzt kostenlos bewerten <span class="btn-arrow">→</span></a>
     </div>
-    <div class="phone-mockup fade-in">
+    <div class="phone-mockup fade-in-right">
       <img src="bewertungsbericht_handy.png" alt="Beispiel Bewertungsbericht auf dem Tablet" style="width:100%; height:auto; display:block; margin:0 auto;">
     </div>
   </div>
@@ -1305,6 +1365,9 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
         <h3>Ergebnis per E-Mail</h3>
         <p>Sie erhalten eine übersichtliche Bewertung als PDF — mit Preisspanne, Marktvergleich und Empfehlungen.</p>
       </div>
+    </div>
+    <div class="fade-in-scale mid-page-cta" style="margin-top:32px; text-align:center;">
+      <a href="#wizard" class="btn-primary" onclick="scrollToWizard(event)">Jetzt kostenlos bewerten <span class="btn-arrow">→</span></a>
     </div>
   </div>
 </section>
@@ -1510,6 +1573,10 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   </div>
 </section>
 
+<div class="fade-in-scale mid-page-cta" style="padding:0 5% 8px; text-align:center;">
+  <a href="#wizard" class="btn-primary" onclick="scrollToWizard(event)">Jetzt kostenlos bewerten <span class="btn-arrow">→</span></a>
+</div>
+
 <!-- FAQ -->
 <section id="faq">
   <div class="section-center">
@@ -1540,6 +1607,11 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   </div>
 </section>
 
+<!-- Sticky CTA-Leiste (nur Mobile, erscheint beim Scrollen) -->
+<div class="sticky-cta-bar" id="sticky-cta-bar">
+  <a href="#wizard" onclick="scrollToWizard(event)">Jetzt kostenlos bewerten <span class="btn-arrow">→</span></a>
+</div>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
@@ -1563,18 +1635,21 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
 
 <script>
 
+// Einziger Einstiegspunkt für alle "Jetzt kostenlos bewerten"-CTAs auf der
+// Seite: setzt den Wizard immer auf Schritt 1 zurück (nie mitten in einer
+// alten Sitzung landen) und scrollt zur jeweils sichtbaren Wizard-Instanz.
+// Vorher zeigte diese Funktion auf Mobile fälschlich auf die per CSS
+// ausgeblendete #wizard-mobile-section — dadurch wirkte der Button wirkungslos.
 function scrollToWizard(e) {
   e && e.preventDefault();
+  resetWizard();
+  closeMenu();
   const isMob = window.innerWidth <= 600;
   const target = isMob
-    ? document.getElementById('wizard-mobile-section')
+    ? document.getElementById('hero-wizard-mobile')
     : document.getElementById('wizard');
   if (target) {
-    target.scrollIntoView({ behavior: 'smooth' });
-    // Auf Mobile auch Section einblenden
-    if (isMob) {
-      document.getElementById('wizard-mobile-section').style.display = 'block';
-    }
+    target.scrollIntoView({ behavior: 'smooth', block: isMob ? 'start' : 'center' });
   }
 }
 
@@ -1589,15 +1664,10 @@ window.addEventListener('scroll', () => {
   }
 });
 
-// Reset wizard and scroll
+// Delegiert an scrollToWizard() — beide taten früher fast dasselbe,
+// aber nur diese Version zielte zuverlässig auf die sichtbare Instanz.
 function resetAndScroll(e) {
-  e && e.preventDefault();
-  currentStep = 1;
-  answers = {};
-  render();
-  closeMenu();
-  window.scrollTo({top: 0, behavior: 'smooth'});
-  setTimeout(() => scrollToWizard(), 500);
+  scrollToWizard(e);
 }
 
 
@@ -3092,7 +3162,19 @@ function toggleFaq(btn) {
 const obs = new IntersectionObserver(entries => {
   entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
 }, {threshold:0.1});
-document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right, .fade-in-scale').forEach(el => obs.observe(el));
+
+// Sticky CTA-Leiste: erst zeigen, sobald der Hero (mit dem Haupt-Wizard)
+// aus dem Bild gescrollt ist — vorher wäre sie redundant.
+(function setupStickyCta() {
+  const bar = document.getElementById('sticky-cta-bar');
+  const hero = document.querySelector('.hero');
+  if (!bar || !hero) return;
+  const heroObs = new IntersectionObserver(entries => {
+    entries.forEach(e => bar.classList.toggle('visible', !e.isIntersecting));
+  }, {threshold: 0});
+  heroObs.observe(hero);
+})();
 
 // Smooth scroll
 document.querySelectorAll('a[href^="#"]').forEach(a => {
