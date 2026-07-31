@@ -433,6 +433,18 @@ nav.scrolled {
   flex-shrink: 0;
   transition: font-size .3s ease;
 }
+.progress-msg {
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--muted);
+  margin: -14px 0 16px;
+  flex-shrink: 0;
+  min-height: 16px;
+  transition: opacity .2s ease;
+}
+.desktop-ring-corner .progress-msg { font-size: 11.5px; margin: -8px 0 6px; }
+.progress-msg.is-close { color: var(--orange); }
 .ptr-hinweis {
   position: fixed;
   top: 10px; left: 50%;
@@ -1161,6 +1173,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
           </div>
         </div>
         <div class="progress-ring-pct" id="progress-pct">0%</div>
+        <div class="progress-msg" id="progress-msg"></div>
       </div>
       <div class="step-label" id="step-label" style="display:none;">Schritt 1 von 12</div>
       <div id="wizard-body"></div>
@@ -1182,6 +1195,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
         </div>
       </div>
       <div class="progress-ring-pct" id="progress-pct-hm">0%</div>
+      <div class="progress-msg" id="progress-msg-hm"></div>
       <div class="step-label" id="step-label-hm" style="display:none;">Schritt 1 von 12</div>
       <div id="wizard-body-hm"></div>
       <div id="wizard-footer-hm" class="wizard-footer"></div>
@@ -1214,6 +1228,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
         </div>
       </div>
       <div class="progress-ring-pct" id="progress-pct-m">0%</div>
+      <div class="progress-msg" id="progress-msg-m"></div>
       <div class="step-label" id="step-label-m" style="display:none;">Schritt 1 von 12</div>
       <div id="wizard-body-m"></div>
       <div id="wizard-footer-m" class="wizard-footer"></div>
@@ -2469,10 +2484,26 @@ const RING_CIRCUMFERENCE = 326.7; // 2 * PI * r(52)
 // Aktualisiert einen einzelnen Fortschritts-Ring: schließt den Kreis,
 // lässt die Prozentzahl mitwachsen, und blendet bei 100% den Haken
 // (mit kurzem Blinken) über dem Haus-Symbol ein.
+// Motivierender Zwischentext neben der Prozentanzeige. Bei den letzten
+// Schritten zählt die tatsächliche Restanzahl an Schritten (präziser und
+// motivierender als reine Prozentschwellen), davor reicht die Prozentzahl.
+function getProgressMessage(pct) {
+  if (pct >= 100) return "Geschafft! 🎉";
+  const remaining = getTotalSteps() - currentStep + 1; // inkl. aktuellem Schritt
+  if (remaining === 1) return "Fast geschafft – nur noch diese Angabe!";
+  if (remaining === 2) return "Fast geschafft – nur noch zwei Angaben!";
+  if (remaining === 3) return "Nur noch drei Schritte!";
+  if (pct >= 75) return "Fast geschafft!";
+  if (pct >= 50) return "Sie sind auf halbem Weg!";
+  if (pct >= 25) return "Gut dabei, weiter so!";
+  return "";
+}
+
 function updateProgressRing(pct, fillId, pctId, checkId) {
   const ring = document.getElementById(fillId);
   const pctEl = document.getElementById(pctId);
   const check = document.getElementById(checkId);
+  const msgEl = document.getElementById(pctId.replace('progress-pct', 'progress-msg'));
   const svg = ring ? ring.closest('svg') : null;
   const wrap = svg ? svg.closest('.progress-ring-wrap') : null;
 
@@ -2480,6 +2511,7 @@ function updateProgressRing(pct, fillId, pctId, checkId) {
     // Auf Schritt 1: gar kein Icon
     if (wrap) wrap.style.display = 'none';
     if (pctEl) pctEl.style.display = 'none';
+    if (msgEl) msgEl.textContent = '';
     return;
   }
 
@@ -2492,6 +2524,11 @@ function updateProgressRing(pct, fillId, pctId, checkId) {
     pctEl.textContent = pct + '%';
     const fontSize = 14 + (Math.min(pct,100)/100) * 16; // wächst von 14px auf 30px
     pctEl.style.fontSize = fontSize + 'px';
+  }
+
+  if (msgEl) {
+    msgEl.textContent = getProgressMessage(pct);
+    msgEl.classList.toggle('is-close', pct >= 75);
   }
 
   // Haken ist ab Schritt 2 immer sichtbar (kein Warten mehr auf 100%)
