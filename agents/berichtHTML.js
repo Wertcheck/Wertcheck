@@ -14,6 +14,20 @@ const fmt = (n) => Math.round(n).toLocaleString('de-DE') + ' €';
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const { NATIONAL_DURCHSCHNITT } = require('./regionalpreise');
 
+// Puppeteer rendert das HTML ohne Dateisystem-Basis (page.setContent hat
+// keinen "aktuellen Ordner") — ein relativer Bildpfad wie "logo-icon.png"
+// würde also ins Leere zeigen. Deshalb hier einmalig als Base64 einlesen
+// und als Data-URI einbetten, genau wie den Kartenausschnitt.
+const fs = require('fs');
+const path = require('path');
+let LOGO_ICON_BASE64 = '';
+try {
+  LOGO_ICON_BASE64 = fs.readFileSync(path.join(__dirname, 'logo-icon.png')).toString('base64');
+} catch (e) {
+  console.error('[berichtHTML] logo-icon.png nicht gefunden — Logo-Icon bleibt im Bericht leer:', e.message);
+}
+const LOGO_ICON_SRC = LOGO_ICON_BASE64 ? `data:image/png;base64,${LOGO_ICON_BASE64}` : '';
+
 // ── Kleine Bausteine, analog zu Tims bisherigen PDFKit-Helferfunktionen ──
 
 function kachelHTML(label, wert) {
@@ -145,12 +159,21 @@ function erstelleBerichtHTML(daten, analyse, kartenBildBase64) {
       </div>`;
   }
 
-  const detailsRows = [
-    ...(daten.heizung ? [['Heizung', daten.heizung]] : []),
-    ...(daten.nutzung ? [['Nutzung', daten.nutzung === 'vermietet' ? 'Vermietet' : 'Selbstnutzung']] : []),
-    ...(daten.energieeffizienz ? [['Energieeffizienzklasse', daten.energieeffizienz]] : []),
-    ['Merkmale', daten.merkmale && daten.merkmale.length ? daten.merkmale.join(', ') : '–']
+  // Objektdaten + "Details zur Immobilie" sind jetzt EINE Box (vorher
+  // doppelte Info: Energieausweis-Kachel und Energieeffizienzklasse-Zeile
+  // zeigten dasselbe zweimal). Heizung/Nutzung wandern als Kacheln mit rein,
+  // Merkmale bleibt als eigene volle Zeile darunter (kann länger werden).
+  const objektKacheln = [
+    ['Objekttyp', daten.typ || '–'],
+    ['Grundstücksfläche', daten.grundstueck ? `${daten.grundstueck} m²` : '–'],
+    ['Baujahr', daten.baujahr || '–'],
+    ['Zustand', daten.zustand || '–'],
+    ['Wohnfläche', `${daten.wohnflaeche} m²`],
+    ['Energieausweis', daten.energieeffizienz ? `Klasse ${daten.energieeffizienz}` : '–'],
+    ['Heizung', daten.heizung || 'unbekannt'],
+    ['Nutzung', daten.nutzung === 'vermietet' ? 'Vermietet' : (daten.nutzung ? 'Selbstnutzung' : '–')]
   ];
+  const merkmaleText = daten.merkmale && daten.merkmale.length ? daten.merkmale.join(', ') : '–';
 
   return `<!DOCTYPE html>
 <html lang="de">
@@ -175,7 +198,7 @@ function erstelleBerichtHTML(daten, analyse, kartenBildBase64) {
   .sheet-body{ padding:0 40px; }
   .report-header{ background:var(--night); padding:20px 40px; margin-bottom:26px; display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:10px; }
   .report-logo{ display:flex; align-items:center; gap:9px; }
-  .report-logo svg{ flex-shrink:0; }
+  .report-logo img{ flex-shrink:0; display:block; }
   .report-logo b{ font-family:var(--f-head); font-weight:800; font-size:16px; color:#fff; letter-spacing:-0.01em; }
   .report-logo b span{ color:var(--petrol); }
   .report-meta{ text-align:right; }
@@ -187,7 +210,10 @@ function erstelleBerichtHTML(daten, analyse, kartenBildBase64) {
   .box-label.on-light{ color:var(--night); }
   .top-row{ display:grid; grid-template-columns:1.5fr 1fr; gap:20px; margin-bottom:20px; }
   .objektdaten-box{ background:var(--night); border-radius:10px; padding:18px 20px; }
-  .kachel-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px 12px; margin-top:14px; }
+  .kachel-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px 12px; margin-top:14px; }
+  .kachel-merkmale{ margin-top:16px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.1); }
+  .kachel-merkmale .lbl{ font-size:8px; font-weight:700; letter-spacing:0.04em; color:var(--border); text-transform:uppercase; margin-bottom:4px; }
+  .kachel-merkmale .val{ font-size:11.5px; font-weight:600; color:#fff; }
   .kachel{ display:flex; align-items:flex-start; gap:9px; }
   .kachel .dot{ width:16px; height:16px; border-radius:50%; border:1.3px solid var(--cyan); flex-shrink:0; margin-top:1px; }
   .kachel .lbl{ font-size:8px; font-weight:700; letter-spacing:0.04em; color:var(--border); text-transform:uppercase; margin-bottom:2px; }
@@ -310,7 +336,7 @@ function erstelleBerichtHTML(daten, analyse, kartenBildBase64) {
   <div class="sheet">
     <div class="report-header">
       <div class="report-logo">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4DD8E8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12L12 4l9 8"/><path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/><path d="M9 15l2 2 4-4"/></svg>
+        <img src="${LOGO_ICON_SRC}" width="24" height="24" alt="">
         <b>IMMOWERT<span>CHECKER</span></b>
       </div>
       <div class="report-meta">
@@ -327,12 +353,11 @@ function erstelleBerichtHTML(daten, analyse, kartenBildBase64) {
         <div class="objektdaten-box">
           <div class="box-label">OBJEKTDATEN</div>
           <div class="kachel-grid">
-            ${kachelHTML('Objekttyp', daten.typ || '–')}
-            ${kachelHTML('Grundstücksfläche', daten.grundstueck ? `${daten.grundstueck} m²` : '–')}
-            ${kachelHTML('Baujahr', daten.baujahr || '–')}
-            ${kachelHTML('Zustand', daten.zustand || '–')}
-            ${kachelHTML('Wohnfläche', `${daten.wohnflaeche} m²`)}
-            ${kachelHTML('Energieausweis', daten.energieeffizienz ? `Klasse ${daten.energieeffizienz}` : '–')}
+            ${objektKacheln.map(([l, w]) => kachelHTML(l, w)).join('')}
+          </div>
+          <div class="kachel-merkmale">
+            <div class="lbl">MERKMALE</div>
+            <div class="val">${esc(merkmaleText)}</div>
           </div>
         </div>
         <div class="map-box">
@@ -385,13 +410,7 @@ function erstelleBerichtHTML(daten, analyse, kartenBildBase64) {
         <p>Diese Bewertung wurde automatisiert auf Basis aktueller Marktdaten und wissenschaftlicher Verfahren erstellt. Sie stellt keine verbindliche Wertermittlung nach § 194 BauGB dar. Für eine rechtssichere Bewertung empfehlen wir eine Vor-Ort-Besichtigung durch einen Experten.</p>
       </div>
 
-      <div class="two-col">
-        <div class="outline-box">
-          <div class="box-label on-light">DETAILS ZUR IMMOBILIE</div>
-          <div style="margin-top:12px;">
-            ${detailsRows.map(([l, w]) => `<div class="detail-row"><span>${esc(l)}</span><span>${esc(w)}</span></div>`).join('')}
-          </div>
-        </div>
+      <div style="margin-bottom:20px;">
         ${marktsituationHTML}
       </div>
 
@@ -411,7 +430,7 @@ function erstelleBerichtHTML(daten, analyse, kartenBildBase64) {
 
     <div class="sheet-footer">
       <div class="footer-brand">
-        <div class="report-logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4DD8E8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12L12 4l9 8"/><path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/></svg><b style="font-size:14px;">IMMOWERT<span>CHECKER</span></b></div>
+        <div class="report-logo"><img src="${LOGO_ICON_SRC}" width="18" height="18" alt=""><b style="font-size:14px;">IMMOWERT<span>CHECKER</span></b></div>
         <p>ImmoWertChecker ist ein Service der [Firmenname GmbH einfügen]</p>
       </div>
       <div class="footer-col">
