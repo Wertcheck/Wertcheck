@@ -60,7 +60,7 @@
 html { scroll-behavior:smooth; }
 body {
   font-family:var(--f-body); color:var(--text); overflow-x:hidden; line-height:1.6;
-  background-color: #000000;
+  background-color: #ffffff;
 }
 body.wizard-scroll-lock {
   overflow: hidden;
@@ -72,7 +72,7 @@ body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background: #000000;
+  background: #ffffff;
   z-index: 0;
   pointer-events: none;
 }
@@ -81,7 +81,7 @@ nav, section, footer, .mobile-menu {
   z-index: 1;
 }
 /* Sections vollständig undurchsichtig — kein Hintergrundbild */
-.ergebnis-section { background: #0A121C; }
+.ergebnis-section { background: transparent; }
 #faktoren { background: #ffffff !important; }
 
 #faq { background: #ffffff !important; }
@@ -92,17 +92,15 @@ nav, section, footer, .mobile-menu {
 nav {
   position: fixed; top:0; left:0; right:0; z-index:100;
   height: 72px;
-  background: transparent;
-  backdrop-filter: none;
-  border-bottom: none;
+  background: var(--night);
+  border-bottom: 1px solid rgba(0,151,178,0.12);
   display: flex; align-items:center; justify-content:space-between;
   padding: 0 5%;
-  transition: background 0.3s, backdrop-filter 0.3s;
+  transition: box-shadow 0.3s;
 }
 nav.scrolled {
-  background: rgba(13,27,42,0.96);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(0,151,178,0.12);
 }
 .logo { display:flex; align-items:center; text-decoration:none; }
 .logo-img { height:58px; width:auto; }
@@ -169,11 +167,11 @@ nav.scrolled {
 }
 .hero-left h1 {
   font-family:var(--f-head); font-size:clamp(36px,4.5vw,64px);
-  font-weight:800; color:#fff; line-height:1.08;
+  font-weight:800; color:var(--night); line-height:1.08;
   margin-bottom:22px; letter-spacing:-0.03em;
 }
 .hero-accent { color:#0097B2; }
-.hero-desc { font-size:16px; font-weight:300; color:rgba(255,255,255,0.65); max-width:420px; margin-bottom:28px; }
+.hero-desc { font-size:16px; font-weight:300; color:var(--muted); max-width:420px; margin-bottom:28px; }
 /* Rating Badge — base rules must stay before the media queries below,
    otherwise their equal-specificity selectors win the cascade on every
    screen size and silently break the mobile single-line layout. */
@@ -193,13 +191,13 @@ nav.scrolled {
 .hero-rating-score {
   font-size: 15px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--night);
 }
 .hero-rating-sub {
   flex-basis: 100%;
   font-size: 12px;
   font-weight: 300;
-  color: rgba(255,255,255,0.45);
+  color: var(--muted);
   text-align: left;
 }
 .hero-rating-mobile-dup { display: none; }
@@ -323,7 +321,7 @@ nav.scrolled {
 .hero-checks { list-style:none; margin-bottom:22px; }
 .hero-checks li {
   display:flex; align-items:flex-start; gap:12px;
-  color:rgba(255,255,255,0.75); font-size:15px; font-weight:300;
+  color:var(--text); font-size:15px; font-weight:300;
   margin-bottom:8px; line-height:1.5;
 }
 .hero-checks li::before {
@@ -343,8 +341,8 @@ nav.scrolled {
 .wizard-card {
   position: relative; z-index: 150;
   margin-top: 20px;
-  background:#fff; border-radius:20px; padding:52px 48px; overflow:hidden;
-  box-shadow:0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.08);
+  background:#fff; border:1px solid var(--border); border-radius:20px; padding:52px 48px; overflow:hidden;
+  box-shadow:0 32px 80px rgba(13,27,42,0.14), 0 0 0 1px rgba(0,151,178,0.06);
 }
 .desktop-ring-corner {
   position: absolute;
@@ -731,10 +729,10 @@ section { padding:88px 5%; }
 .bar { flex:1; border-radius:2px 2px 0 0; background:linear-gradient(to top,var(--orange),var(--orange2)); opacity:.4; }
 .bar:last-child { opacity:1; }
 .ergebnis-right .section-eyebrow { border-left-color:var(--orange); color:var(--orange); }
-.ergebnis-right h2 { font-family:var(--f-head); font-size:clamp(24px,2.6vw,36px); font-weight:800; color:#fff; margin-bottom:24px; line-height:1.2; }
+.ergebnis-right h2 { font-family:var(--f-head); font-size:clamp(24px,2.6vw,36px); font-weight:800; color:var(--night); margin-bottom:24px; line-height:1.2; }
 .ergebnis-right h2 em { font-style:normal; color:var(--orange); }
 .result-checks { list-style:none; margin-bottom:32px; }
-.result-checks li { display:flex; align-items:flex-start; gap:14px; color:rgba(255,255,255,0.6); font-size:15px; font-weight:300; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.06); line-height:1.5; }
+.result-checks li { display:flex; align-items:flex-start; gap:14px; color:var(--text); font-size:15px; font-weight:300; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--border); line-height:1.5; }
 .result-checks li:last-child { border-bottom:none; }
 .rc-dot { width:14px; height:14px; flex-shrink:0; margin-top:3px; background:var(--orange); clip-path:polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%); }
 .btn-primary { display:inline-flex; align-items:center; gap:10px; min-height:62px; background:linear-gradient(135deg, var(--orange), var(--orange2)); color:#ffffff; font-weight:700; font-size:15px; padding:16px 32px; border-radius:12px; border:none; cursor:pointer; text-decoration:none; transition:box-shadow .2s, transform .15s; font-family:var(--f-body); box-shadow:0 8px 20px rgba(0,151,178,0.35); }
@@ -753,14 +751,14 @@ section { padding:88px 5%; }
 .faq-a.open { display:block; }
 
 /* ── FOOTER ──────────────────────────────────────────────────────── */
-footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px solid rgba(0,151,178,0.12); }
+footer { color:var(--muted); padding:44px 5% 28px; border-top:1px solid var(--border); }
 .footer-inner { max-width:1200px; margin:0 auto; }
-.footer-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:32px; padding-bottom:32px; border-bottom:1px solid rgba(255,255,255,0.06); flex-wrap:wrap; gap:20px; }
+.footer-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:32px; padding-bottom:32px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:20px; }
 .footer-links { display:flex; gap:24px; flex-wrap:wrap; }
-.footer-links a { color:rgba(255,255,255,0.35); text-decoration:none; font-size:13px; font-weight:300; transition:color .2s; }
-.footer-links a:hover { color:rgba(255,255,255,0.7); }
+.footer-links a { color:var(--muted); text-decoration:none; font-size:13px; font-weight:300; transition:color .2s; }
+.footer-links a:hover { color:var(--text); }
 .footer-social { display:flex; gap:14px; }
-.footer-social a { color:rgba(255,255,255,0.35); display:flex; align-items:center; transition:color .2s; }
+.footer-social a { color:var(--muted); display:flex; align-items:center; transition:color .2s; }
 .footer-social a:hover { color:var(--orange); }
 .footer-bottom { font-size:12px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-weight:300; }
 .footer-badge { display:inline-flex; align-items:center; gap:6px; }
@@ -1203,7 +1201,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     <div class="hero-left">
       <div class="hero-eyebrow">Kostenlos · Unverbindlich · In 3 Minuten</div>
       <h1>Jetzt deinen <br class="hero-brk hero-brk-1"><span class="hero-accent">Immobilienwert</span><br class="hero-brk hero-brk-2">berechnen</h1>
-      <p class="hero-desc" style="font-size:15px; color:rgba(255,255,255,0.7); margin-bottom:20px; font-weight:300; line-height:1.7;">
+      <p class="hero-desc" style="font-size:15px; color:var(--muted); margin-bottom:20px; font-weight:300; line-height:1.7;">
         Erfahren Sie in nur 3 Minuten den Wert Ihrer Immobilie — kostenlos &amp; unverbindlich.
       </p>
       <ul class="hero-checks">
@@ -1269,7 +1267,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
   </div>
   <!-- Scroll hint desktop -->
   <div class="scroll-hint">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
   </div>
 </section>
 
@@ -1459,7 +1457,7 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
         onerror="this.style.display='none'; document.getElementById('ueber-placeholder').style.display='flex';">
       <div id="ueber-placeholder" style="display:none; width:100%; aspect-ratio:4/3; border-radius:16px; border:1px dashed rgba(0,151,178,0.3); align-items:center; justify-content:center; flex-direction:column; gap:12px;">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(0,151,178,0.4)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <p style="color:rgba(255,255,255,0.25); font-size:12px;">beratung_png.png hier hochladen</p>
+        <p style="color:var(--muted); font-size:12px;">beratung_png.png hier hochladen</p>
       </div>
       <!-- Badge -->
       <div style="position:absolute; bottom:-16px; right:-16px; background:var(--orange); padding:14px 18px; border-radius:10px; box-shadow:0 6px 20px rgba(0,151,178,0.3);">
@@ -1471,29 +1469,29 @@ footer { color:rgba(255,255,255,0.35); padding:44px 5% 28px; border-top:1px soli
     <!-- TEXT RECHTS -->
     <div class="fade-in">
       <div class="section-eyebrow" style="color:var(--orange); border-left-color:var(--orange);">Über ImmowertChecker</div>
-      <h2 style="font-family:var(--f-head); font-size:clamp(24px,2.6vw,36px); font-weight:800; color:#fff; margin-bottom:20px; line-height:1.2; letter-spacing:-0.02em;">
+      <h2 style="font-family:var(--f-head); font-size:clamp(24px,2.6vw,36px); font-weight:800; color:var(--night); margin-bottom:20px; line-height:1.2; letter-spacing:-0.02em;">
         Wir machen <span style="color:var(--orange); font-style:italic;">Immobilienwerte</span> transparent
       </h2>
-      <p style="font-size:15px; color:rgba(255,255,255,0.65); line-height:1.8; margin-bottom:16px; font-weight:300;">
+      <p style="font-size:15px; color:var(--muted); line-height:1.8; margin-bottom:16px; font-weight:300;">
         Viele Menschen erben eine Immobilie oder besitzen eine — und wissen nicht was sie wert ist.
         Genau für diese Situation haben wir ImmowertChecker entwickelt.
       </p>
-      <p style="font-size:15px; color:rgba(255,255,255,0.65); line-height:1.8; margin-bottom:28px; font-weight:300;">
+      <p style="font-size:15px; color:var(--muted); line-height:1.8; margin-bottom:28px; font-weight:300;">
         Kein Fachjargon, kein Termin, keine Verpflichtung. Einfach ein paar Fragen beantworten
         und in Minuten wissen was die eigene Immobilie wert ist.
       </p>
-      <div style="display:flex; gap:32px; flex-wrap:wrap; padding-top:24px; border-top:1px solid rgba(255,255,255,0.08);">
+      <div style="display:flex; gap:32px; flex-wrap:wrap; padding-top:24px; border-top:1px solid var(--border);">
         <div>
           <div style="font-family:var(--f-head); font-size:28px; font-weight:800; color:var(--orange);">100%</div>
-          <div style="font-size:12px; color:rgba(255,255,255,0.4); margin-top:2px;">Kostenlos</div>
+          <div style="font-size:12px; color:var(--muted); margin-top:2px;">Kostenlos</div>
         </div>
         <div>
           <div style="font-family:var(--f-head); font-size:28px; font-weight:800; color:var(--orange);">3 Min.</div>
-          <div style="font-size:12px; color:rgba(255,255,255,0.4); margin-top:2px;">Bis zum Ergebnis</div>
+          <div style="font-size:12px; color:var(--muted); margin-top:2px;">Bis zum Ergebnis</div>
         </div>
         <div>
           <div style="font-family:var(--f-head); font-size:28px; font-weight:800; color:var(--orange);">DSGVO</div>
-          <div style="font-size:12px; color:rgba(255,255,255,0.4); margin-top:2px;">Konform</div>
+          <div style="font-size:12px; color:var(--muted); margin-top:2px;">Konform</div>
         </div>
       </div>
     </div>
