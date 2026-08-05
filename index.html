@@ -92,21 +92,21 @@ nav, section, footer, .mobile-menu {
 nav {
   position: fixed; top:0; left:0; right:0; z-index:100;
   height: 72px;
-  background: var(--night);
-  border-bottom: 1px solid rgba(0,151,178,0.12);
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
   display: flex; align-items:center; justify-content:space-between;
   padding: 0 5%;
   transition: box-shadow 0.3s;
 }
 nav.scrolled {
-  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  box-shadow: 0 4px 20px rgba(13,27,42,0.08);
   backdrop-filter: blur(12px);
 }
 .logo { display:flex; align-items:center; text-decoration:none; }
 .logo-img { height:58px; width:auto; }
 .nav-links { display:flex; align-items:center; gap:32px; list-style:none; }
-.nav-links a { font-size:13px; font-weight:500; color:rgba(255,255,255,0.6); text-decoration:none; letter-spacing:0.02em; transition:color .2s; }
-.nav-links a:hover { color:#fff; }
+.nav-links a { font-size:13px; font-weight:500; color:var(--muted); text-decoration:none; letter-spacing:0.02em; transition:color .2s; }
+.nav-links a:hover { color:var(--text); }
 .nav-cta {
   background: var(--orange) !important;
   color: #ffffff !important;
@@ -119,7 +119,7 @@ nav.scrolled {
 }
 .nav-cta:hover { background: var(--orange2) !important; }
 .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; border:none; background:none; padding:6px; }
-.hamburger span { display:block; width:22px; height:1.5px; background:#fff; transition:transform .3s, opacity .3s; }
+.hamburger span { display:block; width:22px; height:1.5px; background:var(--text); transition:transform .3s, opacity .3s; }
 .hamburger.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
 .hamburger.open span:nth-child(2) { opacity:0; }
 .hamburger.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
@@ -127,15 +127,15 @@ nav.scrolled {
 /* ── MOBILE MENU ────────────────────────────────────────────────── */
 .mobile-menu {
   display:none; position:fixed; inset:0; z-index:99;
-  background:var(--night);
+  background:#ffffff;
   flex-direction:column; align-items:center; justify-content:center; gap:0;
 }
 .mobile-menu.open { display:flex; }
 .mobile-menu a {
   font-family:var(--f-head); font-size:28px; font-weight:700;
-  color:rgba(255,255,255,0.7); text-decoration:none;
+  color:var(--text); text-decoration:none;
   padding:18px 0; width:80%; text-align:center;
-  border-bottom:1px solid rgba(255,255,255,0.06);
+  border-bottom:1px solid var(--border);
   transition:color .2s;
 }
 .mobile-menu a:last-child {
