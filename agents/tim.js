@@ -19,9 +19,9 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
 const { erstelleBerichtHTML } = require('./berichtHTML');
-const { holeKartenausschnitt } = require('../kartenausschnitt');
+const { holeKartenausschnitt } = require('./kartenausschnitt');
 
-const HAUS_FOTO = path.join(__dirname, '..', 'haus-foto.png');
+const HAUS_FOTO = path.join(__dirname, 'haus-foto.png');
 
 let browserPromise = null;
 function getBrowser() {
