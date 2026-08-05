@@ -1,6 +1,6 @@
 {
   "name": "immowertchecker-backend",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "ImmoWertChecker KI-Agenten Backend (Jonas, Clara, Tim, Elena)",
   "main": "server.js",
   "scripts": {
@@ -13,7 +13,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.18.0",
-    "pdfkit": "^0.14.0"
+    "puppeteer": "^22.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.0"
