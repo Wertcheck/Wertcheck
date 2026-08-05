@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ihre Immobilienbewertung · ImmoWertChecker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:   #0D1B2A;
+    --petrol:  #0097B2;
+    --petrol2: #006B80;
+    --cream:   #F0F9FB;
+    --border:  #C8E8EE;
+    --muted:   #6B7A8D;
+    --text:    #1A2533;
+    --f-head:  'Montserrat', sans-serif;
+    --f-body:  'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:var(--f-body); color:var(--text); background:#E4EDF0;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ── Bildschirm-only Steuerleiste (fliegt beim PDF-Druck raus) ── */
+  .toolbar{
+    position:sticky; top:0; z-index:50;
+    background:#ffffff; border-bottom:1px solid var(--border);
+    padding:14px 5%; display:flex; align-items:center; justify-content:space-between; gap:16px;
+  }
+  .toolbar-left{ display:flex; align-items:center; gap:10px; font-family:var(--f-head); font-weight:700; font-size:14px; color:var(--night); }
+  .toolbar-left svg{ flex-shrink:0; }
+  .toolbar-actions{ display:flex; gap:10px; }
+  .tb-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--f-body); font-size:13px; font-weight:700;
+    padding:10px 18px; border-radius:9px; border:1px solid var(--border);
+    background:#fff; color:var(--text); text-decoration:none; cursor:pointer;
+    transition:background .15s, border-color .15s;
+  }
+  .tb-btn:hover{ background:var(--cream); }
+  .tb-btn.primary{ background:linear-gradient(135deg,var(--petrol),var(--petrol2)); color:#fff; border:none; box-shadow:0 6px 16px rgba(0,151,178,0.3); }
+  .tb-btn.primary:hover{ box-shadow:0 8px 20px rgba(0,151,178,0.42); }
+
+  /* ── Bericht-Container: A4-Bahnen, wie später beim PDF-Export ── */
+  .report{ max-width:820px; margin:32px auto 64px; padding:0 5%; }
+  .sheet{
+    background:#fff; border-radius:14px; box-shadow:0 20px 50px rgba(13,27,42,0.1);
+    padding:56px 60px; margin-bottom:28px; position:relative; overflow:hidden;
+  }
+  .sheet + .sheet{ margin-top:28px; }
+
+  /* ── Seite 1: Kopfzeile ── */
+  .report-header{
+    background:var(--night); margin:-56px -60px 32px; padding:32px 60px 26px;
+    display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:10px;
+  }
+  .report-logo{ font-family:var(--f-head); font-weight:800; font-size:20px; color:#fff; letter-spacing:-0.01em; }
+  .report-logo span{ color:var(--petrol); }
+  .report-logo-sub{ font-family:var(--f-body); font-weight:400; font-size:12px; color:rgba(255,255,255,0.55); margin-left:10px; }
+  .report-meta{ text-align:right; }
+  .report-meta .name{ color:#fff; font-size:13px; font-weight:600; }
+  .report-meta .sub{ color:rgba(255,255,255,0.5); font-size:11.5px; margin-top:2px; }
+
+  .eyebrow{ font-family:var(--f-head); font-size:11.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--petrol); margin-bottom:8px; }
+  h2{ font-family:var(--f-head); font-size:19px; font-weight:700; color:var(--night); margin:0 0 14px; }
+
+  /* ── Preisstrahl ── */
+  .marktwert-block{ margin-bottom:34px; }
+  .preisstrahl{ margin-top:26px; position:relative; }
+  .preisstrahl-avg{
+    text-align:center; font-family:var(--f-head); font-weight:800; font-size:30px; color:var(--petrol);
+    margin-bottom:14px;
+  }
+  .preisstrahl-avg span{ font-size:15px; font-weight:600; color:var(--muted); display:block; margin-top:2px; font-family:var(--f-body); }
+  .preisstrahl-track{ position:relative; height:6px; background:linear-gradient(90deg, var(--border), var(--petrol), var(--border)); border-radius:99px; }
+  .preisstrahl-dot{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:18px; height:18px; border-radius:50%; background:var(--night); border:3px solid #fff;
+    box-shadow:0 2px 8px rgba(13,27,42,0.3);
+  }
+  .preisstrahl-labels{ display:flex; justify-content:space-between; margin-top:10px; font-size:12.5px; font-weight:700; color:var(--muted); }
+
+  /* ── Textblöcke ── */
+  .textblock{ margin-bottom:28px; }
+  .textblock p{ font-size:14px; line-height:1.75; color:#333; margin:0; }
+  .highlight-list{ list-style:none; margin:0; padding:0; }
+  .highlight-list li{ display:flex; gap:10px; align-items:flex-start; font-size:14px; line-height:1.6; color:#333; margin-bottom:9px; }
+  .highlight-list li svg{ flex-shrink:0; margin-top:2px; color:var(--petrol); }
+
+  /* ── Liniendiagramm ── */
+  .chart-block{ margin-bottom:30px; }
+  .chart-sub{ font-size:12.5px; color:var(--muted); margin:-8px 0 18px; line-height:1.5; }
+  .chart-endlabels{ display:flex; justify-content:space-between; font-family:var(--f-head); font-weight:700; font-size:12.5px; color:var(--night); margin-bottom:2px; }
+  .chart-years{ display:flex; justify-content:space-between; font-size:10.5px; color:var(--muted); margin-top:4px; }
+
+  /* ── Mietvergleich-Balken ── */
+  .miet-row{ margin-bottom:16px; }
+  .miet-row-label{ font-size:12px; color:var(--muted); margin-bottom:5px; display:flex; justify-content:space-between; }
+  .miet-row-label b{ color:var(--night); font-family:var(--f-head); font-size:12.5px; }
+  .miet-bar-track{ height:16px; border-radius:5px; background:var(--cream); overflow:hidden; }
+  .miet-bar-fill{ height:100%; border-radius:5px; }
+
+  .hinweis-box{
+    background:var(--cream); border-left:3px solid var(--petrol); border-radius:0 8px 8px 0;
+    padding:14px 18px; margin-top:18px;
+  }
+  .hinweis-box .ttl{ font-family:var(--f-head); font-weight:700; font-size:12.5px; color:var(--night); margin-bottom:5px; }
+  .hinweis-box p{ font-size:12.5px; color:#333; line-height:1.65; margin:0; }
+
+  /* ── Angaben-Tabelle ── */
+  .angaben-table{ width:100%; border-collapse:collapse; }
+  .angaben-table tr{ border-bottom:1px solid var(--border); }
+  .angaben-table tr:last-child{ border-bottom:none; }
+  .angaben-table td{ padding:11px 0; font-size:13.5px; }
+  .angaben-table td:first-child{ color:var(--muted); width:42%; }
+  .angaben-table td:last-child{ color:var(--night); font-weight:700; }
+
+  /* ── CTA-Box (ersetzt die frühere leere Notizen-Seite auf dem Bildschirm) ── */
+  .cta-box{
+    background:linear-gradient(135deg, var(--night), #152238);
+    border-radius:14px; padding:36px 40px; color:#fff; text-align:center;
+  }
+  .cta-box h2{ color:#fff; margin-bottom:10px; }
+  .cta-box p{ color:rgba(255,255,255,0.65); font-size:13.5px; max-width:480px; margin:0 auto 22px; line-height:1.6; }
+  .cta-box .tb-btn.primary{ display:inline-flex; }
+
+  /* ── Rechtstext (2-spaltig) ── */
+  .legal-grid{ display:grid; grid-template-columns:1fr 1fr; gap:40px; }
+  .legal-col h3{ font-family:var(--f-head); font-size:12.5px; font-weight:700; color:var(--night); border-bottom:1px solid var(--border); padding-bottom:8px; margin-bottom:12px; }
+  .legal-col p{ font-size:11.5px; color:#555; line-height:1.7; margin:0 0 10px; }
+
+  .sheet-footer{
+    margin:40px -60px -56px; padding:12px 60px; background:var(--petrol); color:#fff;
+    font-size:10.5px; display:flex; justify-content:space-between;
+  }
+
+  @media (max-width:760px){
+    .sheet{ padding:32px 24px; }
+    .report-header{ margin:-32px -24px 24px; padding:24px 24px 20px; flex-direction:column; align-items:flex-start; }
+    .report-meta{ text-align:left; }
+    .legal-grid{ grid-template-columns:1fr; gap:24px; }
+    .sheet-footer{ margin:32px -24px -32px; padding:12px 24px; flex-direction:column; gap:4px; }
+    .toolbar{ padding:12px 5%; }
+    .toolbar-left span:last-child{ display:none; }
+  }
+
+  /* ── Druck / Puppeteer: genau das wird später zu PDF ── */
+  @media print{
+    body{ background:#fff; }
+    .toolbar{ display:none; }
+    .report{ max-width:none; margin:0; padding:0; }
+    .sheet{ box-shadow:none; border-radius:0; margin:0; page-break-after:always; padding:40px 50px; }
+    .sheet:last-child{ page-break-after:auto; }
+    .report-header{ margin:-40px -50px 26px; padding:26px 50px 20px; }
+    .sheet-footer{ margin:30px -50px -40px; padding:10px 50px; position:running(footer); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nur im Browser sichtbar, nicht im PDF -->
+<div class="toolbar">
+  <div class="toolbar-left">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0097B2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12L12 4l9 8"/><path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/><path d="M9 15l2 2 4-4"/></svg>
+    <span>Ihre Immobilienbewertung ist fertig</span>
+  </div>
+  <div class="toolbar-actions">
+    <a href="#" class="tb-btn">Neue Bewertung</a>
+    <a href="#" class="tb-btn primary" onclick="window.print(); return false;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>
+      Als PDF speichern
+    </a>
+  </div>
+</div>
+
+<div class="report">
+
+  <!-- ══════════ SEITE 1 ══════════ -->
+  <div class="sheet">
+    <div class="report-header">
+      <div><span class="report-logo">IMMOWERT<span>CHECKER</span></span><span class="report-logo-sub">Immobilienbewertung</span></div>
+      <div class="report-meta">
+        <div class="name">Erstellt für Anna Beispiel</div>
+        <div class="sub">05.08.2026 · Eigentumswohnung · München</div>
+      </div>
+    </div>
+
+    <div class="marktwert-block">
+      <div class="eyebrow">Geschätzter Marktwert</div>
+      <div class="preisstrahl">
+        <div class="preisstrahl-avg">544.300 €<span>Ø geschätzter Marktwert</span></div>
+        <div class="preisstrahl-track"><div class="preisstrahl-dot"></div></div>
+        <div class="preisstrahl-labels"><span>510.500 €</span><span>578.100 €</span></div>
+      </div>
+    </div>
+
+    <div class="textblock">
+      <h2>Einschätzung</h2>
+      <p>Ihre Eigentumswohnung liegt in einer gefragten Münchner Wohnlage mit stabiler bis leicht steigender Nachfrage. Die solide Ausstattung und der gepflegte Zustand wirken sich positiv auf den erzielbaren Preis aus. Im regionalen Vergleich liegt Ihre Immobilie im oberen Marktsegment.</p>
+    </div>
+
+    <div class="textblock">
+      <h2>Was den Wert positiv beeinflusst</h2>
+      <ul class="highlight-list">
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Zentrale, gut angebundene Lage mit kurzen Wegen zum ÖPNV</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Balkon und moderne Ausstattung erhöhen die Attraktivität für Käufer</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Stabile bis positive Marktentwicklung in der Region über die letzten Jahre</li>
+      </ul>
+    </div>
+
+    <div class="textblock" style="margin-bottom:0;">
+      <h2>Käuferprofil</h2>
+      <p>Für diese Immobilie interessieren sich typischerweise berufstätige Paare und kleine Familien, die Wert auf eine zentrale Lage und eine geringe Sanierungsbedürftigkeit legen. Auch Kapitalanleger zeigen in dieser Lage überdurchschnittliches Interesse.</p>
+    </div>
+
+    <div class="sheet-footer">
+      <span>Fragen zu Ihrer Bewertung? [Telefonnummer einfügen] · info@immowertchecker.de · www.immowertchecker.de</span>
+      <span>1/3</span>
+    </div>
+  </div>
+
+  <!-- ══════════ SEITE 2 ══════════ -->
+  <div class="sheet">
+
+    <div class="chart-block">
+      <h2>Preisentwicklung der letzten 10 Jahre</h2>
+      <p class="chart-sub">Modellierte Entwicklung des Kaufpreis-Richtwerts (€/m²) in München — keine Einzelobjekt-Historie.</p>
+      <div class="chart-endlabels"><span>5.240 €/m²</span><span>7.180 €/m²</span></div>
+      <svg viewBox="0 0 680 110" width="100%" height="110" preserveAspectRatio="none" style="overflow:visible;">
+        <line x1="0" y1="0" x2="680" y2="0" stroke="#EEF6F8" stroke-width="1"/>
+        <line x1="0" y1="36.6" x2="680" y2="36.6" stroke="#EEF6F8" stroke-width="1"/>
+        <line x1="0" y1="73.3" x2="680" y2="73.3" stroke="#EEF6F8" stroke-width="1"/>
+        <line x1="0" y1="110" x2="680" y2="110" stroke="#EEF6F8" stroke-width="1"/>
+        <polyline fill="none" stroke="#0097B2" stroke-width="2.5" points="0,100 68,92 136,85 204,80 272,68 340,60 408,55 476,42 544,28 612,14 680,5"/>
+        <g fill="#0097B2">
+          <circle cx="0" cy="100" r="3"/><circle cx="68" cy="92" r="3"/><circle cx="136" cy="85" r="3"/><circle cx="204" cy="80" r="3"/><circle cx="272" cy="68" r="3"/>
+          <circle cx="340" cy="60" r="3"/><circle cx="408" cy="55" r="3"/><circle cx="476" cy="42" r="3"/><circle cx="544" cy="28" r="3"/><circle cx="612" cy="14" r="3"/><circle cx="680" cy="5" r="3.5"/>
+        </g>
+      </svg>
+      <div class="chart-years"><span>2016</span><span>2018</span><span>2020</span><span>2022</span><span>2024</span><span>2026</span></div>
+    </div>
+
+    <div class="chart-block">
+      <h2>Mietmarkt-Übersicht</h2>
+      <p class="chart-sub">Durchschnittliche Kaltmiete in München im Vergleich zum Bundesdurchschnitt (€/m²):</p>
+      <div class="miet-row">
+        <div class="miet-row-label"><span>München</span><b>19,80 €/m²</b></div>
+        <div class="miet-bar-track"><div class="miet-bar-fill" style="width:88%; background:#0097B2;"></div></div>
+      </div>
+      <div class="miet-row">
+        <div class="miet-row-label"><span>Bundesdurchschnitt</span><b>9,60 €/m²</b></div>
+        <div class="miet-bar-track"><div class="miet-bar-fill" style="width:43%; background:#C8E8EE;"></div></div>
+      </div>
+
+      <div class="hinweis-box">
+        <div class="ttl">Hinweis zur Mietpreisbremse</div>
+        <p>Nach den vorliegenden Angaben greift die Mietpreisbremse (§ 556d BGB) für diese Immobilie voraussichtlich nicht (umfassend modernisiert nach § 556f BGB). Das bedeutet: Bei einer Vermietung könnte voraussichtlich eine marktübliche Miete verlangt werden, ohne an die ortsübliche Vergleichsmiete zzgl. 10 % gebunden zu sein — was sich positiv auf die erzielbare Rendite und damit auf den Wert auswirken kann. Dies ist eine grobe Einschätzung anhand Ihrer Angaben, keine verbindliche Rechtsauskunft.</p>
+      </div>
+    </div>
+
+    <div style="margin-bottom:0;">
+      <h2>Ihre Angaben im Überblick</h2>
+      <table class="angaben-table">
+        <tr><td>Immobilientyp</td><td>Eigentumswohnung</td></tr>
+        <tr><td>Lage</td><td>80331 München</td></tr>
+        <tr><td>Wohnfläche</td><td>78 m²</td></tr>
+        <tr><td>Baujahr</td><td>2001 – 2015</td></tr>
+        <tr><td>Zustand</td><td>Gepflegt</td></tr>
+        <tr><td>Ausstattung</td><td>Gehoben</td></tr>
+        <tr><td>Heizung</td><td>Fernwärme</td></tr>
+        <tr><td>Nutzung</td><td>Selbstnutzung</td></tr>
+        <tr><td>Merkmale</td><td>Balkon, Aufzug, Stellplatz</td></tr>
+      </table>
+    </div>
+
+    <div class="sheet-footer">
+      <span>Fragen zu Ihrer Bewertung? [Telefonnummer einfügen] · info@immowertchecker.de · www.immowertchecker.de</span>
+      <span>2/3</span>
+    </div>
+  </div>
+
+  <!-- ══════════ SEITE 3 ══════════ -->
+  <div class="sheet">
+    <h2 style="font-size:22px; margin-bottom:24px;">Urheberrecht und Haftung</h2>
+    <div class="legal-grid">
+      <div class="legal-col">
+        <h3>Urheberrecht</h3>
+        <p>Der Inhalt dieses Dokuments unterliegt dem Urheberrecht. Veränderungen, Kürzungen, Erweiterungen und Ergänzungen bedürfen der vorherigen Einwilligung der [Firmenname GmbH einfügen].</p>
+        <p>Die geschätzte Preisspanne sowie die dargestellten Markt- und Mietdaten basieren auf öffentlich zugänglichen, regionalen Durchschnittswerten sowie einer KI-gestützten Auswertung der von Ihnen gemachten Angaben.</p>
+        <p>Datenquellen: [Quellen der verwendeten Marktdaten einfügen].</p>
+      </div>
+      <div class="legal-col">
+        <h3>Haftung</h3>
+        <p>Bei diesem Dokument handelt es sich um das Ergebnis einer automatisierten, KI-gestützten Bewertung, die ausschließlich auf den Angaben des Nutzers und regionalen Durchschnittswerten beruht. Die Angaben wurden nicht überprüft. Das Objekt wurde nicht besichtigt.</p>
+        <p>Von der [Firmenname GmbH einfügen] kann deshalb keine Gewähr für die Richtigkeit der dargestellten Daten übernommen werden. Diese Bewertung ersetzt kein Gutachten eines zertifizierten Sachverständigen.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:40px;">
+      <div class="cta-box">
+        <h2>Möchten Sie den nächsten Schritt gehen?</h2>
+        <p>Ein Immobilienberater aus Ihrer Region kann Ihnen helfen, den optimalen Verkaufspreis zu erzielen und den gesamten Verkaufsprozess professionell zu begleiten — unverbindlich und kostenlos.</p>
+        <a href="#" class="tb-btn primary">Kostenlosen Beratungskontakt anfragen</a>
+      </div>
+    </div>
+
+    <div class="sheet-footer">
+      <span>Fragen zu Ihrer Bewertung? [Telefonnummer einfügen] · info@immowertchecker.de · www.immowertchecker.de</span>
+      <span>3/3</span>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
