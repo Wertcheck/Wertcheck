@@ -79,7 +79,7 @@ async function verarbeiten(rohdaten) {
   const analyse = await clara.analysiere(daten);
   console.log(`[Jonas] Clara ist fertig (Preisspanne: ${analyse.wert.low}–${analyse.wert.high} €). Übergebe an Tim …`);
 
-  const pdfBuffer = await tim.erstellePDF(daten, analyse);
+  const { html, pdfBuffer } = await tim.erstelleBerichtUndPDF(daten, analyse);
   console.log(`[Jonas] Tim hat das PDF fertig (${pdfBuffer.length} Bytes). Übergebe an Elena …`);
 
   await elena.versende(daten, analyse, pdfBuffer);
@@ -95,7 +95,7 @@ async function verarbeiten(rohdaten) {
     }
   }
 
-  return { daten, analyse };
+  return { daten, analyse, html };
 }
 
 module.exports = { verarbeiten, normalisiere };

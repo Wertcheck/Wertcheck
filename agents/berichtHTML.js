@@ -93,7 +93,7 @@ function linienChartHTML(verlaufsdaten, wertSchluessel, farbe, viewBoxW, viewBox
     ${jahresLabels}`;
 }
 
-function erstelleBerichtHTML(daten, analyse, kartenBildBase64) {
+function erstelleBerichtHTML(daten, analyse, kartenBildBase64, pdfBase64) {
   const heute = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' });
   const typKurz = (daten.typ || '').toLowerCase().includes('wohnung') ? 'Wohnung' : 'Haus';
   const basisProQm = analyse.wert.avg / daten.wohnflaeche;
@@ -325,10 +325,15 @@ function erstelleBerichtHTML(daten, analyse, kartenBildBase64) {
   </div>
   <div class="toolbar-actions">
     <a href="/" class="tb-btn">Neue Bewertung</a>
-    <a href="#" class="tb-btn primary" onclick="window.print(); return false;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>
-      Als PDF speichern
-    </a>
+    ${pdfBase64
+      ? `<a href="data:application/pdf;base64,${pdfBase64}" download="Immobilienbewertung.pdf" class="tb-btn primary">
+           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>
+           Als PDF speichern
+         </a>`
+      : `<a href="#" class="tb-btn primary" onclick="window.print(); return false;">
+           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>
+           Als PDF speichern
+         </a>`}
   </div>
 </div>
 

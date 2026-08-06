@@ -63,25 +63,46 @@ async function holeKartenBase64(daten) {
   }
 }
 
-function erstellePDF(daten, analyse) {
+// Erzeugt PDF UND Browser-HTML aus einem Guss (Kartenausschnitt wird nur
+// einmal geholt). Das zurückgegebene HTML enthält den fertigen PDF-Download
+// direkt eingebettet (Data-URI) — kein zweiter Server-Aufruf zum
+// Herunterladen nötig, der Button funktioniert offline/sofort.
+function erstelleBerichtUndPDF(daten, analyse) {
   return eingereiht(async () => {
     const kartenBildBase64 = await holeKartenBase64(daten);
-    const html = erstelleBerichtHTML(daten, analyse, kartenBildBase64);
+
+    // Pass 1: HTML ohne Download-Link (der PDF-Inhalt selbst braucht die
+    // Toolbar sowieso nicht — die ist per @media print ausgeblendet).
+    const htmlFuerPDF = erstelleBerichtHTML(daten, analyse, kartenBildBase64);
 
     const browser = await getBrowser();
     const page = await browser.newPage();
+    let pdfBuffer;
     try {
-      await page.setContent(html, { waitUntil: 'networkidle0' });
-      const buffer = await page.pdf({
+      await page.setContent(htmlFuerPDF, { waitUntil: 'networkidle0' });
+      pdfBuffer = await page.pdf({
         format: 'A4',
         printBackground: true,
         margin: { top: 0, bottom: 0, left: 0, right: 0 }
       });
-      return buffer;
     } finally {
-      await page.close(); // Tab schließen, Browser-Prozess bleibt für den nächsten Aufruf am Leben
+      await page.close();
     }
+
+    // Pass 2: dieselbe Vorlage nochmal, diesmal MIT dem gerade erzeugten
+    // PDF als echtem Download-Link für die Browser-Ansicht.
+    const pdfBase64 = pdfBuffer.toString('base64');
+    const htmlFuerBrowser = erstelleBerichtHTML(daten, analyse, kartenBildBase64, pdfBase64);
+
+    return { html: htmlFuerBrowser, pdfBuffer };
   });
 }
 
-module.exports = { erstellePDF };
+// Bisherige Schnittstelle bleibt erhalten (nur das PDF, für Stellen, die
+// ausschließlich den Buffer brauchen).
+async function erstellePDF(daten, analyse) {
+  const { pdfBuffer } = await erstelleBerichtUndPDF(daten, analyse);
+  return pdfBuffer;
+}
+
+module.exports = { erstellePDF, erstelleBerichtUndPDF };
