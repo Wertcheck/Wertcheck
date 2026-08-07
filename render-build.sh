@@ -1,18 +1,16 @@
 #!/usr/bin/env bash
 # render-build.sh
 # ────────────────
-# WICHTIG: Der Cache-Ordner muss INNERHALB des Projektordners liegen
-# (nicht z.B. unter /opt/render/.cache) — Render überträgt nach dem
-# Build nur den Inhalt des Projektordners an die Laufzeitumgebung.
-# Alles außerhalb davon geht beim Übergang von "Build" zu "Deploy"
-# verloren, auch wenn der Build selbst fehlerfrei durchläuft.
+# WICHTIG: PUPPETEER_CACHE_DIR muss VOR "npm install" gesetzt sein.
+# Puppeteer lädt Chrome bereits automatisch als Teil von "npm install"
+# herunter (Postinstall-Hook) — wenn die Variable erst danach gesetzt
+# wird, landet Chrome am Standard-Ort statt am gewünschten Pfad, und
+# ein nachträgliches "npx puppeteer browsers install chrome" denkt
+# fälschlich "ist schon da" und tut nichts (daher keine Ausgabe im Log).
 
 set -o errexit
 
-npm install
-
 export PUPPETEER_CACHE_DIR="$(pwd)/.cache/puppeteer"
 rm -rf "$PUPPETEER_CACHE_DIR"
-mkdir -p "$PUPPETEER_CACHE_DIR"
 
-npx puppeteer browsers install chrome
+npm install
