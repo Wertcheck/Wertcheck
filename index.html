@@ -526,13 +526,24 @@ input[type="range"]::-moz-range-thumb { width:20px; height:20px; border-radius:5
 .address-trust-badges span { display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); }
 .address-trust-badges svg { color:var(--orange); flex-shrink:0; }
 .consent-check {
-  display: flex; align-items: flex-start; gap: 8px;
+  display: flex; align-items: flex-start; gap: 10px;
   margin: 2px 0 10px; cursor: pointer;
   font-size: 11px; color: var(--muted); line-height: 1.4;
 }
 .consent-check input[type="checkbox"] {
-  flex-shrink: 0; margin-top: 2px; width: 16px; height: 16px;
-  accent-color: var(--orange); cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+  flex-shrink: 0; margin-top: 2px; width: 18px; height: 18px;
+  border: 2px solid var(--border); border-radius: 4px;
+  background: #fff; cursor: pointer; position: relative;
+  transition: background .15s, border-color .15s;
+}
+.consent-check input[type="checkbox"]:checked {
+  background: var(--orange); border-color: var(--orange);
+}
+.consent-check input[type="checkbox"]:checked::after {
+  content: ''; position: absolute; left: 5px; top: 1px;
+  width: 5px; height: 9px; border: solid #fff; border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
 /* Wohnung-Details: Dropdown, Stepper, Checkbutton, Info-Icon */
